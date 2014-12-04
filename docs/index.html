@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ProvDB API Documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"UQQDV1BSGwAEVFhSDgc="};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({1:[function(t,e){function n(t,e,n){n||(n={});for(var r=o[t],a=r&&r.length||0,s=n[i]||(n[i]={}),u=0;a>u;u++)r[u].apply(s,e);return s}function r(t,e){var n=o[t]||(o[t]=[]);n.push(e)}var o={},i="nr@context";e.exports={on:r,emit:n}},{}],2:[function(t){function e(t,e,n,i,s){try{u?u-=1:r("err",[s||new UncaughtException(t,e,n)])}catch(c){try{r("ierr",[c,(new Date).getTime(),!0])}catch(d){}}return"function"==typeof a?a.apply(this,o(arguments)):!1}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function n(t){r("err",[t,(new Date).getTime()])}var r=t("handle"),o=t(6),i=t(5),a=window.onerror,s=!1,u=0;t("loader").features.push("err"),window.onerror=e,NREUM.noticeError=n;try{throw new Error}catch(c){"stack"in c&&(t(1),t(2),"addEventListener"in window&&t(3),window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&t(4),s=!0)}i.on("fn-start",function(){s&&(u+=1)}),i.on("fn-err",function(t,e,r){s&&(this.thrown=!0,n(r))}),i.on("fn-end",function(){s&&!this.thrown&&u>0&&(u-=1)}),i.on("internal-error",function(t){r("ierr",[t,(new Date).getTime(),!0])})},{1:5,2:4,3:3,4:6,5:1,6:14,handle:"D5DuLP",loader:"G9z0Bl"}],3:[function(t){function e(t){r.inPlace(t,["addEventListener","removeEventListener"],"-",n)}function n(t){return t[1]}var r=t(1),o=(t(3),t(2));if(e(window),"getPrototypeOf"in Object){for(var i=document;i&&!i.hasOwnProperty("addEventListener");)i=Object.getPrototypeOf(i);i&&e(i);for(var a=XMLHttpRequest.prototype;a&&!a.hasOwnProperty("addEventListener");)a=Object.getPrototypeOf(a);a&&e(a)}else XMLHttpRequest.prototype.hasOwnProperty("addEventListener")&&e(XMLHttpRequest.prototype);o.on("addEventListener-start",function(t){if(t[1]){var e=t[1];"function"==typeof e?this.wrapped=e["nr@wrapped"]?t[1]=e["nr@wrapped"]:e["nr@wrapped"]=t[1]=r(e,"fn-"):"function"==typeof e.handleEvent&&r.inPlace(e,["handleEvent"],"fn-")}}),o.on("removeEventListener-start",function(t){var e=this.wrapped;e&&(t[1]=e)})},{1:15,2:1,3:14}],4:[function(t){var e=(t(3),t(1)),n=t(2);e.inPlace(window,["requestAnimationFrame","mozRequestAnimationFrame","webkitRequestAnimationFrame","msRequestAnimationFrame"],"raf-"),n.on("raf-start",function(t){t[0]=e(t[0],"fn-")})},{1:15,2:1,3:14}],5:[function(t){function e(t){var e=t[0];"string"==typeof e&&(e=new Function(e)),t[0]=n(e,"fn-")}var n=(t(3),t(1)),r=t(2);n.inPlace(window,["setTimeout","setInterval","setImmediate"],"setTimer-"),r.on("setTimer-start",e)},{1:15,2:1,3:14}],6:[function(t){function e(){o.inPlace(this,s,"fn-")}function n(t,e){o.inPlace(e,["onreadystatechange"],"fn-")}function r(t,e){return e}var o=t(1),i=t(2),a=window.XMLHttpRequest,s=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"];window.XMLHttpRequest=function(t){var n=new a(t);try{i.emit("new-xhr",[],n),o.inPlace(n,["addEventListener","removeEventListener"],"-",function(t,e){return e}),n.addEventListener("readystatechange",e,!1)}catch(r){try{i.emit("internal-error",r)}catch(s){}}return n},window.XMLHttpRequest.prototype=a.prototype,o.inPlace(XMLHttpRequest.prototype,["open","send"],"-xhr-",r),i.on("send-xhr-start",n),i.on("open-xhr-start",n)},{1:15,2:1}],7:[function(t){function e(){function e(t){if("string"==typeof t&&t.length)return t.length;if("object"!=typeof t)return void 0;if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if("undefined"!=typeof FormData&&t instanceof FormData)return void 0;try{return JSON.stringify(t).length}catch(e){return void 0}}function n(t){var n=this.params,r=this.metrics;if(!this.ended){this.ended=!0;for(var i=0;u>i;i++)t.removeEventListener(s[i],this.listener,!1);if(!n.aborted){if(r.duration=(new Date).getTime()-this.startTime,4===t.readyState){n.status=t.status;var a=t.responseType,c="arraybuffer"===a||"blob"===a||"json"===a?t.response:t.responseText,d=e(c);if(d&&(r.rxSize=d),this.sameOrigin){var f=t.getResponseHeader("X-NewRelic-App-Data");f&&(n.cat=f.split(", ").pop())}}else n.status=0;r.cbTime=this.cbTime,o("xhr",[n,r])}}}function r(t,e){var n=i(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}t("loader").features.push("xhr");var o=t("handle"),i=t(1),a=t(5),s=["load","error","abort","timeout"],u=s.length,c=t(2);t(3),t(4),a.on("new-xhr",function(){this.totalCbs=0,this.called=0,this.cbTime=0,this.end=n,this.ended=!1,this.xhrGuids={}}),a.on("open-xhr-start",function(t){this.params={method:t[0]},r(this,t[1]),this.metrics={}}),a.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),a.on("send-xhr-start",function(t,n){var r=this.metrics,o=t[0],i=this;if(r&&o){var c=e(o);c&&(r.txSize=c)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof n.onload))&&i.end(n)}catch(e){try{a.emit("internal-error",e)}catch(r){}}};for(var d=0;u>d;d++)n.addEventListener(s[d],this.listener,!1)}),a.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),a.on("xhr-load-added",function(t,e){var n=""+c(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),a.on("xhr-load-removed",function(t,e){var n=""+c(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),a.on("addEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-added",[t[1],t[2]],e)}),a.on("removeEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-removed",[t[1],t[2]],e)}),a.on("fn-start",function(t,e,n){e instanceof XMLHttpRequest&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),a.on("fn-end",function(t,e){this.xhrCbStart&&a.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)&&e()},{1:8,2:11,3:3,4:6,5:1,handle:"D5DuLP",loader:"G9z0Bl"}],8:[function(t,e){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");return!r.port&&o[1]&&(r.port=o[1].split("/")[0].split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname),r.sameOrigin=!e.hostname||e.hostname===document.domain&&e.port===n.port&&e.protocol===n.protocol,r}},{}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],D5DuLP:[function(t,e){function n(t,e){var n=r[t];return n?n.apply(this,e):(o[t]||(o[t]=[]),void o[t].push(e))}var r={},o={};e.exports=n,n.queues=o,n.handlers=r},{}],11:[function(t,e){function n(t){if(!t||"object"!=typeof t&&"function"!=typeof t)return-1;if(t===window)return 0;if(o.call(t,"__nr"))return t.__nr;try{return Object.defineProperty(t,"__nr",{value:r,writable:!0,enumerable:!1}),r}catch(e){return t.__nr=r,r}finally{r+=1}}var r=1,o=Object.prototype.hasOwnProperty;e.exports=n},{}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],G9z0Bl:[function(t,e){function n(){var t=p.info=NREUM.info;if(t&&t.agent&&t.licenseKey&&t.applicationID&&u&&u.body){p.proto="https"===f.split(":")[0]||t.sslForHttp?"https://":"http://",a("mark",["onload",i()]);var e=u.createElement("script");e.src=p.proto+t.agent,u.body.appendChild(e)}}function r(){"complete"===u.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),s=window,u=s.document,c="addEventListener",d="attachEvent",f=(""+location).split("?")[0],p=e.exports={offset:i(),origin:f,features:[]};u[c]?(u[c]("DOMContentLoaded",o,!1),s[c]("load",n,!1)):(u[d]("onreadystatechange",r),s[d]("onload",n)),a("mark",["firstbyte",i()])},{handle:"D5DuLP"}],14:[function(t,e){function n(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(0>o?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=n},{}],15:[function(t,e){function n(t,e,r,s){function nrWrapper(){try{var n,a=u(arguments),c=this,d=r&&r(a,c)||{}}catch(f){i([f,"",[a,c,s],d])}o(e+"start",[a,c,s],d);try{return n=t.apply(c,a)}catch(p){throw o(e+"err",[a,c,p],d),p}finally{o(e+"end",[a,c,n],d)}}return a(t)?t:(e||(e=""),nrWrapper[n.flag]=!0,nrWrapper)}function r(t,e,r,o){r||(r="");var i,s,u,c="-"===r.charAt(0);for(u=0;u<e.length;u++)s=e[u],i=t[s],a(i)||(t[s]=n(i,c?s+r:r,o,s,t))}function o(t,e,n){try{s.emit(t,e,n)}catch(r){i([r,t,e,n])}}function i(t){try{s.emit("internal-error",t)}catch(e){}}function a(t){return!(t&&"function"==typeof t&&t.apply&&!t[n.flag])}var s=t(1),u=t(2);e.exports=n,n.inPlace=r,n.flag="nr@wrapper"},{1:1,2:14}]},{},["G9z0Bl",2,7]);</script><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"beacon-2.newrelic.com","queueTime":0,"licenseKey":"e228c2e8d6","agent":"js-agent.newrelic.com/nr-412.min.js","transactionName":"NgNVZEQDXkNUUEVfDA9JcUVYAURZWl0eRhEOEERVRBRVQhtFWFMUElxWQF89VF9WRlxTDRUHQ1lZDA==","applicationID":"3409096","errorBeacon":"bam.nr-data.net","applicationTime":40}</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content=""> 
+    <link href="stylesheets/provenance-suite.min.css" rel="stylesheet">
+    <link href="stylesheets/custom.css" rel="stylesheet">
+    
+    
+<!--    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-39466031-1', 'provenance.ecs.soton.ac.uk');
+      ga('require', 'displayfeatures');
+      ga('send', 'pageview');
+    </script>-->
+
+  </head>
+  <body role="document"  data-spy="scroll" data-target=".sidebar">
+     Fixed navbar 
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div id="messages">
+      
+      </div>
+
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="/api/v2.0/docs" class="navbar-brand"><span class="octicon octicon-database" style="position: relative; top: -2px;"></span> ProvDB</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            
+            <li class=""><a href="/api/v2.0/docs">Home</a></li>
+            
+            
+            <!--<li class=""><a href="/store/public/">Public Documents</a></li>-->
+            
+            
+            <!--<li class=""><a href="/store/account/login/">Login</a></li>-->
+            <!--<li class=""><a href="/store/account/signup/"><span class="product-highlight">Sign Up</span></a></li>-->
+            
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header">Documentation</li>
+                <li><a href="/api/v2.0/docs">API</a></li>
+    <!--            <li><a href="/store/help/oauth">OAuth</a></li>
+                <li class="divider"></li>
+                <li><a href="/store/contact">Contact</a></li>
+                <li><a href="/store/about">About Us</a></li>-->
+              </ul>
+            </li>
+            
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    
+    <div class="body-bg ">
+      <div id="main" class="container" role="main">
+        <div id="top"></div>
+        <div id="page-header">
+        
+        </div>
+
+        <div class="row" id="content">
+          
+<div class="col-md-10 col-md-offset-1 documentation-paper">
+  <h2 class="documentation-title">Documentation &rsaquo; API</h2>
+  <div class="row">
+    <div class="col-md-3">
+      
+<div class="sidebar" data-spy="affix" data-offset-top="120">
+<ul class="list-group nav">
+	<li class="list-group-item"><a href="#introduction"><strong>Introduction</strong></a></li>
+	<li class="list-group-item"><a href="#resources"><strong>Resources</strong></a></li>
+    <li class="list-group-item"><a href="#documents">Documents</a></li>
+    <li class="list-group-item"><a href="#documents">Entities</a></li>
+    <li class="list-group-item"><a href="#documents">Activities</a></li>
+    <li class="list-group-item"><a href="#documents">Agents</a></li> 
+    <li class="list-group-item"><a href="#responses"><strong>Responses</strong></a></li>
+    <li class="list-group-item"><a href="#authentication"><strong>Authentication</strong></a></li>
+    <li class="list-group-item"><a href="#api-key">API Key</a></li>
+  <!--  <li class="list-group-item"><a href="#oauth">OAuth</a></li>-->
+    <li class="list-group-item"><a  href="#libraries"><strong>Libraries</strong></a></li>
+    <li class="list-group-item"><a  href="#python">Python</a></li>
+ <!--   <li class="list-group-item"><a  href="#jquery">jQuery</a></li>-->
+</ul>
+</div>
+
+    </div>
+    <div class="col-md-9 documentation-body bordered">
+      <div class="body-pad">
+        
+	<div id="introduction" class="anchorOffset"></div>
+	<h2 class="first">Introduction</h2>
+	<p>
+		ProvDB's API provides a RESTful web service for
+		storage and access of provenance documents in various formats of the W3C's <a href="http://www.w3.org/TR/prov-dm/">PROV Data Model</a>. Using the API, any
+		client can upload PROV-compliant documents and query them using the PROV description model.	</p>
+  <p>
+    This document provides details and examples of the available endpoints and resources at a low level. Existing libraries
+    can be used instead to publish and access provenance documents available through ProvDB.
+  </p>
+	<div id="resources" class="anchorOffset"></div>
+	<h2>Resources</h2>
+	<p>
+    
+      The API currently works with the following resources: <strong>documents</strong>, <strong> entities </strong>, <strong>activities</strong>, and <strong>agents</strong>, which are documented below.
+    
+	</p>
+	<div id="documents" class="anchorOffset"></div>
+	<h3>Documents</h3>
+	<p>
+		The following actions are available on the documents resource:
+	</p>
+	
+	
+	
+<!--		<div id="documents-list" class="anchorOffset"></div>
+	<table class="table">
+		<tr>
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-list" class="toggle_expand"><strong>GET /store/api/v0/documents/</strong></a></td>
+			<td>Retrieve a list of documents visible to the authenticated user or public.</td>
+		</tr>
+		<tr class="collapsed documents_list" style="display:none">
+			<td colspan="2">
+				<h5>Request Parameters</h5>
+				<h6>Pagination <span class="label label-default">optional</span></h6>
+				<dl class="dl-horizontal">
+				  <dt>offset</dt>
+				  <dd>the offset for the first document to list</dd>
+				  <dt>limit</dt>
+				  <dd>the number of documents that will be displayed</dd>
+				</dl>
+        <h6>Ordering <span class="label label-default">optional</span></h6>
+				<p>Documents can be ordered by their creation date by passing one of the following values to the <code><small>order_by</small></code> parameter:
+				<dl class="dl-horizontal">
+				  <dt><span class="text-danger">created_at</span></dt>
+				  <dd>Return oldest documents first</dd>
+                <dt><span class="text-danger">-created_at</span></dt>
+				  <dd>Return newest documents first</dd>
+			 	</dl>
+				<h6>Filtration <span class="label label-default">optional</span></h6>
+				<p>For each of the fields listed in the filtering section of the <a href="/store/api/v0/documents/schema/?format=json">documents endpoint
+				schema</a>, various filter parameters can be sent to distill the result list returned. Where <code>field</code> represents the field name:</p>
+				<dl class="dl-horizontal">
+				  <dt><span class="text-danger">field</span></dt>
+				  <dd>the exact value that this field must match to be included in the returned list (e.g <code><small>owner=bob</small></code> to include documents owned by the user with username 'bob')</dd>
+			 	</dl>
+
+			 	<p>For numerical fields:</p>
+			 	<dl class="dl-horizontal">
+				  <dt><span class="text-danger">field</span>__gt</dt>
+				  <dd>the value that this field must <strong>exceed</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__gte</dt>
+				  <dd>the value that this field must <strong>exceed or equal</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__lt</dt>
+				  <dd>the value that this field must <strong>precede</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__lte</dt>
+				  <dd>the value that this field must <strong>precede or equal</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__range</dt>
+				  <dd>the value that this field must be <strong>within</strong> to be included (e.g <code><small>views_count__range=7,102</small></code> to include documents with a view count between 7 and 102 inclusive)</dd>
+				</dl>
+				<p>For string fields (excl. owner):</p>
+				<dl class="dl-horizontal">
+				  <dt><span class="text-danger">field</span>__startswith</dt>
+				  <dd>the value that this field must <strong>start with</strong> to be included (e.g <code><small>document_name__startswith=agentswitch</small></code> to include documents with a name that begins with 'agentswitch')</dd>
+				  <dt><span class="text-danger">field</span>__endswith</dt>
+				  <dd>the value that this field must <strong>end with</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__contains</dt>
+				  <dd>the value that this field must <strong>contain</strong> to be included</dd>
+				</dl>
+				<p>Any number of these filters can be combined in one query.</p>
+				<h6>Valid Fields</h6>
+				<p>Fields that can be used for filters: <code>created_at</code>, <code>document_name</code>, <code>id</code>, <code>owner</code>, <code>public</code>, <code>views_count</code>.</p>
+				<h6>Some Examples</h6>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>API URL <small>(appended to /store/api/v0/documents/)</small></th>
+							<th>Results Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><a href="/store/api/v0/documents/?owner=tdh&views_count__gt=10&format=json">?owner=tdh&views_count__gt=50</a></td>
+							<td>A list of documents owned by the user with username 'tdh' that have a view count exceeding 50.</td>
+						</tr>
+						<tr>
+							<td><a href="/store/api/v0/documents/?document_name__contains=w3c&format=json">?document_name__contains=w3c</a></td>
+							<td>A list of documents with a name containing anywhere the string 'w3c'.</td>
+						</tr>
+						<tr>
+							<td><a href="/store/api/v0/documents/?created_at__range=2013-08-01,2013-08-31&format=json">?created_at__range=2013-08-01,2013-08-31</a></td>
+							<td>A list of documents submitted in August 2013.</td>
+						</tr>
+						<tr>
+							<td><a href="/store/api/v0/documents/?public=false&format=json">?public=false</a></td>
+							<td>A list of only private documents (empty list unless authenticated request).</td>
+						</tr>
+					</tbody>
+				</table>
+				<hr>
+				<h5>Response Object</h5>
+				<dl class="dl-horizontal">
+				  <dt>objects</dt>
+				  <dd>a list of document resource objects</dd>
+				  <dt>meta</dt>
+				  <dd>information about the list</dd>
+				</dl>
+				Each document object in the objects list contains the following fields:
+				<dl class="dl-horizontal">
+				  <dt>id</dt>
+				  <dd>the unique ID of the document</dd>
+				  <dt>resource_uri</dt>
+				  <dd>the API url which contains all the document information</dd>
+				  <dt>public</dt>
+				  <dd>boolean value describing visibility of document</dd>
+				  <dt>document_name</dt>
+				  <dd>name given to the document</dd>
+				  <dt>owner</dt>
+				  <dd>username of the document owner</dd>
+				  <dt>created_at</dt>
+				  <dd>the datetime the document was submitted to the store</dd>
+				</dl>
+				The meta field contains the following information:
+				<dl class="dl-horizontal">
+				  <dt>limit</dt>
+				  <dd>the maximum number of documents this object will contain</dd>
+				  <dt>offset</dt>
+				  <dd>the number of documents excluded from the start (for pagination)</dd>
+				  <dt>next/previous</dt>
+				  <dd>URLs to the next/previous list page</dd>
+				  <dt>total_count</dt>
+				  <dd>total number of documents you have access to</dd>
+				</dl>
+				<hr>
+				<!-- EXAMPLE HTTP --*>
+				<h5>Example</h5>
+				<h6>Request</h6>
+				<pre>
+GET /store/api/v0/documents/
+
+Accept: application/json
+Content-Type: application/json
+				</pre> 
+				<h6>Response <span class="label label-success">200 OK</span></h6>
+				<pre>
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Content-Type,Authorization,Accept,*
+Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache
+Content-Type: application/json
+Date: Mon, 19 Aug 2013 13:43:29 GMT
+Server: WSGIServer/0.1 Python/2.7.5
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+
+{"meta": {"limit": 20, "next": "/store/api/v0/documents/?limit=20&offset=20", "offset": 0, "previous": null, "total_count": 30}, "objects": [{"created_at": "2013-08-14T13:10:34.636600", "document_name": "first document", "id": 1, "public": false, "resource_uri": "/store/api/v0/documents/1/", "url": "", "views_count": 15}, {"created_at": "2013-08-14T13:43:35.323624", "document_name": "asdasd", "id": 2, "public": true, "resource_uri": "/store/api/v0/documents/2/", "url": "", "views_count": 6}, {"created_at": "2013-08-14T14:13:32.662135", "document_name": "basic", "id": 3, "public": false, "resource_uri": "/store/api/v0/documents/3/", "url": "", "views_count": 3}, {"created_at": "2013-08-14T14:13:57.918169", "document_name": "from provn", "id": 4, "public": false, "resource_uri": "/store/api/v0/documents/4/", "url": "", "views_count": 3}, {"created_at": "2013-08-14T14:15:05.637226", "document_name": "from provn", "id": 5, "public": false, "resource_uri": "/store/api/v0/documents/5/", "url": "", "views_count": 2}, {"created_at": "2013-08-14T14:26:12.216104", "document_name": ".", "id": 7, "public": false, "resource_uri": "/store/api/v0/documents/7/", "url": "", "views_count": 4}, {"created_at": "2013-08-15T11:19:41.298267", "document_name": "batch", "id": 8, "public": true, "resource_uri": "/store/api/v0/documents/8/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:19:45.285852", "document_name": "batch", "id": 9, "public": true, "resource_uri": "/store/api/v0/documents/9/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:19:48.613903", "document_name": "batch", "id": 10, "public": true, "resource_uri": "/store/api/v0/documents/10/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:19:52.118402", "document_name": "batch", "id": 11, "public": true, "resource_uri": "/store/api/v0/documents/11/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:19:54.968984", "document_name": "batch", "id": 12, "public": true, "resource_uri": "/store/api/v0/documents/12/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:19:58.062253", "document_name": "batch", "id": 13, "public": true, "resource_uri": "/store/api/v0/documents/13/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:00.837089", "document_name": "batch", "id": 14, "public": true, "resource_uri": "/store/api/v0/documents/14/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:03.584173", "document_name": "batch", "id": 15, "public": true, "resource_uri": "/store/api/v0/documents/15/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:08.173577", "document_name": "batch", "id": 16, "public": true, "resource_uri": "/store/api/v0/documents/16/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:11.216306", "document_name": "batch", "id": 17, "public": true, "resource_uri": "/store/api/v0/documents/17/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:14.213137", "document_name": "batch", "id": 18, "public": true, "resource_uri": "/store/api/v0/documents/18/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:17.133062", "document_name": "batch", "id": 19, "public": true, "resource_uri": "/store/api/v0/documents/19/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:19.881651", "document_name": "batch", "id": 20, "public": true, "resource_uri": "/store/api/v0/documents/20/", "url": "", "views_count": 0}, {"created_at": "2013-08-15T11:20:23.195316", "document_name": "batch", "id": 21, "public": true, "resource_uri": "/store/api/v0/documents/21/", "url": "", "views_count": 0}]}
+				</pre>
+			</td>
+		</tr>
+	</table>-->
+	<div id="documents-detail" class="anchorOffset"></div>
+	<table class="table">
+		<tr class="collapsed documents_list" style="display:none">
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-detail" class="toggle_expand"><strong>GET /store/api/v2/b/provenance/b/resource/:uuid/</strong></a></td>
+			<td>Retrieve provenance information about the resource with the given UUID.</td>
+		</tr>
+		<tr class="collapsed documents_detail" style="display:none;">
+			<td colspan="2">
+				<h5>Response Object</h5>
+				<dl class="dl-horizontal">
+				  <dt>uuid</dt>
+				  <dd>the provenance of resource in JSON</dd>
+<!--				  <dt>resource_uri</dt>
+				  <dd>the API url which contains all the document information</dd>
+				  <dt>public</dt>
+				  <dd>boolean value describing visibility of document</dd>
+				  <dt>document_name</dt>
+				  <dd>name given to the document</dd>
+				  <dt>resource_uri</dt>
+				  <dd>the API url which contains all the document information</dd>
+				  <dt>owner</dt>
+				  <dd>username of the document owner</dd>				  <dt>created_at</dt>
+				  <dd>the datetime the document was submitted to the store</dd>
+				  <dt>bundles</dt>
+				  <dd>a dictionary containing the document&rsquo;s bundle ids as keys and their API endpoint urls as values</dd>-->
+				  
+				</dl>
+<!--				<hr>
+				<h5>Notes</h5>
+				<p>A request to this endpoint with an <code>Accept</code> header (other than <code>application/json</code>) will be redirected to the format below with the matching format appended.</p>
+				<hr>-->
+				<!-- EXAMPLE HTTP -->
+				<h5>Example</h5>
+				<h6>Request</h6>
+				<pre>
+curl -i http://geoprovdb.webfactional.com/api/v2.0/provenance/b/resource/"1234-4567-8900"/
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Tue, 23 Sep 2014 12:01:53 GMT
+Content-Type: application/json
+Content-Length: 1035
+Connection: keep-alive
+Vary: Accept-Encoding
+
+{"wasAssociatedWith": {"_:wAW8": {"prov:agent": "foundry:docIdAssigner", "prov:activity": "foundry:assignId"}, "_:wAW7": {"prov:agent": "foundry:ag_2", "prov:activity": "foundry:ac_2"}}, "entity": {"foundry:en_2": {"foundry:batchId": "20140721", "foundry:sourceId": {"type": "xsd:string", "$": "nlx_999998"}, "foundry:UUID": "1234-4567-8900"}}, "used": {"_:u7": {"prov:entity": null, "prov:activity": "foundry:ac_2"}, "_:u8": {"prov:entity": null, "prov:activity": "foundry:assignId"}}, "agent": {"foundry:ag_2": {"prov:type": {"type": "xsd:string", "$": "prov:SoftwareAgent"}}, "foundry:docIdAssigner": {"prov:type": {"type": "xsd:string", "$": "prov:SoftwareAgent"}}}, "activity": {"foundry:ac_2": {"prov:startTime": "2014-07-21T16:05:00.000-07:00", "prov:endTime": "2014-07-21T16:05:01.000-07:00", "prov:type": {"type": "xsd:string", "$": "ingest-docs"}}, "foundry:assignId": {"prov:startTime": "2014-07-21T16:05:02-07:00", "prov:endTime": "2014-07-21T16:05:03-07:00", "prov:type": {"type": "xsd:string", "$": "doc-id-assigment"}}}}
+
+
+				</pre>
+			</td>
+		</tr>
+	</table>
+<!--	<div id="documents-raw" class="anchorOffset"></div>
+	<table class="table">
+		<tr class="collapsed documents_detail" style="display:none;">
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-raw" class="toggle_expand"><strong>GET /store/api/v0/documents/:id(/flattened)(/view/:view).:format</strong></a></td>
+			<td>Retrieve the raw body of the document with the given ID in the requested format.</td>
+		</tr>
+		<tr class="collapsed documents_raw" style="display:none">
+			<td colspan="2">
+				<h5>Supported Formats</h5>
+				<p><code>json</code> <code>provn</code> <code>svg</code> <code>trig</code> <code>ttl</code> <code>xml</code></p>
+				<hr>
+				<h5>Optional URL segments</h5>
+				<p>When the <code>/flattened</code> segment is present the document will be presented with all bundle records merged into it.</p>
+				<p>When the <code>/view/:view</code> segment is present (with a <code>:view</code> value of either <code>data</code>, <code>process</code> or <code>responsibility</code>) the returned document's records will be filtered to the relevant types.</p>
+				<p><small>Note: Both of these segments <strong>can</strong> be present at the same time.</small></p>
+				<hr>
+				<h5>Response Body</h5>
+				<p>The document represented in the selected format.</p>
+				<hr>
+				<!-- EXAMPLE HTTP --*>
+				<h5>Example</h5>
+				<h6>Request</h6>
+				<pre>
+GET /store/api/v0/documents/2.json
+
+Accept: application/json
+Content-Type: application/json
+				</pre> 
+				<h6>Response <span class="label label-success">200 OK</span></h6>
+				<pre>
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Content-Type,Authorization,Accept,*
+Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache
+Content-Type: application/json
+Date: Mon, 19 Aug 2013 13:45:29 GMT
+Server: WSGIServer/0.1 Python/2.7.5
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+
+{"wasDerivedFrom": {"_:id2": {"prov:usedEntity": "hg:Overview.html", "prov:generatedEntity": "w3:WD-prov-dm-20111215", "prov:usage": "ex:recordu", "prov:generation": "ex:recordg", "prov:activity": "ex:rcp"}}, "wasAssociatedWith": {"_:id3": {"prov:agent": "ex:webmaster", "prov:activity": "ex:rcp"}}, "used": {"ex:recordu": {"prov:entity": "hg:Overview.html", "prov:activity": "ex:rcp"}, "_:id1": {"prov:entity": "ex:req3", "prov:activity": "ex:rcp"}}, "agent": {"ex:webmaster": {"prov:type": {"type": "python:utf8", "$": "Person"}}}, "entity": {"w3:WD-prov-dm-20111215": {"prov:type": {"type": "python:utf8", "$": "html4"}}, "hg:Overview.html": {"prov:type": {"type": "python:utf8", "$": "file in hg"}}, "ex:req3": {"prov:type": {"type": "xsd:anyURI", "$": "http://www.w3.org/2005/08/01-transitions.html#pubreq"}}}, "prefix": {"rec": "http://example.org/record", "w3": "http://www.w3.org/TR/2011/", "hg": "http://dvcs.w3.org/hg/prov/raw-file/9628aaff6e20/model/releases/WD-prov-dm-20111215/", "ex": "http://example.org/"}, "activity": {"ex:rcp": {"prov:type": {"type": "python:utf8", "$": "copy directory"}}}, "wasGeneratedBy": {"ex:recordg": {"prov:entity": "w3:WD-prov-dm-20111215", "prov:activity": "ex:rcp"}}}
+				</pre>
+			</td>
+		</tr>
+	</table>-->
+	<div id="documents-save" class="anchorOffset"></div>
+	<table class="table">
+		<tr class="collapsed documents_raw" style="display:none">
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-save" class="toggle_expand"><strong>POST /api/v2.0/resource/provenance</strong></a><br>
+			<!-- <span class="label label-warning">authentication required</span>-->
+			 </td>
+			<td>Save a new document.</td>
+		</tr>
+		<tr class="collapsed documents_save" style="display:none">
+			<td colspan="2">
+				<h5>Request Body <small>should be a JSON object containing:</small></h5>
+				<dl class="dl-horizontal">
+				  <dt>uuid</dt>
+				<!--   <dd>name for the document</dd>
+				 <dt>public</dt>
+				  <dd><span class="label label-default">optional</span> whether or not the document should be made public (boolean)</dd>-->
+				</dl>
+				<p class="indent">and one of the following:</p>
+			  	<dl class="dl-horizontal">
+				  <dt>content</dt>
+				  <dd>PROV-JSON representation of the resource (default) or a string containing a representation in the form matching the provided Content-type header</dd>
+				 <!-- <dt>url</dt>-->
+				  <!--<dd>url to an existing document to use as the content (should be of the form matching the provided Content-type header or JSON by default)</dd>-->
+				</dl>
+				<hr>
+				<h5>Response Object</h5>
+				<dl class="dl-horizontal">
+			<!--	  <dt>id</dt>
+				  <dd>the unique ID of the new document</dd>
+				  <dt>public</dt>-->
+			<!--	  <dd>boolean value describing visibility of document</dd>-->
+			<!--	  <dt>document_name</dt>
+				  <dd>name given to the document</dd>-->
+				  <!--<dt>created_at </dt>-->
+				  <dd>the datetime the provenance was submitted</dd>
+				  <dt>content</dt>
+				  <dd>the body of the resource you just created</dd>
+				</dl>
+				<hr>
+				<!-- EXAMPLE HTTP -->
+				<h5>Example</h5>
+				<h6>Request</h6>
+				<pre>
+f = open('./doc2.json', 'r')
+obj = f.read()
+str = 'curl -i -H "Content-Type: application/json" -X POST -d \'%(obj)s\' http://geoprovdb.webfactional.com/api/v2.0/resource/provenance' % {"obj":obj}
+os.system(str)
+<!--POST /store/api/v0/documents/-->
+
+Accept: application/json
+<!--Authorization: ApiKey username:7ce01ecc7d7717b02feac9e957053775152ee351-->
+Content-Type: application/json
+
+{"wasAssociatedWith": {"_:wAW8": {"prov:agent": "foundry:docIdAssigner", "prov:activity": "foundry:assignId"}, "_:wAW7": {"prov:agent": "foundry:ag_2", "prov:activity": "foundry:ac_2"}}, "used": {"_:u7": {"prov:entity": "foundry:en_2", "prov:activity": "foundry:ac_2"}, "_:u8": {"prov:entity": "foundry:en_2", "prov:activity": "foundry:assignId"}}, "agent": {"foundry:ag_2": {"foundry:name": {"type": "xsd:string", "$": "DocIngestorCLI"}, "prov:type": {"type": "xsd:string", "$": "prov:SoftwareAgent"}}, "foundry:docIdAssigner": {"prov:type": {"type": "xsd:string", "$": "prov:SoftwareAgent"}}}, "entity": {"foundry:en_2": {"foundry:batchId": {"type": "xsd:string", "$": "20140721"}, "foundry:sourceId": {"type": "xsd:string", "$": "nlx_999998"}, "foundry:UUID": {"type": "xsd:string", "$": "1234-4567-8900"}}}, "prefix": {"prov": "http://www.w3.org/ns/prov#", "foundry": "http://example.org", "xsd": "http://www.w3.org/2001/XMLSchema"}, "activity": {"foundry:ac_2": {"prov:startTime": "2014-07-21T16:05:00.000-07:00", "prov:endTime": "2014-07-21T16:05:01.000-07:00", "prov:type": {"type": "xsd:string", "$": "ingest-docs"}}, "foundry:assignId": {"prov:startTime": "2014-07-21T16:05:02-07:00", "prov:endTime": "2014-07-21T16:05:03-07:00", "prov:type": {"type": "xsd:string", "$": "doc-id-assigment"}}}				</pre> 
+				<h6>Response 
+				<span class="label label-success">201 Created</span></h6>
+				<pre>
+HTTP/1.1 100 Continue
+
+HTTP/1.1 201 CREATED
+Server: nginx
+Date: Tue, 23 Sep 2014 11:59:00 GMT
+Content-Type: application/json
+Content-Length: 1385
+Connection: keep-alive
+
+{"submitted provenance": {"wasAssociatedWith": {"_:wAW8": {"prov:agent": "foundry:docIdAssigner", "prov:activity": "foundry:assignId"}, "_:wAW7": {"prov:agent": "foundry:ag_2", "prov:activity": "foundry:ac_2"}}, "used": {"_:u7": {"prov:entity": "foundry:en_2", "prov:activity": "foundry:ac_2"}, "_:u8": {"prov:entity": "foundry:en_2", "prov:activity": "foundry:assignId"}}, "agent": {"foundry:ag_2": {"foundry:name": {"type": "xsd:string", "$": "DocIngestorCLI"}, "prov:type": {"type": "xsd:string", "$": "prov:SoftwareAgent"}}, "foundry:docIdAssigner": {"prov:type": {"type": "xsd:string", "$": "prov:SoftwareAgent"}}}, "entity": {"foundry:en_2": {"foundry:batchId": {"type": "xsd:string", "$": "20140721"}, "foundry:sourceId": {"type": "xsd:string", "$": "nlx_999998"}, "foundry:UUID": {"type": "xsd:string", "$": "1234-4567-8900"}}}, "prefix": {"prov": "http://www.w3.org/ns/prov#", "foundry": "http://example.org", "xsd": "http://www.w3.org/2001/XMLSchema"}, "activity": {"foundry:ac_2": {"prov:startTime": "2014-07-21T16:05:00.000-07:00", "prov:endTime": "2014-07-21T16:05:01.000-07:00", "prov:type": {"type": "xsd:string", "$": "ingest-docs"}}, "foundry:assignId": {"prov:startTime": "2014-07-21T16:05:02-07:00", "prov:endTime": "2014-07-21T16:05:03-07:00", "prov:type": {"type": "xsd:string", "$": "doc-id-assigment"}}}}, "provenance submitted at": "2014-09-23 11:59:00.516144"}
+				</pre>
+			</td>
+		</tr>
+	</table>
+	
+<div id="entities" class="anchorOffset"></div>
+<h3>Entities</h3>
+<p>
+	The following actions are available on the entities:
+</p>
+
+<div id="activties" class="anchorOffset"></div>
+<h3>Activities</h3>
+<p>
+	The following actions are available on the activities resource:
+</p>
+
+<div id="agents" class="anchorOffset"></div>
+<h3>Agents</h3>
+<p>
+	The following actions are available on the agents resource:
+</p>
+	
+<!--	<div id="documents-bundles" class="anchorOffset"></div>
+	<table class="table">
+		<tr class="collapsed documents_save" style="display:none">
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-bundles" class="toggle_expand"><strong>GET /store/api/v0/documents/:id/bundles/</strong></td>
+			<td>List bundles of the document with the given ID.</td>
+		</tr>
+		<tr class="collapsed documents_bundles" style="display:none">
+			<td colspan="2">
+				<h5>Request Parameters</h5>
+				<h6>Pagination <span class="label label-default">optional</span></h6>
+				<dl class="dl-horizontal">
+				  <dt>offset</dt>
+				  <dd>the offset for the first bundle to list</dd>
+				  <dt>limit</dt>
+				  <dd>the number of bundles that will be displayed</dd>
+				</dl>
+        <h6>Ordering <span class="label label-default">optional</span></h6>
+				<p>Bundles can be ordered by their creation date by passing one of the following values to the <code><small>order_by</small></code> parameter:
+				<dl class="dl-horizontal">
+				  <dt><span class="text-danger">created_at</span></dt>
+				  <dd>Return oldest bundles first</dd>
+                <dt><span class="text-danger">-created_at</span></dt>
+				  <dd>Return newest bundles first</dd>
+			 	</dl>
+				<h6>Filtration <span class="label label-default">optional</span></h6>
+				<p>For some fields of bundles, filter parameters can be sent to distill the result list returned. Where <code>field</code> represents the field name:</p>
+				<dl class="dl-horizontal">
+				  <dt><span class="text-danger">field</span></dt>
+				  <dd>the exact value that this field must match to be included in the returned list</dd>
+			 	</dl>
+			 	<p>For numerical fields:</p>
+			 	<dl class="dl-horizontal">
+				  <dt><span class="text-danger">field</span>__gt</dt>
+				  <dd>the value that this field must <strong>exceed</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__gte</dt>
+				  <dd>the value that this field must <strong>exceed or equal</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__lt</dt>
+				  <dd>the value that this field must <strong>precede</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__lte</dt>
+				  <dd>the value that this field must <strong>precede or equal</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__range</dt>
+				  <dd>the value that this field must be <strong>within</strong> to be included (e.g <code><small>id__range=40,760</small></code> to include bundles with an ID between 40 and 760 inclusive)</dd>
+				</dl>
+				<p>For string fields (excl. owner):</p>
+				<dl class="dl-horizontal">
+				  <dt><span class="text-danger">field</span>__startswith</dt>
+				  <dd>the value that this field must <strong>start with</strong> to be included (e.g <code><small>identifier__startswith=agentsbundle</small></code> to include documents with a name that begins with 'agentsbundle')</dd>
+				  <dt><span class="text-danger">field</span>__endswith</dt>
+				  <dd>the value that this field must <strong>end with</strong> to be included</dd>
+				  <dt><span class="text-danger">field</span>__contains</dt>
+				  <dd>the value that this field must <strong>contain</strong> to be included</dd>
+				</dl>
+				<p>Any number of these filters can be combined in one query.</p>
+				<h6>Valid Fields</h6>
+				<p>Fields that can be used for filters: <code>created_at</code>, <code>identifier</code>, <code>id</code>.</p>
+			</td>
+		</tr>
+	</table>-->
+<!--	<div id="documents-add" class="anchorOffset"></div>
+	<table class="table">
+		<tr class="collapsed documents_bundles" style="display:none">
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-add" class="toggle_expand"><strong>POST /store/api/v0/documents/:id/bundles/</strong><br><span class="label label-warning">authentication required</span></td>
+			<td>Add a bundle to the document with the given ID.</td>
+		</tr>
+		<tr class="collapsed documents_add" style="display:none">
+			<td colspan="2">
+				<h5>Request Body <small>should be a JSON object containing:</small></h5>
+				<dl class="dl-horizontal">
+				  <dt>rec_id</dt>
+				  <dd>name for the bundle (must be unique to any existing bundle names)</dd>
+				  <dt>content</dt>
+				  <dd>PROV-JSON representation of the bundle</dd>
+				</dl>
+				<hr>
+				<!-- EXAMPLE HTTP --*>
+				<h5>Example</h5>
+				<h6>Request</h6>
+				<pre>
+POST /store/api/v0/documents/33/bundles/
+
+Accept: application/json
+Authorization: ApiKey username:7ce01ecc7d7717b02feac9e957053775152ee351
+Content-Type: application/json
+
+{"content":{"prefix":{"ex2":"http://example2.org/","ex":"http://example.org/","_":"http://example3.org/"},"activity":{"ex:a1":{}}},"rec_id":"newbundle"}
+				</pre> 
+				<h6>Response <span class="label label-success">202 Accepted</span></h6>
+				<pre>
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Content-Type,Authorization,Accept,*
+Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache
+Content-Length: 152
+Content-Type: application/json
+Date: Mon, 19 Aug 2013 13:47:29 GMT
+Server: WSGIServer/0.1 Python/2.7.5
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+				</pre>
+			</td>
+		</tr>
+	</table>-->
+<!--	<div id="documents-delete" class="anchorOffset"></div>
+	<table class="table">
+		<tr class="collapsed documents_add" style="display:none">
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-delete" class="toggle_expand"><strong>DELETE /store/api/v0/documents/:id/</strong><br><span class="label label-warning">authentication required</span></td>
+			<td>Delete the document with the ID provided.</td>
+		</tr>
+		<tr class="collapsed documents_delete" style="display:none">
+			<td colspan="2">
+				<!-- EXAMPLE HTTP --*>
+				<h5>Example</h5>
+				<h6>Request</h6>
+				<pre>
+DELETE /store/api/v0/documents/33/
+
+Accept: application/json
+Authorization: ApiKey username:7ce01ecc7d7717b02feac9e957053775152ee351
+Content-Type: application/json
+				</pre> 
+				<h6>Response <span class="label label-success">204 No Content</span></h6>
+				<pre>
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Content-Type,Authorization,Accept,*
+Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache
+Content-Length: 0
+Content-Type: application/json
+Date: Mon, 19 Aug 2013 13:48:29 GMT
+Server: WSGIServer/0.1 Python/2.7.5
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+			</td>
+		</tr>
+	</table>-->
+<!--	<div id="documents-bundle" class="anchorOffset"></div>
+	<table class="table">
+		<tr class="collapsed documents_delete" style="display:none">
+			<th>Action</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><a href="#documents-bundle" class="toggle_expand"><strong>GET /store/api/v0/documents/:doc_id/bundles/:bundle_id(.:format)</strong><br><span class="label label-warning">authentication required</span></td>
+			<td>View the bundle contained in the speicified document with the specified ID.</td>
+		</tr>
+		<tr class="collapsed documents_bundle" style="display:none">
+			<td colspan="2">
+				<h5>Notes</h5>
+				<ul>
+					<li>If no format is provided, it is determined from the <code>Accept</code> header sent in the request.</li>
+				</ul>
+				<!-- EXAMPLE HTTP --*>
+				<h5>Example</h5>
+				<h6>Request</h6>
+				<pre>
+DELETE /store/api/v0/documents/33/bundles/3.json
+
+Accept: application/json
+Authorization: ApiKey username:7ce01ecc7d7717b02feac9e957053775152ee351
+Content-Type: application/json
+				</pre> 
+				<h6>Response <span class="label label-success">200 OK</span></h6>
+				<pre>
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Content-Type,Authorization,Accept,*
+Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache
+Content-Type: application/json
+Date: Mon, 19 Aug 2013 13:48:29 GMT
+Server: WSGIServer/0.1 Python/2.7.5
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+
+{"prefix": {"ex": "http://example.org/"}, "activity": {"ex:a1": {}}}
+			</td>
+		</tr>
+			</table>-->
+			
+
+   
+
+
+	<div id="responses" class="anchorOffset"></div>
+	<h2>Responses</h2>
+	<table class="table">  
+        <thead>  
+          <tr>
+          <th style="width:15%"><h5>Method</h3></th>
+          <th style="width:30%"><h5>Response Code</h3></th>
+          <th style="width:55%"><h5>Response Description</h3></th>
+          </tr>  
+        </thead>  
+        <tbody>
+        	<tr>
+        		<td>GET</td>
+        		<td><span class="label label-success">200 OK</span></h3>
+        		<td>The resource was successfully retrieved.</td>
+        	</tr>
+        	<tr>
+        		<td>POST</td>
+        		<td><span class="label label-success">201 Created</span></td>
+        		<td>The resource was successfully created. The information held in the new resource will be provided in the response body.</td>
+        	</tr>
+        	<tr>
+        		<td>POST</td>
+        		<td><span class="label label-success">202 Accepted</span></td>
+        		<td>The sub-resource was successfully added to the target resource.</td>
+        	</tr>
+        	<tr>
+        		<td>DELETE</td>
+        		<td><span class="label label-success">204 No Content</span></td>
+        		<td>The resource was successfully deleted.</td>
+        	</tr>
+          <tr>
+        		<td>POST</td>
+        		<td><span class="label label-danger">400 Bad Request</span></td>
+        		<td>A problem occurred while parsing the document (wrong syntax) or adding the bundle (bundle contains a bundle or bundle ID is not unique to the document.)</td>
+        	</tr>
+        	<tr>
+        		<td>Any</td>
+        		<td><span class="label label-danger">401 Unauthorized</span></td>
+        		<td>There is a problem with the <a href="#authentication">Authentication</a> header provided.</td>
+        	</tr>
+        	<tr>
+        		<td>Any</td>
+        		<td><span class="label label-danger">403 Forbidden</span></td>
+        		<td>You do not have the permissions to perform the requested operation on the resource.</td>
+        	</tr>
+        	<tr>
+        		<td>Any</td>
+        		<td><span class="label label-danger">404 Not Found</span></td>
+        		<td>The resource/url you have requested does not exist.</td>
+        	</tr>
+          <tr>
+        		<td>GET</td>
+        		<td><span class="label label-danger">410 Gone</span></td>
+        		<td>The resource requested is of invalid prov syntax and can no longer be served.</td>
+        	</tr>
+        	<tr>
+        		<td>GET</td>
+        		<td><span class="label label-danger">422 Unprocessable Entity</span></td>
+        		<td>Due to semantic errors, the resource could not be returned in the desired format.</td>
+        	</tr>
+        	<tr>
+        		<td>Any</td>
+        		<td><span class="label label-danger">500 Internal Server Error</span></td>
+        		<td>Something went wrong on the server. We will have been notified. If the problem continues <a href="/store/contact">contact us</a>.</td>
+        	</tr>
+        </tbody>
+    </table>
+
+	<div id="authentication" class="anchorOffset"></div>
+	<h2>Authentication</h2>
+	<p>
+		The API supports authentication by either API key or OAuth. The API can also be accessed anonymously if
+		you do not wish to authenticate. In this case only public documents will be visible and documents may not 
+		be added/modified.
+	</p>
+	<div id="api-key" class="anchorOffset"></div>
+	<h3>API Key</h3>
+	<p>
+		To authenticate via API Key you must first have generated an API key (in your <a href="/store/account/developer/">
+		Developer Area</a>) which will be sent along with your username in order to authenticate. To use this key you must
+		send an HTTP <code>Authorization</code> header along with your requests with a value of the format <code>ApiKey &lt;username&gt;:&lt;apikey&gt;</code>.
+	</p>
+	<p>
+		So for example if your username is '<span class="text-danger">foo</span>' and your API key is '<span class="text-danger">b4702794b52445bab04a51ead73d5adbc554c970</span>' you would
+		send a HTTP Authorization header with the value:
+	</p>
+	<pre>ApiKey <span class="text-danger">foo</span>:<span class="text-danger">b4702794b52445bab04a51ead73d5adbc554c970</span></pre>
+<!--	<div id="oauth" class="anchorOffset"></div>
+	<h3>OAuth</h3>
+	<p>
+		Visit the <a href="/store/help/oauth/">dedicated OAuth help article</a> for information about using OAuth on ProvStore.-->
+	</p>
+	<div id="libraries" class="anchorOffset"></div>
+	<h2>Libraries</h2>
+
+
+<div id="python" class="anchorOffset"></div>
+		<h3>Python</h3>
+<!--		<h4><a href="https://pypi.python.org/pypi/provstore-api/">provstore-api</a></h4>
+
+    <p>This package provides an API client for connecting with the store. <a href="http://provstore-api.readthedocs.org/en/latest/">View the full documentation</a></p>
+
+    <h5 class="pre-head">Install</h5>
+    <pre class="prettyprint language-bash">
+pip install provstore-api
+</pre>
+    <h5 class="pre-head">Usage</h5>
+    <pre class="prettyprint language-python">
+from provstore.api import Api
+
+import provstore.tests.examples as examples # for this example
+
+api = Api(username="me", api_key="XYZ")
+
+# Store a new document
+stored_document = api.document.create(prov_document, name="my document")
+# Add a bundle to our document
+stored_document.bundles['ex:bundle'] = prov_bundle
+
+# Get a document with ID 148 from ProvStore:
+stored_document = api.document.get(148)
+# Get the document's provenance
+stored_document.prov
+
+# Delete the document with ID 148 from the store:
+api.document.get(148).delete()
+
+# Get document with this ID's bundles
+for bundle in api.document.get(148).bundles:
+    # print the bundle's identifier
+    print bundle.identifier
+    # the bundle's provenance is at:
+    bundle.prov
+</pre>-->
+	
+<!--		<div id="jquery" class="anchorOffset"></div>
+		<h3>jQuery</h3>
+		<p>Using the <a href="/static/provserver/api.js">ProvStore jQuery API plugin</a> calls to the API can be made as follows:</p>
+<h4 class="pre-head">Initialize API Object</h4>
+<pre class="prettyprint language-javascript">
+var api = new $.provStoreApi({username: &lt;username&gt;, key: &lt;api key&gt;});</pre>
+
+<h4 class="pre-head">List document</h4>
+<pre class="prettyprint language-javascript">
+api.getDocuments(
+  &lt;offset (integer)&gt;,
+  &lt;limit (integer)&gt;,
+  function(data){
+    /* success callback with <a href="#documents-list" class="toggle_expand" style="border-bottom: 1px dotted;">Document List response object</a> as param */
+  },
+  function(error){/* error callback */}
+);</pre>
+
+<h4 class="pre-head">Read document</h4>
+<pre class="prettyprint language-javascript">
+api.getDocument(
+  &lt;document ID (integer)&gt;,
+  function(data){
+    /* success callback with document metadata object as param */
+  },
+  function(error){/* error callback */}
+);</pre>
+
+<h4 class="pre-head">Document body</h4>
+<pre class="prettyprint language-javascript">
+api.getDocumentBody(
+  &lt;document ID (integer)&gt;,
+  &lt;document format (string)&gt;, /* one of the <a href="#documents-raw" class="toggle_expand" style="border-bottom: 1px dotted;">supported formats</a> */
+  function(data){
+    /* success callback with document metadata object as param */
+  },
+  function(error){/* error callback */}
+);</pre>
+
+<h4 class="pre-head">Submit document</h4>
+<pre class="prettyprint language-javascript">
+api.submitDocument(
+  &lt;document name (string)&gt;,
+  &lt;document (PROV-JSON)&gt;,
+  &lt;make document public (boolean)&gt;,
+  function(id){/* success callback with new document id as only parameter */},
+  function(error){/* error callback */}
+);</pre>
+
+<h4 class="pre-head">Add bundle</h4>
+<pre class="prettyprint language-javascript">
+api.addBundle(
+  &lt;target document ID (integer)&gt;,
+  &lt;new bundle identifier (string)&gt;,
+  &lt;bundle (PROV-JSON)&gt;,
+  function(id){/* success callback with new document id as only parameter */},
+  function(error){/* error callback */}
+);</pre>
+
+<h4 class="pre-head">Delete a document</h4>
+<pre class="prettyprint language-javascript">
+api.getDocument(
+  &lt;document ID (integer)&gt;,
+  function(){
+    /* success callback with document metadata object as param */
+  },
+  function(error){/* error callback */}
+);</pre>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>-->
+
+    
+    
+<!--    <div class="hero index">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 text-center">
+                  <p>You are viewing ProvStore without an account. To begin storing your own documents:</p>
+                  <a href="/store/account/signup/" class="btn btn-lg btn-default btn-block center-block" style="margin-top: 12px; width: 50%;">Sign Up Free</a>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    
+
+ <!--    <div class="footer">
+     <div class="container">
+        <ul class="list-inline help-links">
+          <li><a href="/store/about">About ProvStore</a></li>
+          <li><a href="/store/contact">Contact Us</a></li>
+          <li><a href="/store/terms">Terms of Service</a></li>
+        </ul>
+
+        <div class="acknowledgements">
+          <ul class="list-inline">
+            <li><a href="http://www.orchid.ac.uk/">ORCHID</a></li>
+            <li><a href="http://www.w3.org/TR/prov-overview/">W3C PROV</a></li>
+          </ul>
+
+          <p><small>&copy; 2014 <a href="//www.southampton.ac.uk">University of Southampton</a>.</small></p>
+        </div>
+      </div>
+    </div>-->
+
+    <script src="scripts/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery.cookie.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/app.js"></script>
+    
+<script type="text/javascript">
+api_help();
+</script>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+
+  </body>
+</html>
