@@ -135,6 +135,12 @@ class GeoProvDM:
       RETURN path;")
     result = query.execute(p_uuid = nodeUuid)
     return result  #*
+
+  def deleteNodeByUuid(self, nodeUuid):
+      query = neo4j.CypherQuery(self._neo_graph, \
+	"MATCH (n {`_id` : {p_uuid}}) OPTIONAL MATCH (n)-[r]-() DELETE n,r;")
+      result = query.execute(p_uuid = nodeUuid)
+      return result
  
 #Retrieve PROV-DM compliant provenance  of a resource with a given 'uuid', and which has activity 'activityname' in its path
   def getNodeByUuidWithActivity(self, nodeUuid, activityname):
