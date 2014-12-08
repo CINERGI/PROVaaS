@@ -1,5 +1,5 @@
 #from geoprovdm import *
-import sys,json
+import sys,json,datetime
 from py2neo import neo4j, node, rel
 
 # convert a prov-dm json to a python dictionary object
@@ -79,4 +79,16 @@ def neo2json(aneo):
         #print res2
     return res2
     
+def outputJSON(obj):
+    """Default JSON serializer."""
 
+    if isinstance(obj, datetime.datetime):
+        if obj.utcoffset() is not None:
+            obj = obj - obj.utcoffset()
+
+        return obj.strftime('%Y-%m-%d %H:%M:%S.%f')
+    return str(obj)
+
+
+def quote(str):
+    return "\"" + str + "\""

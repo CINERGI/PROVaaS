@@ -35,13 +35,13 @@ from geoprovdm import *
 
 app = Flask(__name__)
 
-db = GeoProvDM("http://localhost:7474/db/data/", True)
+db = GeoProvDM("http://localhost:7474/db/data/", False)
 
-@app.route("/api/v2.0/provenance/b/resource/")
+@app.route("/provenance/test")
 def hello():
     return "Hello World!"
 
-@app.route('/api/v2.0/provenance/resource', methods=['POST'])
+@app.route('/provenance/resource', methods=['POST'])
 def create_resource_prov():
 
     # Atleast one entity should be present
@@ -58,7 +58,7 @@ def create_resource_prov():
 	     	entity = json2obj(entities[k])
              	entity[u'_id'] = k
              	node = db.addEntity(entity)
-            	db.addProperty(node,entity)
+            	#db.addProperty(node,entity)
    	    else:
 	     	return Response(status=400)
     else:
@@ -94,51 +94,63 @@ def create_resource_prov():
     return Response(dumps(data,default=outputJSON), mimetype='application/json',status=201)
 
 
-@app.route('/api/v2.0/provenance/b/resource/<string:uuid>', methods=['GET'])
+@app.route('/provenance/b/resource/<string:uuid>', methods=['GET'])
 def get_resource_provenance(uuid):
  
   #obj = db.getSubgraph(uuid)
-  obj = db.getNodeByUuid(uuid)
+  uuid1 = uuid
+  obj = db.getNodeByUuid(uuid1)
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 
-@app.route('/api/v2.0/provenance/b/resource/<string:uuid>', methods=['DELETE'])
+@app.route('/resource/<string:uuid>', methods=['DELETE'])
 def delete_resource_provenance(uuid):
-  obj = db.deleteNodeByUuid(uuid)
+  uuid1 = uuid
+  obj = db.deleteNodeByUuid(uuid1)
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 
-@app.route('/api/v2.0/provenance/b/resource/<string:uuid>/activity/<string:activityproperty>', methods=['GET'])
+@app.route('/provenance/b/resource/<string:uuid>/activity/<string:activityproperty>', methods=['GET'])
 def get_resource_provenance_with_uuid_activityproperty(uuid,aprop):
- 
-  obj = db.getNodeByUuidWithActivity(uuid,aprop)
+  uuid1 = uuid
+  aprop1 = aprop
+  obj = db.getNodeByUuidWithActivity(uuid1,aprop1)
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 
-@app.route('/api/v2.0/provenance/<string:direction>/resource/<string:resourceproperty>', methods=['GET'])
+@app.route('/provenance/<string:direction>/resource/<string:resourceproperty>', methods=['GET'])
 def get_resource_provenance_with_resource_property(direction,rprop):
-  if (direction == "b"):
-     obj = db.getNodeByPropAncestral(rprop)
-  elif (direction == "f"):
-     obj = db.getNodeByPropForward(rprop)
+  direction1 = direction
+  rprop1 = rprop
+  if (direction1 == "b"):
+     obj = db.getNodeByPropAncestral(rprop1)
+  elif (direction1 == "f"):
+     obj = db.getNodeByPropForward(rprop1)
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 
-@app.route('/api/v2.0/provenance/<string:direction>/resource/<string:resourceproperty>/activity/<string:activityproperty>', methods=['GET'])
+@app.route('/provenance/<string:direction>/resource/<string:resourceproperty>/activity/<string:activityproperty>', methods=['GET'])
 def get_resource_provenance_with_resource_activity_property(direction, rprop, aprop):
-  if (direction == "b"):
-     obj = db.getNodeByUuidWithAncestral(rprop,aprop)
-  elif (direction == "f"):
-     obj = db.getNodeByUuidWithForward(rprop,aprop)	
+  direction1 = direction
+  rprop1 = rprop
+  aprop1 = aprop
+  if (direction1 == "b"):
+     obj = db.getNodeByUuidWithAncestral(rprop1,aprop1)
+  elif (direction1 == "f"):
+     obj = db.getNodeByUuidWithForward(rprop1,aprop1)	
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 
-@app.route('/api/v2.0/provenance/<string:direction>/activity/<string:activityproperty>/from/<string:datetime1>/to/<string:datetime2>', methods=['GET'])
+@app.route('/provenance/<string:direction>/activity/<string:activityproperty>/from/<string:datetime1>/to/<string:datetime2>', methods=['GET'])
 def get_resource_provenance_with_activity_from_to(direction, aprop, t1,t2):
-  if (direction == "b"):
-     obj = db.getNodeUsedByActivityWithTimestamp(aprop,t1,t2)
-  elif (direction == "f"):
-     obj = db.getNodeGeneratedByActivityWithTimestamp(aprop,t1,t2)
+  direction1 = direction
+  aprop1 = aprop
+  t11 = t1
+  t21 = t2
+  if (direction1 == "b"):
+     obj = db.getNodeUsedByActivityWithTimestamp(aprop1,t11,t21)
+  elif (direction1 == "f"):
+     obj = db.getNodeGeneratedByActivityWithTimestamp(aprop1,t11,t21)
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 	
