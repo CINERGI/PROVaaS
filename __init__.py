@@ -35,7 +35,13 @@ from geoprovdm import *
 
 app = Flask(__name__)
 
-db = GeoProvDM("http://localhost:7474/db/data/", False)
+ENVIRON = 'PROD'
+ENVIRON = os.environ.get('PROV_ENVIRON')
+if (ENVIRON == None):
+   ENVIRON = 'PROD'
+
+
+db = GeoProvDM(ENVIRON, "http://localhost:7474/db/data/", False)
 
 @app.route("/provenance/test")
 def hello():
@@ -49,10 +55,15 @@ def create_resource_prov():
         return Response(status=400)
 
     obj = request.json
-
+    obj = jsonRefresh(obj) 
     # make all entities
     if 'entity' in obj:
-    	entities = obj['entity']
+        if db.getRequestId() is None:
+            requestId = db.addRequestId()
+        else:
+            requestId = db.updateRequestId()  	
+
+        entities = obj['entity']
     	for k in entities.keys():
             if 'foundry:UUID' in entities[k]: 
 	     	entity = json2obj(entities[k])
@@ -89,8 +100,8 @@ def create_resource_prov():
                 db.addRelation(rel, name, relations[name])
         except KeyError:
             pass
- 
-    data = {"provenance submitted at": datetime.datetime.utcnow(), "submitted provenance": obj}
+
+    data = {"request id: ": requestId, "provenance submitted at": datetime.datetime.utcnow(), "submitted provenance": obj}
     return Response(dumps(data,default=outputJSON), mimetype='application/json',status=201)
 
 
