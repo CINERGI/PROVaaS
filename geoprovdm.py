@@ -219,7 +219,7 @@ class GeoProvDM:
       "Start en=node(*)\
       MATCH path = en-[*..2]->a \
       WHERE en.`foundry:UUID` = {p_uuid} \
-      AND NOT ()-[:wasInformedBy]->a
+      AND NOT ()-[:wasInformedBy]->a  \
       RETURN path;")
     result = query.execute(p_uuid = nodeUuid)
     return result  #*
