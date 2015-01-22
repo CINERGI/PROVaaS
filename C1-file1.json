@@ -1,0 +1,70 @@
+{
+  "entity": {
+    "foundry:en1": {
+      "foundry:sourceId": {
+        "$": "nlx_999998",
+        "type": "xsd:string"
+      },
+      "foundry:UUID": {
+        "$": "1234-4567-8978",
+        "type": "xsd:string"
+      },
+      "foundry:creationTime": {
+        "$": "2014-11-01T00:03:00",
+        "type": "xsd:string"
+      },
+      "foundry:batchId": {
+        "$": "20141101",
+        "type": "xsd:string"
+      }
+    },
+    "foundry:en2": {
+      "foundry:sourceId": {
+        "$": "nlx_999997",
+        "type": "xsd:string"
+      },
+      "foundry:UUID": {
+        "$": "1234-4567-8979",
+        "type": "xsd:string"
+      },
+      "foundry:creationTime": {
+        "$": "2014-11-01T00:06:00",
+        "type": "xsd:string"
+      },
+      "foundry:batchId": {
+        "$": "20141101",
+        "type": "xsd:string"
+      }
+    }
+
+  },
+  "prefix": {
+    "xsd": "http://www.w3.org/2001/XMLSchema",
+    "prov": "http://www.w3.org/ns/prov#",
+    "foundry": "http://example.org"
+  },
+  
+  "activity": {
+    "foundry:ac1": {
+      "prov:type": {
+        "$": "act1",
+        "type": "xsd:string"
+      },
+      "prov:startTime": "2014-11-01T00:04:00",
+      "prov:endTime": "2014-11-01T00:07:00"
+    }
+  },
+  "wasGeneratedBy": {
+    "_:wGB1": {
+      "prov:entity": "foundry:en2",
+      "prov:activity": "foundry:ac1"      
+    }
+  },
+
+  "used": {
+    "_:u1": {
+      "prov:activity": "foundry:ac1",
+      "prov:entity": "foundry:en1"      
+    }
+  }
+}
