@@ -1,0 +1,89 @@
+{
+  "entity": {
+    "7bed1548-824e-11e4-a30f-002590a563e0": {
+      "foundry:batchId": null,
+      "foundry:sourceId": {
+        "type": "xsd:string",
+        "$": "NOAA"
+      },
+      "foundry:UUID": "5fc7af98-52a6-4512-9930-b685c7f9ddb4",
+      "foundry:creationTime": "2014-12-12 14:30:32",
+      "foundry:label": "\"http://hydro10.sdsc.edu/NOAA_1\""
+    },
+    "7fd13cd4-824e-11e4-b330-002590a563e0": {
+      "foundry:batchId": null,
+      "foundry:sourceId": {
+        "type": "xsd:string",
+        "$": "cinergi-0001-01"
+      },
+      "foundry:UUID": "51220a00e4b0b37542fda86e",
+      "foundry:creationTime": "2014-12-12 14:30:32",
+      "foundry:label": "\"http://hydro10.sdsc.edu/CINERGI_1\""
+    },
+    "7bed1372-824e-11e4-a30f-002590a563e0": {
+      "foundry:batchId": null,
+      "foundry:sourceId": {
+        "type": "xsd:string",
+        "$": "cinergi-0001-01"
+      },
+      "foundry:UUID": "51220a00e4b0b37542fda86e",
+      "foundry:creationTime": "2014-12-12 14:30:32",
+      "foundry:label": "\"http://hydro10.sdsc.edu/CINERGI_0001-01\""
+    },
+    "7fd13afe-824e-11e4-b330-002590a563e0": {
+      "foundry:batchId": null,
+      "foundry:sourceId": {
+        "type": "xsd:string",
+        "$": "cinergi-0001-02"
+      },
+      "foundry:UUID": "51220a00e4b0b37542fda86e",
+      "foundry:creationTime": "2014-12-12 14:30:36",
+      "foundry:label": "\"http://hydro10.sdsc.edu/CINERGI_0001-02\""
+    }
+  },
+  "wasDerivedFrom": {
+    "7fd1366c-824e-11e4-b330-002590a563e0": {
+      "prov:usedEntity": "7fd13cd4-824e-11e4-b330-002590a563e0",
+      "prov:generatedEntity": "7fd13afe-824e-11e4-b330-002590a563e0"
+    }
+  },
+  "used": {
+    "7bed1192-824e-11e4-a30f-002590a563e0": {
+      "prov:entity": "7bed1548-824e-11e4-a30f-002590a563e0",
+      "prov:activity": "7bed0ce2-824e-11e4-a30f-002590a563e0"
+    },
+    "7fd13932-824e-11e4-b330-002590a563e0": {
+      "prov:entity": "7fd13cd4-824e-11e4-b330-002590a563e0",
+      "prov:activity": "7fd13edc-824e-11e4-b330-002590a563e0"
+    }
+  },
+  "activity": {
+    "7fd13edc-824e-11e4-b330-002590a563e0": {
+      "prov:startTime": "2014-12-12 14:30:38-08:00",
+      "prov:endTime": "2014-12-12 14:30:38-08:00",
+      "prov:type": {
+        "type": "xsd:string",
+        "$": "spatialEnhancer"
+      },
+      "foundry:how": "Modified spatial fields"
+    },
+    "7bed0ce2-824e-11e4-a30f-002590a563e0": {
+      "prov:startTime": "2014-12-12 14:30:32-08:00",
+      "prov:endTime": "2014-12-12 14:30:32-08:00",
+      "prov:type": {
+        "type": "xsd:string",
+        "$": "ingestion"
+      }
+    }
+  },
+  "wasGeneratedBy": {
+    "7bed0f94-824e-11e4-a30f-002590a563e0": {
+      "prov:entity": "7bed1372-824e-11e4-a30f-002590a563e0",
+      "prov:activity": "7bed0ce2-824e-11e4-a30f-002590a563e0"
+    },
+    "7fd140b2-824e-11e4-b330-002590a563e0": {
+      "prov:entity": "7fd13afe-824e-11e4-b330-002590a563e0",
+      "prov:activity": "7fd13edc-824e-11e4-b330-002590a563e0"
+    }
+  }
+}
