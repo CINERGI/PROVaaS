@@ -3,145 +3,143 @@ import json
 import networkx as nx
 from pprint import pprint
 import uuid
+#from time import mktime, strptime
+from datetime import datetime
+import copy
 
-class PROV:
-    """ Main PROV class that cretaes a PROV graph from JSON object and validates it.
-    """
+def is_invalid_date(input_date_time):
 
+    result = None
 
-    def __init__(self, jsonobj):
-        def is_invalid_date(input_date_time):
-            #from time import mktime, strptime
-            from datetime import datetime
+    for format in ['%Y%m%d', '%Y%m%d.%H']:
+	try:
+	    result = datetime.strptime(input_date_time, format)
+	except:
+	    pass
 
-            result = None
+    if result is None:
+	# print 'Malformed date.'
+	return True
+    else:
+	# print 'Date is fine.'
+	return False
 
-            for format in ['%Y%m%d', '%Y%m%d.%H']:
-                try:
-                    result = datetime.strptime(input_date_time, format)
-                except:
-                    pass
-
-            if result is None:
-                # print 'Malformed date.'
-                return True
-            else:
-                # print 'Date is fine.'
-                return False
-
-        # returns value of a filed of an element from a list of elements
-        def getField(elementsList, element, filedId):
-            return elementsList[element][elementsList[element]['__namespace']+':'+filedId]
-
-        provg  = nx.DiGraph()
-
-        #add nodes; currently entities and activities
-        entities = jsonobj.get('entity')
-        if entities is None:
-            return False, "there are no entities"
-        activities = jsonobj.get('activity') or []
-
-        for k in entities:
-            # "foundry:en9"
-            namespace , entity_name = k.split(':')
-            #print "adding entity " +str (k) + " having value ="
-            #pprint(entities[k])
-            if entities[k].get(namespace+':UUID') is None:
-                ret = False, "there is no UUID in entity "+k
-            if entities[k].get(namespace+':creationTime') is None:
-                ret = False, "there is no creationTime in entity "+k
-            if entities[k].get(namespace+'version') is None:
-                ret = False, "there is no version in entity "+k
-            if is_invalid_date(entities[k][namespace+':creationTime']['$']):
-                ret = False, "invalid creationTime format in entity "+k
-
-            entities[k]['__namespace'] = namespace
-            print entities[k][namespace+':creationTime']['$']
-            provg.add_node(k, entities.get(k) )
-        for k in activities:
-            namespace , entity_name = k.split(':')
-
-            print "adding activity " +str (k) + " having value ="
-            pprint(activities[k])
-            if activities[k].get(namespace+':type') is None:
-                ret =  False, "there is no type in activity "+k
-            if activities[k].get(namespace+':startTime') is None:
-                ret =  False, "there is no startTime in activity "+k
-            if activities[k].get(namespace+':endTime') is None:
-                ret =  False, "there is no endTime in activity "+k
-            if activities[k][namespace+':endTime'] > activities[k][namespace+':startTime']:
-                ret =  False, "startTime should be before endTime in activity "+k
-
-            if is_invalid_date(activities[k][namespace+':startTime']):
-                ret = False, "invalid startTime format in activity "+k
-            if is_invalid_date(activities[k][namespace+':endTime']):
-                ret = False, "invalid endTime format in activity "+k
-
-            activities[k]['__namespace'] = namespace
-            provg.add_node(k, activities.get(k) )
+# returns value of a filed of an element from a list of elements
+def getField(elementsList, element, filedId):
+    return elementsList[element][elementsList[element]['__namespace']+':'+filedId]
 
 
-        #add relationships
-        wasGeneratedBy = jsonobj.get('wasGeneratedBy') or []
-        used = jsonobj.get('used') or []
-        wasDerivedFrom = jsonobj.get('wasDerivedFrom') or []
+def validateJSONRequest(jsonobj)
 
-        for k in wasGeneratedBy:
-            #The set of all entity nodes that were "wasGeneratedBy" an activity A have creation time between activity A's start_time and end_time
-            #print "adding wasGeneratedBy edge " +str (k) + " having value =" + str(wasGeneratedBy[k])
-            activity = wasGeneratedBy[k]['prov:activity']
-            entity = wasGeneratedBy[k]['prov:entity']
-            if getField(activities, activity, 'endTime') < getField(entities, entity, 'creationTime'):
-                ret =  False, "wasGeneratedBy error for "+k+":creationTime of entity "+entity+\
-                       " should be between startTime and endTime of activity "+activity
-            if getField(activities, activity, 'startTime') > getField(entities, entity, 'creationTime'):
-                ret =  False, "wasGeneratedBy error for "+k+":creationTime of entity "+entity+\
-                       " should be between startTime and endTime of activity "+activity
-            provg.add_edge(entity,activity, dict(type=wasGeneratedBy, name=k) )
-        for k in used:
-            #The set of all entity nodes that were "used" by an activity A have creation time less than activity A's end_time.
-            #print "adding used edge " +str (k) + " having value =" + str(used[k])
-            activity = used[k]['prov:activity']
-            entity = used[k]['prov:entity']
-            if activities[activity]['prov:endTime'] < getField(entities, entity, 'creationTime'):
-                ret =  False, "used error for "+k+":creationTime of entity "+entity+\
-                       " should be before endTime of activity "+activity
-            provg.add_edge(activity,entity, dict(type=used, name=k) )
-        for k in wasDerivedFrom:
-            #In the "wasDerivedBy" edge the source entity has a version number and creation time that is
-            # lower than destination entity version number and creation time, but have the same UUID.
-            entity_source = wasDerivedFrom[k]['prov:usedEntity']
-            entity_destination =wasDerivedFrom[k]['prov:generatedEntity']
-            print "source details: "
-            pprint(entities[entity_source])
-            print "destination details: "
-            pprint(entities[entity_destination])
-            if getField(entities, entity_source, 'UUID') != getField(entities, entity_destination, 'UUID'):
-                ret =  False, "wasDerivedFrom error for "+k+":UUID of entity "+entity_source+\
-                       " should be the same as UUID of entity "+entity_destination
-            if getField(entities, entity_source, 'creationTime') >= getField(entities, entity_destination, 'creationTime'):
-                ret =  False, "wasDerivedFrom error for "+k+":creationTime of entity "+entity_source+\
-                       " should be lower than creationTime of entity "+entity_destination
-            #if getField(entities, entity_source, 'version') >= getField(entities, entity_destination, 'version'):
-            #    ret =  False, "wasDerivedFrom error for "+k+":version of entity "+entity_source+\
-            #           " should be lower than version of entity "+entity_destination
+	provg  = nx.DiGraph()
 
-            print "adding wasDerivedFrom edge  " +str (k) + " having value =" + str(wasDerivedFrom[k])
-            provg.add_edge(entity_source, entity_destination, dict(type=wasDerivedFrom, name=k) )
+	#add nodes; currently entities and activities
+	entities = jsonobj.get('entity')
+	if entities is None:
+	    return False, "There are no entities"
+
+	activities = jsonobj.get('activity') or []
+
+	for k in entities:
+	    # "foundry:en9"
+	    namespace , entity_name = k.split(':')
+	    #print "adding entity " +str (k) + " having value ="
+	    #pprint(entities[k])
+	    if entities[k].get(namespace+':UUID') is None:
+		     ret = False, "There is no UUID in entity "+k
+	    if entities[k].get(namespace+':creationTime') is None:
+		     ret = False, "There is no creationTime in entity "+k
+	    if entities[k].get(namespace+'version') is None:
+		     ret = False, "There is no version in entity "+k
+	    if is_invalid_date(entities[k][namespace+':creationTime']['$']):
+		     ret = False, "Invalid creationTime format in entity "+k
+
+	    entities[k]['__namespace'] = namespace
+	    print entities[k][namespace+':creationTime']['$']
+      # All good with entity
+	    provg.add_node(k, entities.get(k) )
+
+	for k in activities:
+	    namespace , entity_name = k.split(':')
+	    print "adding activity " +str (k) + " having value ="
+	    pprint(activities[k])
+	    if activities[k].get(namespace+':type') is None:
+		     ret =  False, "There is no type in activity "+k
+	    if activities[k].get(namespace+':startTime') is None:
+		     ret =  False, "There is no startTime in activity "+k
+	    if activities[k].get(namespace+':endTime') is None:
+		     ret =  False, "There is no endTime in activity "+k
+	    if activities[k][namespace+':endTime'] > activities[k][namespace+':startTime']:
+		     ret =  False, "StartTime should be before endTime in activity "+k
+
+	    if is_invalid_date(activities[k][namespace+':startTime']):
+		     ret = False, "Invalid startTime format in activity "+k
+	    if is_invalid_date(activities[k][namespace+':endTime']):
+		     ret = False, "Invalid endTime format in activity "+k
+
+	    activities[k]['__namespace'] = namespace
+	    
+	    provg.add_node(k, activities.get(k) )
 
 
-        # remove additional
+	#add relationships
+	wasGeneratedBy = jsonobj.get('wasGeneratedBy') or []
+	used = jsonobj.get('used') or []
+	wasDerivedFrom = jsonobj.get('wasDerivedFrom') or []
 
-        print "-------------"
-        print provg.nodes()
-        print provg.edges()
+	for k in wasGeneratedBy:
+	    #The set of all entity nodes that were "wasGeneratedBy" an activity A have creation time between activity A's start_time and end_time
+	    #print "adding wasGeneratedBy edge " +str (k) + " having value =" + str(wasGeneratedBy[k])
+	    activity = wasGeneratedBy[k]['prov:activity']
+	    entity = wasGeneratedBy[k]['prov:entity']
+	    if getField(activities, activity, 'endTime') < getField(entities, entity, 'creationTime'):
+		     ret =  False, "wasGeneratedBy error for "+k+":creationTime of entity "+entity+\
+		       " should be between startTime and endTime of activity "+activity
+	    if getField(activities, activity, 'startTime') > getField(entities, entity, 'creationTime'):
+		     ret =  False, "wasGeneratedBy error for "+k+":creationTime of entity "+entity+\
+		       " should be between startTime and endTime of activity "+activity
+	    provg.add_edge(entity,activity, dict(type=wasGeneratedBy, name=k) )
 
-    def _validate(self, provgraph):
+	for k in used:
+	    #The set of all entity nodes that were "used" by an activity A have creation time less than activity A's end_time.
+	    #print "adding used edge " +str (k) + " having value =" + str(used[k])
+	    activity = used[k]['prov:activity']
+	    entity = used[k]['prov:entity']
+	    if activities[activity]['prov:endTime'] < getField(entities, entity, 'creationTime'):
+		     ret =  False, "used error for "+k+":creationTime of entity "+entity+\
+		       " should be before endTime of activity "+activity
+	    provg.add_edge(activity,entity, dict(type=used, name=k) )
+	for k in wasDerivedFrom:
+	    #In the "wasDerivedBy" edge the source entity has a version number and creation time that is
+	    # lower than destination entity version number and creation time, but have the same UUID.
+	    entity_source = wasDerivedFrom[k]['prov:usedEntity']
+	    entity_destination =wasDerivedFrom[k]['prov:generatedEntity']
+	    print "source details: "
+	    pprint(entities[entity_source])
+	    print "destination details: "
+	    pprint(entities[entity_destination])
+	    if getField(entities, entity_source, 'UUID') != getField(entities, entity_destination, 'UUID'):
+		     ret =  False, "wasDerivedFrom error for "+k+":UUID of entity "+entity_source+\
+		       " should be the same as UUID of entity "+entity_destination
+	    if getField(entities, entity_source, 'creationTime') >= getField(entities, entity_destination, 'creationTime'):
+		     ret =  False, "wasDerivedFrom error for "+k+":creationTime of entity "+entity_source+\
+		       " should be lower than creationTime of entity "+entity_destination
+	    #if getField(entities, entity_source, 'version') >= getField(entities, entity_destination, 'version'):
+	    #    ret =  False, "wasDerivedFrom error for "+k+":version of entity "+entity_source+\
+	    #           " should be lower than version of entity "+entity_destination
 
-        return True
+	    print "adding wasDerivedFrom edge  " +str (k) + " having value =" + str(wasDerivedFrom[k])
+	    provg.add_edge(entity_source, entity_destination, dict(type=wasDerivedFrom, name=k) )
 
-def uuid_rename(jsonobj):
-    import copy
+
+	# remove additional
+
+	print "-------------"
+	print provg.nodes()
+	print provg.edges()
+
+
+def jsonid_rename(jsonobj):
 
     graph_uuid = "need to figure out what is a good id"
     #str(uuid.uuid3(uuid.NAMESPACE_DNS, str("need to figure out what is a good id")))
@@ -205,8 +203,6 @@ def uuid_rename(jsonobj):
 
 if __name__ == "__main__":
     # For testing
-
-
     json_data=open('C1-file1.json')
     obj = json.load(json_data)
     json_data.close()

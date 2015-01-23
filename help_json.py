@@ -16,6 +16,44 @@ def json2obj(ajson):
             res[attr] = str(ajson[attr])
     return res
 
+def neo2gv(result):
+
+    en_list = ""
+    ac_list = ""
+    ag_list = "" 
+    ac_stmt = ""
+    en_stmt = "" 
+    if result is not None:
+	for paths in result:
+	    for path in paths:
+		rels = path.relationships
+		nodes = path.nodes
+		for n in nodes:
+		    if "Activity" in n.get_labels():		    
+			ac_list = ac_list + n["_id"] + ";" 
+ 			ac_stmt = ac_stmt + n["_id"] + " [label=\"Activity:" + n["prov:type"] + "\" tooltip=\"prov:startTime=" + n["prov:startTime"] + ";prov:endTime=" + n["prov:endTime"] + "\"] \\n"
+	            elif "Entity" in n.get_labels():
+			en_list = en_list + n["_id"] + ";" 
+			en_stmt = en_stmt + n["_id"] + " [label=\"Entity\"" + " tooltip=\"foundry:UUID=" + n["foundry:UUID"] 
+		    elif "Agent" in n.get_labels():
+			ag_list = ag_list + n["_id"] + ";"
+		    else:
+			pass	
+		
+                
+ 
+		
+    gv_result = "digraph PROV { \
+    graph [rankdir = \"RL\" ];  \
+    node [shape=box fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + en_list + \
+    "node [shape=ellipse fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + ac_list + \
+    "node [shape=diamond fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + ag_list + \
+    "edge [fontname=\"Times\" fontsize=\"10\"];" + \
+    ac_stmt + en_stmt
+
+    print gv_result
+    return gv_result	
+
 def neo2json(aneo):
     res={}
     if aneo is not None:

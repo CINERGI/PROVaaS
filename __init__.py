@@ -146,46 +146,43 @@ def get_resource():
 @auth.login_required
 def create_resource_prov():
 
-    # Atleast one entity should be present
-    if not request.json or not 'entity' in request.json:
-        return Response(status=400)
 
     obj = request.json
-    obj = jsonRefresh(obj) 
-    # make all entities
-    if 'entity' in obj:
-        if db.getRequestId() is None:
-            requestId = db.addRequestId()
-        else:
-            requestId = db.updateRequestId()  	
+    #validate obj
+    isvalid,message = validateJSONRequest(obj)
+  
+    if not (isvalid):
+        data = {"Error:": message}
+	return Response(dumps(data), mimetype='application/json',status=400)
+    #valid JSON, then rename JSON ids
+    obj = jsonid_rename(obj) 
+    # all ready to insert into database
 
-        entities = obj['entity']
-    	for k in entities.keys():
-            if 'foundry:UUID' in entities[k]: 
-	     	entity = json2obj(entities[k])
-             	entity[u'_id'] = k
-             	node = db.addEntity(entity)
-            	#db.addProperty(node,entity)
-   	    else:
-	     	return Response(status=400)
+    # the RequestID of this POST
+    if db.getRequestId() is None:
+        requestId = db.addRequestId()
     else:
-	return Response(status=400)
+        requestId = db.updateRequestId()
+       	
+    entities = obj['entity']
+    for k in entities.keys():
+	entity = json2obj(entities[k])
+        entity[u'_id'] = k
+        node = db.addEntity(entity)
+        #db.addProperty(node,entity)
 	 
     # make all agents
-    if 'agent' in obj:
-    	agents = obj['agent']
-    	for k in agents.keys():
-            agent = json2obj(agents[k])
-            agent[u'_id'] = k
-            db.addAgent(agent)
+    agents = obj['agent']
+    for k in agents.keys():
+        agent = json2obj(agents[k])
+        agent[u'_id'] = k
+        db.addAgent(agent)
         
-    # make all activities
-    if 'activity' in obj:
-    	acts = obj['activity']
-    	for k in acts.keys():
-            act = json2obj(acts[k])
-            act[u'_id'] = k
-            db.addActivity(act)
+    acts = obj['activity']
+    for k in acts.keys():
+        act = json2obj(acts[k])
+        act[u'_id'] = k
+        db.addActivity(act)
     
     # =========================
     # === add all relations ===

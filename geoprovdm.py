@@ -6,8 +6,7 @@ import json
 from py2neo import neo4j, node, rel
 
 # VERSION
-_geoprovdm_version=0.1
-ENVIRON='PROD'
+_geoprovdm_version=0.75
 
 class GeoProvDM:
   """ Main class that provides  all functionality needed
@@ -69,37 +68,39 @@ class GeoProvDM:
   def addRequestId(self):
     tmp= {}
     tmp["_id"]= "prodNode:rid1" #self._REQUESTID
-    tmp["prov:type"]="RequestId"
-    tmp["prov:number"]="1"
+    tmp["provdb:type"]="RequestId"
+    tmp["provdb:number"]="1"
     rid= json.loads(json.dumps(tmp))
     node = self._addObject(self._REQUESTID, rid)
-    return node["prov:number"]
+    return node["provdb:number"]
 
   _ORDER = "Order"
   def _addOrder(self,actType):
     tmp= {}
     tmp["_id"]= "prodNode:"+actType #self._ORDER+actType
-    tmp["prov:type"]="Order"
-    tmp["prov:actType"]=actType
-    tmp["prov:order"]="1"
+    tmp["provdb:type"]="Order"
+    tmp["provdb:actType"]=actType
+    tmp["provdb:order"]="1"
     order= json.loads(json.dumps(tmp))
     return self._addObject(self._ORDER, order)  
   
   def _addObject(self, objType, obj):
-    if not obj.has_key("_id"):
-      obj["_id"] = hex(random.getrandbits(128))[2:-1] 
-    elif not self._getNodeById(objType, obj["_id"]) is None:
+    #if not obj.has_key("_id"):
+    #  obj["_id"] = hex(random.getrandbits(128))[2:-1] 
+    if not self._getNodeById(objType, obj["_id"]) is None:
       return False
       
     obj['_geoprovdm_version'] = _geoprovdm_version
+    #if book-keeping nodes
     if objType!="RequestId" and objType!="Order":
-        obj['prov:RequestId'] = self._getRequestId()["prov:number"]
+        obj['provdb:RequestId'] = self._getRequestId()["provdb:number"]
+    # if activity nodes
     if objType=="Activity":
-        obj['prov:order'] = self._getOrder(obj['prov:type'])["prov:order"]
+        obj['provdb:order'] = self._getOrder(obj['provdb:type'])["provdb:order"]
+ 
     a_node, = self._neo_graph.create(obj)
     a_node.add_labels(objType)
-    #return True
-    return a_node
+    return True
 
   def addRelation(self, relationType, name, objectIdList):    
     return self._addRelation(relationType, name, objectIdList)
@@ -148,6 +149,10 @@ class GeoProvDM:
     except KeyError:
       print "Error: Incorrect type or id list"
 
+
+###**********************************************************************************
+
+
   def _getNodeById(self, nodeType, nodeId):
     query = neo4j.CypherQuery(self._neo_graph, \
       "MATCH (ee:" + nodeType.title() + ") WHERE ee._id = {p_id} RETURN ee;")
@@ -156,7 +161,7 @@ class GeoProvDM:
 
   def _getNodeInformant(self, actId,order):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (ee:Activity) WHERE ee.`prov:type` = {act} AND ee.`prov:order`={a_order} RETURN ee;")
+      "MATCH (ee:Activity) WHERE ee.`prov:type` = {act} AND ee.`provdb:order`={a_order} RETURN ee;")
     node = query.execute_one(act = actId,a_order=order)
     return node
 
@@ -173,21 +178,21 @@ class GeoProvDM:
     query = neo4j.CypherQuery(self._neo_graph, \
       "MATCH (rId:RequestId) RETURN rId;")
     node = query.execute_one()
-    tmp=node["prov:number"]
-    node["prov:number"]=str(int(tmp)+1)
-    return node["prov:number"]
+    tmp=node["provdb:number"]
+    node["provdb:number"]=str(int(tmp)+1)
+    return node["provdb:number"]
 
   def _updateOrder(self,actType):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (o:Order) Where o.`prov:actType`={atype} RETURN o;")
+      "MATCH (o:Order) Where o.`provdb:actType`={atype} RETURN o;")
     node = query.execute_one(atype=actType)
-    tmp=node["prov:order"]
-    node["prov:order"]=str(int(tmp)+1)
+    tmp=node["provdb:order"]
+    node["provdb:order"]=str(int(tmp)+1)
     return node
 
   def _getOrder(self,actType):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (o:Order) Where o.`prov:actType`={atype} RETURN o;")
+      "MATCH (o:Order) Where o.`provdb:actType`={atype} RETURN o;")
     node = query.execute_one(atype=actType)
     return node
 
@@ -226,11 +231,11 @@ class GeoProvDM:
 
   def deleteNodeByUuid(self, nodeUuid):
       query = neo4j.CypherQuery(self._neo_graph, \
-	"MATCH (n {`prov:RequestId` : {p_uuid}}) OPTIONAL MATCH (n)-[r]-() DELETE r;")
+	"MATCH (n {`provdb:RequestId` : {p_uuid}}) OPTIONAL MATCH (n)-[r]-() DELETE r;")
       result = query.execute(p_uuid = nodeUuid)
 	
       query = neo4j.CypherQuery(self._neo_graph, \
-	"MATCH (n {`prov:RequestId` : {p_uuid}}) DELETE n;")
+	"MATCH (n {`provdb:RequestId` : {p_uuid}}) DELETE n;")
       result = query.execute(p_uuid = nodeUuid)
       return result
  
