@@ -71,8 +71,8 @@ class GeoProvDM:
     tmp["provdb:type"]="RequestId"
     tmp["provdb:number"]="1"
     rid= json.loads(json.dumps(tmp))
-    node = self._addObject(self._REQUESTID, rid)
-    return node["provdb:number"]
+    self._addObject(self._REQUESTID, rid)
+    return tmp["provdb:number"]
 
   _ORDER = "Order"
   def _addOrder(self,actType):
@@ -96,7 +96,7 @@ class GeoProvDM:
         obj['provdb:RequestId'] = self._getRequestId()["provdb:number"]
     # if activity nodes
     if objType=="Activity":
-        obj['provdb:order'] = self._getOrder(obj['provdb:type'])["provdb:order"]
+        obj['provdb:order'] = self._getOrder(obj['prov:type'])["provdb:order"]
  
     a_node, = self._neo_graph.create(obj)
     a_node.add_labels(objType)
@@ -145,7 +145,12 @@ class GeoProvDM:
       if dId is not None:
           dest = self._getNodeById(dType, dId)
       if not (source is None or dest is None):
-        self._neo_graph.create(rel(source, (relationType, {"name":name}), dest))
+        # check if relationship prev exists and of same type
+        rellist = self._neo_graph.match(source,(relationType,{"_id":name}),dest,False)
+        print "Relist"
+        print rellist.string 
+        if (rellist is None):
+          self._neo_graph.create(rel(source, (relationType, {"_id":name}), dest))
     except KeyError:
       print "Error: Incorrect type or id list"
 
@@ -158,6 +163,13 @@ class GeoProvDM:
       "MATCH (ee:" + nodeType.title() + ") WHERE ee._id = {p_id} RETURN ee;")
     node = query.execute_one(p_id = nodeId)
     return node
+
+  def _getEdgeById(self, edgeType, edgeId):
+    query = neo4j.CypherQuery(self._neo_graph, \
+      "MATCH (ee:" + edgeType.title() + ") WHERE ee._id = {p_id} RETURN ee;")
+    node = query.execute_one(p_id = edgeId)
+    return node
+
 
   def _getNodeInformant(self, actId,order):
     query = neo4j.CypherQuery(self._neo_graph, \

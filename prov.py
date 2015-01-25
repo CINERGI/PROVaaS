@@ -4,7 +4,7 @@ import networkx as nx
 from pprint import pprint
 import uuid
 #from time import mktime, strptime
-from datetime import datetime
+import datetime
 import copy
 
 def is_invalid_date(input_date_time):
@@ -26,10 +26,10 @@ def is_invalid_date(input_date_time):
 
 # returns value of a filed of an element from a list of elements
 def getField(elementsList, element, filedId):
-    return elementsList[element][elementsList[element]['__namespace']+':'+filedId]
+  return elementsList[element][elementsList[element]['__namespace']+':'+filedId]
 
 
-def validateJSONRequest(jsonobj)
+def validateJSONRequest(jsonobj):
 
 	provg  = nx.DiGraph()
 
@@ -63,21 +63,21 @@ def validateJSONRequest(jsonobj)
 	    namespace , entity_name = k.split(':')
 	    print "adding activity " +str (k) + " having value ="
 	    pprint(activities[k])
-	    if activities[k].get(namespace+':type') is None:
+	    if activities[k].get('prov:type') is None:
 		     ret =  False, "There is no type in activity "+k
-	    if activities[k].get(namespace+':startTime') is None:
+	    if activities[k].get('prov:startTime') is None:
 		     ret =  False, "There is no startTime in activity "+k
-	    if activities[k].get(namespace+':endTime') is None:
+	    if activities[k].get('prov:endTime') is None:
 		     ret =  False, "There is no endTime in activity "+k
-	    if activities[k][namespace+':endTime'] > activities[k][namespace+':startTime']:
+	    if activities[k]['prov:endTime'] > activities[k]['prov:startTime']:
 		     ret =  False, "StartTime should be before endTime in activity "+k
 
-	    if is_invalid_date(activities[k][namespace+':startTime']):
+	    if is_invalid_date(activities[k]['prov:startTime']):
 		     ret = False, "Invalid startTime format in activity "+k
-	    if is_invalid_date(activities[k][namespace+':endTime']):
+	    if is_invalid_date(activities[k]['prov:endTime']):
 		     ret = False, "Invalid endTime format in activity "+k
 
-	    activities[k]['__namespace'] = namespace
+	    activities[k]['__namespace'] = 'prov' #namespace
 	    
 	    provg.add_node(k, activities.get(k) )
 
@@ -137,78 +137,104 @@ def validateJSONRequest(jsonobj)
 	print "-------------"
 	print provg.nodes()
 	print provg.edges()
+	return True,"validation successful"
 
 
 def jsonid_rename(jsonobj):
 
-    graph_uuid = "need to figure out what is a good id"
+  graph_uuid = "need to figure out what is a good id"
     #str(uuid.uuid3(uuid.NAMESPACE_DNS, str("need to figure out what is a good id")))
-    name_mapping = {} # old_name:new_name
-    entities = jsonobj.get('entity')
-    activities = jsonobj.get('activity') or []
+  name_mapping = {} # old_name:new_name
+  entities = jsonobj.get('entity')
+  activities = jsonobj.get('activity') or []
 
-    jsonobj2 = copy.deepcopy(jsonobj)
+  jsonobj2 = copy.deepcopy(jsonobj)
 
-    for k in entities:
-        namespace , entity_name = k.split(':')
+  for k in entities:
+      namespace , entity_name = k.split(':')
         #big_string = k[namespace+':UUID'] + k[namespace+':creationTime'] + k[namespace+':version']
-        big_string = str(jsonobj['entity'][k][namespace+':UUID']) + \
-                     str(jsonobj['entity'][k][namespace+':creationTime'])
+      big_string = str(jsonobj['entity'][k][namespace+':UUID']) + \
+                   str(jsonobj['entity'][k][namespace+':creationTime'])
                      #str(jsonobj['entity'][k][namespace+':version'])
-        name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
-        print "new value for entity "+str(k) +" is "+ name_mapping[k]
-        #add field to identify subgraph
-        jsonobj2['entity'][k]['provdb:projectID'] = graph_uuid
-        # we found the new name for object, let's change it
-        jsonobj2['entity'].setdefault(name_mapping[k], jsonobj2['entity'].pop(k))
+      name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
+      print "new value for entity "+str(k) +" is "+ name_mapping[k]
+      #add field to identify subgraph
+      jsonobj2['entity'][k]['provdb:projectID'] = graph_uuid
+      # we found the new name for object, let's change it
+      jsonobj2['entity'].setdefault(name_mapping[k], jsonobj2['entity'].pop(k))
 
 
-    for k in activities or []:
-        name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(jsonobj['activity'][k]['prov:type'])))
-        print "new value for activity "+str(k) +" is "+ name_mapping[k]
-        #add field to identify subgraph
-        jsonobj2['activity'][k]['provdb:projectID'] = graph_uuid
-        # we found the new name for object, let's change it
-        jsonobj2['activity'].setdefault(name_mapping[k], jsonobj2['activity'].pop(k))
+  for k in activities or []:
+      big_string = str(jsonobj['activity'][k]['prov:type']) + \
+                   str(jsonobj['activity'][k]['prov:startTime']) + \
+                   str(jsonobj['activity'][k]['prov:endTime'])
+                     #str(jsonobj['entity'][k][namespace+':version'])
+      name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
+ 
+      #name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, str(jsonobj['activity'][k]['prov:type'])))
+      print "new value for activity "+str(k) +" is "+ name_mapping[k]
+      #add field to identify subgraph
+      jsonobj2['activity'][k]['provdb:projectID'] = graph_uuid
+      # we found the new name for object, let's change it
+      jsonobj2['activity'].setdefault(name_mapping[k], jsonobj2['activity'].pop(k))
 
 
-    wasGeneratedBy = jsonobj.get('wasGeneratedBy') or []
-    used = jsonobj.get('used') or []
-    wasDerivedFrom = jsonobj.get('wasDerivedFrom') or []
-    for k in wasGeneratedBy:
-        activity = wasGeneratedBy[k]['prov:activity']
-        entity = wasGeneratedBy[k]['prov:entity']
-        #add field to identify subgraph
-        jsonobj2['wasGeneratedBy'][k]['provdb:projectID'] = graph_uuid
-        # change values with new node names
-        jsonobj2['wasGeneratedBy'][k]['prov:activity'] = name_mapping[activity]
-        jsonobj2['wasGeneratedBy'][k]['prov:entity'] = name_mapping[entity]
-    for k in used:
-        activity = used[k]['prov:activity']
-        entity = used[k]['prov:entity']
-        #add field to identify subgraph
-        jsonobj2['used'][k]['provdb:projectID'] = graph_uuid
-        # change values with new node names
-        jsonobj2['used'][k]['prov:activity'] = name_mapping[activity]
-        jsonobj2['used'][k]['prov:entity'] = name_mapping[entity]
-    for k in wasDerivedFrom:
-        entity_source = wasDerivedFrom[k]['prov:usedEntity']
-        entity_destination =wasDerivedFrom[k]['prov:generatedEntity']
-        #add field to identify subgraph
-        jsonobj2['wasDerivedFrom'][k]['provdb:projectID'] = graph_uuid
-        # change values with new node names
-        jsonobj2['wasDerivedFrom'][k]['prov:usedEntity'] = name_mapping[entity_source]
-        jsonobj2['wasDerivedFrom'][k]['prov:generatedEntity'] = name_mapping[entity_destination]
-    return jsonobj2
+  wasGeneratedBy = jsonobj.get('wasGeneratedBy') or []
+  used = jsonobj.get('used') or []
+  wasDerivedFrom = jsonobj.get('wasDerivedFrom') or []
+  for k in wasGeneratedBy:
+      activity = wasGeneratedBy[k]['prov:activity']
+      entity = wasGeneratedBy[k]['prov:entity']
+      big_string = str(k) + str(jsonobj['wasGeneratedBy'][k]['prov:activity']) + \
+                   str(jsonobj['wasGeneratedBy'][k]['prov:entity']) 
+
+      name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))  
+      #add field to identify subgraph
+      jsonobj2['wasGeneratedBy'][k]['provdb:projectID'] = graph_uuid
+      # change values with new node names
+      jsonobj2['wasGeneratedBy'][k]['prov:activity'] = name_mapping[activity]
+      jsonobj2['wasGeneratedBy'][k]['prov:entity'] = name_mapping[entity]
+      
+      jsonobj2['wasGeneratedBy'].setdefault(name_mapping[k], jsonobj2['wasGeneratedBy'].pop(k))
+
+  for k in used:
+      activity = used[k]['prov:activity']
+      entity = used[k]['prov:entity']
+      big_string = str(k) + str(jsonobj['used'][k]['prov:activity']) + \
+                   str(jsonobj['used'][k]['prov:entity']) 
+
+      name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))  
+      #add field to identify subgraph
+      jsonobj2['used'][k]['provdb:projectID'] = graph_uuid
+      # change values with new node names
+      jsonobj2['used'][k]['prov:activity'] = name_mapping[activity]
+      jsonobj2['used'][k]['prov:entity'] = name_mapping[entity]
+      jsonobj2['used'].setdefault(name_mapping[k], jsonobj2['used'].pop(k))
+ 
+  for k in wasDerivedFrom:
+      entity_source = wasDerivedFrom[k]['prov:usedEntity']
+      entity_destination =wasDerivedFrom[k]['prov:generatedEntity']
+      
+      big_string = str(k) + str(jsonobj['wasDerivedFrom'][k]['prov:generatedEntity']) + \
+                   str(jsonobj['wasDerivedFrom'][k]['prov:usedentity']) 
+
+      name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))  
+      #add field to identify subgraph
+      jsonobj2['wasDerivedFrom'][k]['provdb:projectID'] = graph_uuid
+      # change values with new node names
+      jsonobj2['wasDerivedFrom'][k]['prov:usedEntity'] = name_mapping[entity_source]
+      jsonobj2['wasDerivedFrom'][k]['prov:generatedEntity'] = name_mapping[entity_destination]
+      jsonobj2['wasDerivedFrom'].setdefault(name_mapping[k], jsonobj2['wasDerivedFrom'].pop(k))
+  return jsonobj2
 
 if __name__ == "__main__":
     # For testing
-    json_data=open('C1-file1.json')
-    obj = json.load(json_data)
-    json_data.close()
-    #xxx=PROV(obj)
-    obj2 = uuid_rename(obj)
-    pprint(obj2)
+  json_data=open('C1-file1.json')
+  obj = json.load(json_data)
+  json_data.close()
+  #xxx=PROV(obj)
+  obj2 = jsonid_rename(obj)
+  pprint(obj2)
 
 
 

@@ -32,6 +32,7 @@ from flask import Flask, request, Response, jsonify
 #from jsonhelp import *
 from help_json import *
 from geoprovdm import *
+from prov import *
 
 import os
 from flask import  abort, g, url_for
@@ -172,11 +173,11 @@ def create_resource_prov():
         #db.addProperty(node,entity)
 	 
     # make all agents
-    agents = obj['agent']
-    for k in agents.keys():
-        agent = json2obj(agents[k])
-        agent[u'_id'] = k
-        db.addAgent(agent)
+    #agents = obj['agent']
+    #for k in agents.keys():
+    #    agent = json2obj(agents[k])
+    #    agent[u'_id'] = k
+    #    db.addAgent(agent)
         
     acts = obj['activity']
     for k in acts.keys():
