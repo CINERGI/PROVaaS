@@ -61,7 +61,7 @@ if (ENVIRON == None):
 
 db = GeoProvDM(ENVIRON, "http://%s:7474/db/data/"%SERVER_IP, False)
 
-@app.route("/provenance/test")
+@app.route("/api/provenance/test")
 def hello():
     return "Hello World!"
 
@@ -143,7 +143,7 @@ def get_auth_token():
 def get_resource():
     return jsonify({'data': 'Hello, %s!' % g.user.username})
 
-@app.route('/provenance/resource', methods=['POST'])
+@app.route('/api/provenance/', methods=['POST'])
 @auth.login_required
 def create_resource_prov():
 
@@ -156,14 +156,14 @@ def create_resource_prov():
         data = {"Error:": message}
 	return Response(dumps(data), mimetype='application/json',status=400)
     #valid JSON, then rename JSON ids
-    obj = jsonid_rename(obj) 
+    namespace,obj = jsonid_rename(obj) 
     # all ready to insert into database
 
     # the RequestID of this POST
-    if db.getRequestId() is None:
-        requestId = db.addRequestId()
+    if db.getRequestId(namespace) is None:
+        requestId = db.addRequestId(namespace)
     else:
-        requestId = db.updateRequestId()
+        requestId = db.updateRequestId(namespace)
        	
     entities = obj['entity']
     for k in entities.keys():
@@ -199,23 +199,35 @@ def create_resource_prov():
     return Response(dumps(data,default=outputJSON), mimetype='application/json',status=201)
 
 
-@app.route('/provenance/b/resource/<string:uuid>', methods=['GET'])
+@app.route('/api/<string:namespace>/provenance/<string:uuid>', methods=['GET'])
 @auth.login_required
-def get_resource_provenance(uuid):
+def get_resource_provenance(namespace,uuid):
  
   #obj = db.getSubgraph(uuid)
   uuid1 = uuid
-  obj = db.getNodeByUuid(uuid1)
+  namespace1 = namespace
+  obj = db.getNodeByUuid(namespace1,uuid1)
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 
-@app.route('/resource/<string:uuid>', methods=['DELETE'])
+@app.route('/api/<string:namespace>/provenance/<string:uuid>', methods=['DELETE'])
 @auth.login_required
-def delete_resource_provenance(uuid):
+def delete_resource_provenance(namespace,uuid):
+  namespace1 = namespace
   uuid1 = uuid
-  obj = db.deleteNodeByUuid(uuid1)
+  obj = db.deleteNodeByUuid(namespace1,uuid1)
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
+
+@app.route('/api/<string:namespace>/provenance/request/<string:rid>', methods=['DELETE'])
+@auth.login_required
+def delete_provenance_request(namespace,rid):
+  namespace1 = namespace
+  rid1 = rid
+  obj = db.deleteNodeByRequestid(namespace1,rid1)
+  obj_json = neo2json(obj)
+  return Response(obj_json,mimetype='application/json',status=200)
+
 
 @app.route('/provenance/b/resource/<string:uuid>/activity/<string:activityproperty>', methods=['GET'])
 @auth.login_required

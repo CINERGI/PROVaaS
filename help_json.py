@@ -16,44 +16,6 @@ def json2obj(ajson):
             res[attr] = str(ajson[attr])
     return res
 
-def neo2gv(result):
-
-    en_list = ""
-    ac_list = ""
-    ag_list = "" 
-    ac_stmt = ""
-    en_stmt = "" 
-    if result is not None:
-	for paths in result:
-	    for path in paths:
-		rels = path.relationships
-		nodes = path.nodes
-		for n in nodes:
-		    if "Activity" in n.get_labels():		    
-			ac_list = ac_list + n["_id"] + ";" 
- 			ac_stmt = ac_stmt + n["_id"] + " [label=\"Activity:" + n["prov:type"] + "\" tooltip=\"prov:startTime=" + n["prov:startTime"] + ";prov:endTime=" + n["prov:endTime"] + "\"] \\n"
-	            elif "Entity" in n.get_labels():
-			en_list = en_list + n["_id"] + ";" 
-			en_stmt = en_stmt + n["_id"] + " [label=\"Entity\"" + " tooltip=\"foundry:UUID=" + n["foundry:UUID"] 
-		    elif "Agent" in n.get_labels():
-			ag_list = ag_list + n["_id"] + ";"
-		    else:
-			pass	
-		
-                
- 
-		
-    gv_result = "digraph PROV { \
-    graph [rankdir = \"RL\" ];  \
-    node [shape=box fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + en_list + \
-    "node [shape=ellipse fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + ac_list + \
-    "node [shape=diamond fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + ag_list + \
-    "edge [fontname=\"Times\" fontsize=\"10\"];" + \
-    ac_stmt + en_stmt
-
-    print gv_result
-    return gv_result	
-
 def neo2json(aneo):
     res={}
     if aneo is not None:
@@ -99,13 +61,16 @@ def neo2json(aneo):
                             res["activity"]={}
                         res["activity"][n["_id"]]={"prov:type":{"$":  n["prov:type"], "type": "xsd:string"},\
                                                   "prov:startTime":n["prov:startTime"],\
-                                                  "prov:endTime":n["prov:endTime"]}
+                                                  "prov:endTime":n["prov:endTime"], \
+						  "foundry:how":n["foundry:how"]}
                     elif "Entity" in n.get_labels():
                         if "entity" not in res:
                             res["entity"]={}
                         res["entity"][n["_id"]]={"foundry:sourceId":{"$": n["foundry:sourceId"], "type": "xsd:string"},\
-                                                      "foundry:UUID":n["foundry:UUID"],"foundry:creationTime":n["foundry:creationTime"],\
-                                                      "foundry:batchId":n["foundry:batchId"]}
+                                                      "foundry:UUID":n["foundry:UUID"], \
+						      "foundry:creationTime":n["foundry:creationTime"],\
+                                                      "foundry:batchId":n["foundry:batchId"], \
+						      "foundry:label":"\"" + n["foundry:label"] + "\""}
                     elif "Agent" in n.get_labels():#if node[size]["prov:type"] is not None:#and not node[size].has_key("prov:startTime") and not node[size].has_key("foundry:UUID"):
                         if "agent" not in res:
                             res["agent"] ={}
