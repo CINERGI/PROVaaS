@@ -1,7 +1,7 @@
 #from geoprovdm import *
 import sys,json,datetime,uuid
 from py2neo import neo4j, node, rel
-
+from pprint import pprint
 # convert a prov-dm json to a python dictionary object
 #   with key and value of type string
 def json2obj(ajson):
@@ -36,6 +36,12 @@ def neo2json(aneo):
                         res['wasStartedBy'][r["name"]]={"prov:activity": r.start_node["_id"], "prov:trigger":  r.end_node["_id"]}
                     elif r.type == 'wasEndedBy':
                         res['wasEndedBy'][r["name"]]={"prov:activity": r.start_node["_id"], "prov:trigger":  r.end_node["_id"]}    
+                    elif r.type == 'wasGeneratedBy':
+                        res['wasGeneratedBy'][r["_id"]]={"prov:entity": r.start_node["_id"], "prov:activity":  r.end_node["_id"]}
+                    elif r.type == 'used':
+                        res['used'][r["_id"]]={"prov:entity": r.start_node["_id"], "prov:activity":  r.end_node["_id"]}
+                    elif r.type == 'wasDerivedFrom':
+                        res['wasDerivedFrom'][r["_id"]]={"prov:usedEntity": r.start_node["_id"], "prov:generatedEntity":  r.end_node["_id"]}
                     else:
                         s=r.start_node.get_labels()# type is set
                         e=r.end_node.get_labels()
@@ -59,18 +65,18 @@ def neo2json(aneo):
                     if "Activity" in n.get_labels():
                         if "activity" not in res:
                             res["activity"]={}
-                        res["activity"][n["_id"]]={"prov:type":{"$":  n["prov:type"], "type": "xsd:string"},\
-                                                  "prov:startTime":n["prov:startTime"],\
-                                                  "prov:endTime":n["prov:endTime"], \
-						  "foundry:how":n["foundry:how"]}
+                        res["activity"][n["_id"]]={n["__namespace"]+"type":{"$":  n[n["__namespace"]+":type"], "type": "xsd:string"},\
+                                                  n["__namespace"]+":startTime":n[n["__namespace"]+":startTime"],\
+                                                  n["__namespace"]+":endTime":n[n["__namespace"]+":endTime"], \
+                          n["__namespace"]+":how":n[n["__namespace"]+":how"]}
                     elif "Entity" in n.get_labels():
                         if "entity" not in res:
                             res["entity"]={}
-                        res["entity"][n["_id"]]={"foundry:sourceId":{"$": n["foundry:sourceId"], "type": "xsd:string"},\
-                                                      "foundry:UUID":n["foundry:UUID"], \
-						      "foundry:creationTime":n["foundry:creationTime"],\
-                                                      "foundry:batchId":n["foundry:batchId"], \
-						      "foundry:label":"\"" + n["foundry:label"] + "\""}
+                        res["entity"][n["_id"]]={n["__namespace"]+":sourceId":{"$": n[n["__namespace"]+":sourceId"], "type": "xsd:string"},\
+                                                      n["__namespace"]+":UUID":n[n["__namespace"]+":UUID"], \
+                              n["__namespace"]+":creationTime":n[n["__namespace"]+":creationTime"],\
+                                                      n["__namespace"]+":batchId":n[n["__namespace"]+":batchId"], \
+                              n["__namespace"]+":label":"\"" + n[n["__namespace"]+":label"] + "\""}
                     elif "Agent" in n.get_labels():#if node[size]["prov:type"] is not None:#and not node[size].has_key("prov:startTime") and not node[size].has_key("foundry:UUID"):
                         if "agent" not in res:
                             res["agent"] ={}
