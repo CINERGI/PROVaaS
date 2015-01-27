@@ -1,7 +1,7 @@
 #from geoprovdm import *
 import sys,json,datetime,uuid
 from py2neo import neo4j, node, rel
-
+from pprint import pprint
 # convert a prov-dm json to a python dictionary object
 #   with key and value of type string
 def json2obj(ajson):
@@ -15,44 +15,6 @@ def json2obj(ajson):
         else:
             res[attr] = str(ajson[attr])
     return res
-
-def neo2gv(result):
-
-    en_list = ""
-    ac_list = ""
-    ag_list = "" 
-    ac_stmt = ""
-    en_stmt = "" 
-    if result is not None:
-	for paths in result:
-	    for path in paths:
-		rels = path.relationships
-		nodes = path.nodes
-		for n in nodes:
-		    if "Activity" in n.get_labels():		    
-			ac_list = ac_list + n["_id"] + ";" 
- 			ac_stmt = ac_stmt + n["_id"] + " [label=\"Activity:" + n["prov:type"] + "\" tooltip=\"prov:startTime=" + n["prov:startTime"] + ";prov:endTime=" + n["prov:endTime"] + "\"] \\n"
-	            elif "Entity" in n.get_labels():
-			en_list = en_list + n["_id"] + ";" 
-			en_stmt = en_stmt + n["_id"] + " [label=\"Entity\"" + " tooltip=\"foundry:UUID=" + n["foundry:UUID"] 
-		    elif "Agent" in n.get_labels():
-			ag_list = ag_list + n["_id"] + ";"
-		    else:
-			pass	
-		
-                
- 
-		
-    gv_result = "digraph PROV { \
-    graph [rankdir = \"RL\" ];  \
-    node [shape=box fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + en_list + \
-    "node [shape=ellipse fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + ac_list + \
-    "node [shape=diamond fontname=\"Times\" fontsize=\"10\" style=\"filled\"]; " + ag_list + \
-    "edge [fontname=\"Times\" fontsize=\"10\"];" + \
-    ac_stmt + en_stmt
-
-    print gv_result
-    return gv_result	
 
 def neo2json(aneo):
     res={}
@@ -74,6 +36,12 @@ def neo2json(aneo):
                         res['wasStartedBy'][r["name"]]={"prov:activity": r.start_node["_id"], "prov:trigger":  r.end_node["_id"]}
                     elif r.type == 'wasEndedBy':
                         res['wasEndedBy'][r["name"]]={"prov:activity": r.start_node["_id"], "prov:trigger":  r.end_node["_id"]}    
+                    elif r.type == 'wasGeneratedBy':
+                        res['wasGeneratedBy'][r["_id"]]={"prov:entity": r.start_node["_id"], "prov:activity":  r.end_node["_id"]}
+                    elif r.type == 'used':
+                        res['used'][r["_id"]]={"prov:entity": r.start_node["_id"], "prov:activity":  r.end_node["_id"]}
+                    elif r.type == 'wasDerivedFrom':
+                        res['wasDerivedFrom'][r["_id"]]={"prov:usedEntity": r.start_node["_id"], "prov:generatedEntity":  r.end_node["_id"]}
                     else:
                         s=r.start_node.get_labels()# type is set
                         e=r.end_node.get_labels()
@@ -97,15 +65,18 @@ def neo2json(aneo):
                     if "Activity" in n.get_labels():
                         if "activity" not in res:
                             res["activity"]={}
-                        res["activity"][n["_id"]]={"prov:type":{"$":  n["prov:type"], "type": "xsd:string"},\
-                                                  "prov:startTime":n["prov:startTime"],\
-                                                  "prov:endTime":n["prov:endTime"]}
+                        res["activity"][n["_id"]]={n["__namespace"]+"type":{"$":  n[n["__namespace"]+":type"], "type": "xsd:string"},\
+                                                  n["__namespace"]+":startTime":n[n["__namespace"]+":startTime"],\
+                                                  n["__namespace"]+":endTime":n[n["__namespace"]+":endTime"], \
+                          n["__namespace"]+":how":n[n["__namespace"]+":how"]}
                     elif "Entity" in n.get_labels():
                         if "entity" not in res:
                             res["entity"]={}
-                        res["entity"][n["_id"]]={"foundry:sourceId":{"$": n["foundry:sourceId"], "type": "xsd:string"},\
-                                                      "foundry:UUID":n["foundry:UUID"],"foundry:creationTime":n["foundry:creationTime"],\
-                                                      "foundry:batchId":n["foundry:batchId"]}
+                        res["entity"][n["_id"]]={n["__namespace"]+":sourceId":{"$": n[n["__namespace"]+":sourceId"], "type": "xsd:string"},\
+                                                      n["__namespace"]+":UUID":n[n["__namespace"]+":UUID"], \
+                              n["__namespace"]+":creationTime":n[n["__namespace"]+":creationTime"],\
+                                                      n["__namespace"]+":batchId":n[n["__namespace"]+":batchId"], \
+                              n["__namespace"]+":label":"\"" + n[n["__namespace"]+":label"] + "\""}
                     elif "Agent" in n.get_labels():#if node[size]["prov:type"] is not None:#and not node[size].has_key("prov:startTime") and not node[size].has_key("foundry:UUID"):
                         if "agent" not in res:
                             res["agent"] ={}

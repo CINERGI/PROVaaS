@@ -40,18 +40,21 @@ class GeoProvDM:
     
     :param act: a dictionary of attributes of the activity
     """ 
-    order= self._getOrder(act[u'prov:type'])
+    order= self._getOrder(act[u'prov:type'],act[u'provdb:projectId'])
     if order is None:
-      self._addOrder(act[u'prov:type'])
-      return self._addObject(self._ACTIVITY, act)
+      self._addOrder(act[u'prov:type'],act[u'provdb:projectId'])
+      self._addObject(self._ACTIVITY, act)
+      self._updateOrder(act[u'prov:type'],act[u'provdb:projectId'])
+      return True
     else:                
-      old=self._getNodeInformant(act[u'prov:type'],order["prov:order"])
-      self._updateOrder(act[u'prov:type'])
-      obj = self._addObject(self._ACTIVITY,act)
-      if (old is not None):
-      	nodelist=json.loads(json.dumps({"prov:informed":act[u'_id'],"prov:informant":old["_id"]}))
-      	self._addRelation("wasInformedBy","_:wIB"+act[u'_id']+old['_id'],nodelist)
-      return obj
+      isobj = self._addObject(self._ACTIVITY,act)
+      if (isobj):
+        old=self._getNodeInformant(act[u'prov:type'],str((int(order["provdb:order"])-1)),order["provdb:projectId"])
+        if (old is not None):
+      	  nodelist=json.loads(json.dumps({"prov:informed":act[u'_id'],"prov:informant":old["_id"]}))
+      	  self._addRelation("wasInformedBy","_:wIB"+act[u'_id']+old['_id'],nodelist)
+      	  self._updateOrder(act[u'prov:type'],act[u'provdb:projectId'])
+        return True 
     
   _ENTITY = "Entity"
   def addEntity(self, entity):
@@ -65,22 +68,24 @@ class GeoProvDM:
     return self._addObject(self._ENTITY, entity)
      
   _REQUESTID = "RequestId"
-  def addRequestId(self):
+  def addRequestId(self,namespace):
     tmp= {}
-    tmp["_id"]= "prodNode:rid1" #self._REQUESTID
+    tmp["_id"]= namespace+":rid1" #self._REQUESTID
     tmp["provdb:type"]="RequestId"
     tmp["provdb:number"]="1"
+    tmp["provdb:projectId"]=namespace
     rid= json.loads(json.dumps(tmp))
-    node = self._addObject(self._REQUESTID, rid)
-    return node["provdb:number"]
+    self._addObject(self._REQUESTID, rid)
+    return tmp["provdb:number"]
 
   _ORDER = "Order"
-  def _addOrder(self,actType):
+  def _addOrder(self,actType,namespace):
     tmp= {}
-    tmp["_id"]= "prodNode:"+actType #self._ORDER+actType
+    tmp["_id"]= namespace+":"+actType #self._ORDER+actType
     tmp["provdb:type"]="Order"
     tmp["provdb:actType"]=actType
-    tmp["provdb:order"]="1"
+    tmp["provdb:projectId"]=namespace
+    tmp["provdb:order"]="0"
     order= json.loads(json.dumps(tmp))
     return self._addObject(self._ORDER, order)  
   
@@ -93,10 +98,10 @@ class GeoProvDM:
     obj['_geoprovdm_version'] = _geoprovdm_version
     #if book-keeping nodes
     if objType!="RequestId" and objType!="Order":
-        obj['provdb:RequestId'] = self._getRequestId()["provdb:number"]
+        obj['provdb:RequestId'] = self._getRequestId(obj["provdb:projectId"])["provdb:number"]
     # if activity nodes
     if objType=="Activity":
-        obj['provdb:order'] = self._getOrder(obj['provdb:type'])["provdb:order"]
+        obj['provdb:order'] = self._getOrder(obj['prov:type'],obj["provdb:projectId"])["provdb:order"]
  
     a_node, = self._neo_graph.create(obj)
     a_node.add_labels(objType)
@@ -104,7 +109,7 @@ class GeoProvDM:
 
   def addRelation(self, relationType, name, objectIdList):    
     return self._addRelation(relationType, name, objectIdList)
- 
+
   def _addRelation(self, relationType, name, objectIdList):
     """ Add a relation to database
     
@@ -145,7 +150,12 @@ class GeoProvDM:
       if dId is not None:
           dest = self._getNodeById(dType, dId)
       if not (source is None or dest is None):
-        self._neo_graph.create(rel(source, (relationType, {"name":name}), dest))
+        # check if relationship prev exists and of same type
+        rellist = self._neo_graph.match_one(source,(relationType,{"_id":name}),dest,False)
+        if (rellist is None):
+	  print relationType
+	  print name
+          self._neo_graph.create(rel(source, (relationType, {"_id":name}), dest))
     except KeyError:
       print "Error: Incorrect type or id list"
 
@@ -159,45 +169,46 @@ class GeoProvDM:
     node = query.execute_one(p_id = nodeId)
     return node
 
-  def _getNodeInformant(self, actId,order):
+
+  def _getNodeInformant(self, actId,order,namespace):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (ee:Activity) WHERE ee.`prov:type` = {act} AND ee.`provdb:order`={a_order} RETURN ee;")
-    node = query.execute_one(act = actId,a_order=order)
+      "MATCH (ee:Activity) WHERE ee.`prov:type` = {act} AND ee.`provdb:order`={a_order} and ee.`provdb:projectId` = {namespace} RETURN ee;")
+    node = query.execute_one(act = actId,a_order=order,namespace=namespace)
     return node
 
-  def _getRequestId(self):
+  def _getRequestId(self,namespace):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (rId:RequestId) RETURN rId;")
-    node = query.execute_one()
+      "MATCH (rId:RequestId) where rId.`provdb:projectId` = {namespace} RETURN rId;")
+    node = query.execute_one(namespace=namespace)
     return node
 
-  def getRequestId(self):
-    return self._getRequestId()
+  def getRequestId(self,namespace):
+    return self._getRequestId(namespace)
 
-  def updateRequestId(self):
+  def updateRequestId(self,namespace):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (rId:RequestId) RETURN rId;")
-    node = query.execute_one()
+      "MATCH (rId:RequestId) where rId.`provdb:projectId` = {namespace} RETURN rId;")
+    node = query.execute_one(namespace=namespace)
     tmp=node["provdb:number"]
     node["provdb:number"]=str(int(tmp)+1)
     return node["provdb:number"]
 
-  def _updateOrder(self,actType):
+  def _updateOrder(self,actType,namespace):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (o:Order) Where o.`provdb:actType`={atype} RETURN o;")
-    node = query.execute_one(atype=actType)
+      "MATCH (o:Order) Where o.`provdb:actType`={atype} and o.`provdb:projectId` = {namespace} RETURN o;")
+    node = query.execute_one(atype=actType,namespace=namespace)
     tmp=node["provdb:order"]
     node["provdb:order"]=str(int(tmp)+1)
     return node
 
-  def _getOrder(self,actType):
+  def _getOrder(self,actType,namespace):
     query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (o:Order) Where o.`provdb:actType`={atype} RETURN o;")
-    node = query.execute_one(atype=actType)
+      "MATCH (o:Order) Where o.`provdb:actType`={atype} and o.`provdb:projectId` = {namespace} RETURN o;")
+    node = query.execute_one(atype=actType,namespace=namespace)
     return node
 
-  def getOrder(self,actType):
-    return self._getOrder(actType)
+  def getOrder(self,actType,namespace):
+    return self._getOrder(actType,namespace)
 
   #'used':['activity', 'entity'], 
   _requiredIdsInRelation = {'wasAssociatedWith':['activity', 'agent'],\
@@ -219,24 +230,41 @@ class GeoProvDM:
 
 ############################
 #Retrieve PROV-DM compliant provenance about the resource with the given 'uuid'.
-  def getNodeByUuid(self, nodeUuid):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "Start en=node(*)\
-      MATCH path = en-[*..2]->a \
-      WHERE en.`foundry:UUID` = {p_uuid} \
-      AND NOT ()-[:wasInformedBy]->a  \
-      RETURN path;")
-    result = query.execute(p_uuid = nodeUuid)
-    return result  #*
+  def getNodeByUuid(self, namespace, nodeUuid):
+    str = 'Start en=node(*) \
+	MATCH path = en-[*..2]->a \
+	WHERE en.`%(namespace1)s:UUID` = "%(p_uuid)s" \
+	AND NOT ()-[:wasInformedBy]->a  \
+	RETURN path;' %{"namespace1":namespace,"p_uuid":nodeUuid}
+    query = neo4j.CypherQuery(self._neo_graph,str)
+    result = query.execute()
 
-  def deleteNodeByUuid(self, nodeUuid):
+    #query = neo4j.CypherQuery(self._neo_graph, \
+    #  "Start en=node(*)\
+    #  MATCH path = en-[*..2]->a \
+    #  WHERE en.`{namespace1}:UUID` = \"{p_uuid}\" \
+    #  AND NOT ()-[:wasInformedBy]->a  \
+    #  RETURN path;")
+    #result = query.execute(namespace1=namespace,p_uuid = nodeUuid)
+    return result  
+
+  def deleteNodeByUuid(self, namespace,uuid):
       query = neo4j.CypherQuery(self._neo_graph, \
-	"MATCH (n {`provdb:RequestId` : {p_uuid}}) OPTIONAL MATCH (n)-[r]-() DELETE r;")
-      result = query.execute(p_uuid = nodeUuid)
+	"MATCH (n {`{namespace}:UUID` : {uuid}}) RETURN n")
+      node = query.execute_one(namespace=namespace,uuid = uuid)
+      requestId = node["provdb:requestId"]
+      self.deleteNodeByRequestid(namespace,requestId)
+      return result
+ 
+
+  def deleteNodeByRequestid(self, namespace,rid):
+      query = neo4j.CypherQuery(self._neo_graph, \
+	"MATCH (n {`provdb:RequestId` : {rid}}) OPTIONAL MATCH (n)-[r]-() DELETE r;")
+      result = query.execute(rid = rid)
 	
       query = neo4j.CypherQuery(self._neo_graph, \
-	"MATCH (n {`provdb:RequestId` : {p_uuid}}) DELETE n;")
-      result = query.execute(p_uuid = nodeUuid)
+	"MATCH (n {`provdb:RequestId` : {rid}}) DELETE n;")
+      result = query.execute(rid = rid)
       return result
  
 #Retrieve PROV-DM compliant provenance  of a resource with a given 'uuid', and which has activity 'activityname' in its path
