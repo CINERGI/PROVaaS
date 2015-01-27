@@ -282,6 +282,10 @@ d3.json(source,function(d) {
   	var center = height / 2.0;
   	var space = width - padding * 2;
   	var spacing = space / max_depth;
+	var max_height = height * 0.8;
+	if (spacing > max_height) {
+	  spacing = max_height;
+	}
   	var offset = spacing * Math.sqrt(3.0) / 2.0;
   	console.log(padding, center, space,spacing, offset);
 
