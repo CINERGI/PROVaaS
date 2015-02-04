@@ -5,16 +5,22 @@ from pprint import pprint
 import uuid
 from time import strptime
 import copy
+from dateutil import parser
+from pytz import utc
 
-DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+#"2014-11-01T00:06:00" ,  "2015-02-02T12:39:51-08:00"
+#DATETIME_FORMATS = ['%Y-%m-%dT%H:%M:%S' , '%Y-%m-%dT%H:%M:%S%:z' ]
 
+# checks if input string contains a date in one of acceptable date-time formats
 def is_valid_date(input_date_time):
     result = None
 
+    #for format in DATETIME_FORMATS:
     try:
-        #"2014-11-01T00:06:00"
-        result = strptime(input_date_time, DATETIME_FORMAT)
+        result = parser.parse(input_date_time) #(input_date_time, format)
+
     except:
+        print "Unexpected error:", sys.exc_info()[0]
         pass
 
     if result is None:
@@ -25,7 +31,24 @@ def is_valid_date(input_date_time):
         return True
     return True
 
-# returns value of a filed of an element from a list of elements
+import calendar
+from datetime import datetime, timedelta
+
+# returns a "date" format from a string containing a date in one of acceptable date-time formats
+def get_date(input_date_time):
+    result = None
+
+    try:
+        result = parser.parse(input_date_time)
+    except:
+        pass
+
+    if result.tzinfo is None:
+        return utc.localize(result)
+    else:
+        return result
+
+# returns value of a field of an element from a list of elements
 def getField(elementsList, element, filedId):
   return elementsList[element][elementsList[element]['__namespace']+':'+filedId]
 
@@ -75,8 +98,8 @@ def validateJSONRequest(jsonobj):
             return  False, "There is no startTime in activity "+k
         if activities[k].get('prov:endTime') is None:
             return  False, "There is no endTime in activity "+k
-        if strptime(activities[k]['prov:endTime'], DATETIME_FORMAT) < \
-                strptime(activities[k]['prov:startTime'], DATETIME_FORMAT):
+        if get_date(activities[k]['prov:endTime']) < \
+                get_date(activities[k]['prov:startTime']):
             return  False, "StartTime should be before endTime in activity "+k
 
         if not is_valid_date(activities[k]['prov:startTime']):
@@ -99,12 +122,12 @@ def validateJSONRequest(jsonobj):
         #print "adding wasGeneratedBy edge " +str (k) + " having value =" + str(wasGeneratedBy[k])
         activity = wasGeneratedBy[k]['prov:activity']
         entity = wasGeneratedBy[k]['prov:entity']
-        if strptime(getField(activities, activity, 'endTime'), DATETIME_FORMAT) < \
-            strptime(getField(entities, entity, 'creationTime')['$'], DATETIME_FORMAT):
+        if get_date(getField(activities, activity, 'endTime')) < \
+            get_date(getField(entities, entity, 'creationTime')['$']):
                 return  False, "wasGeneratedBy error for "+k+":creationTime of entity "+entity+\
                " should be between startTime and endTime of activity "+activity
-        if strptime(getField(activities, activity, 'startTime'), DATETIME_FORMAT) > \
-            strptime(getField(entities, entity, 'creationTime')['$'], DATETIME_FORMAT):
+        if get_date(getField(activities, activity, 'startTime')) > \
+            get_date(getField(entities, entity, 'creationTime')['$']):
                 return  False, "wasGeneratedBy error for "+k+":creationTime of entity "+entity+\
                " should be between startTime and endTime of activity "+activity
         provg.add_edge(entity,activity, dict(type=wasGeneratedBy, name=k) )
@@ -114,7 +137,7 @@ def validateJSONRequest(jsonobj):
         #print "adding used edge " +str (k) + " having value =" + str(used[k])
         activity = used[k]['prov:activity']
         entity = used[k]['prov:entity']
-        if activities[activity]['prov:endTime'] < getField(entities, entity, 'creationTime'):
+        if get_date(activities[activity]['prov:endTime']) < get_date(getField(entities, entity, 'creationTime')):
             return  False, "used error for "+k+":creationTime of entity "+entity+\
                 " should be before endTime of activity "+activity
         provg.add_edge(activity,entity, dict(type=used, name=k) )
@@ -130,7 +153,8 @@ def validateJSONRequest(jsonobj):
         if getField(entities, entity_source, 'UUID') != getField(entities, entity_destination, 'UUID'):
             return  False, "wasDerivedFrom error for "+k+":UUID of entity "+entity_source+\
                " should be the same as UUID of entity "+entity_destination
-        if getField(entities, entity_source, 'creationTime') >= getField(entities, entity_destination, 'creationTime'):
+        if get_date(getField(entities, entity_source, 'creationTime')) >= \
+                get_date(getField(entities, entity_destination, 'creationTime')):
             return  False, "wasDerivedFrom error for "+k+":creationTime of entity "+entity_source+\
                " should be lower than creationTime of entity "+entity_destination
         #if getField(entities, entity_source, 'version') >= getField(entities, entity_destination, 'version'):
