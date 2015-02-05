@@ -7,6 +7,9 @@ from time import strptime
 import copy
 from dateutil import parser
 from pytz import utc
+import calendar
+#from datetime import datetime, timedelta
+import datetime #, timedelta
 
 #"2014-11-01T00:06:00" ,  "2015-02-02T12:39:51-08:00"
 #DATETIME_FORMATS = ['%Y-%m-%dT%H:%M:%S' , '%Y-%m-%dT%H:%M:%S%:z' ]
@@ -31,13 +34,11 @@ def is_valid_date(input_date_time):
         return True
     return True
 
-import calendar
-from datetime import datetime, timedelta
 
 # returns a "date" format from a string containing a date in one of acceptable date-time formats
 def get_date(input_date_time):
     result = None
-
+    print input_date_time
     try:
         result = parser.parse(input_date_time)
     except:
@@ -137,7 +138,7 @@ def validateJSONRequest(jsonobj):
         #print "adding used edge " +str (k) + " having value =" + str(used[k])
         activity = used[k]['prov:activity']
         entity = used[k]['prov:entity']
-        if get_date(activities[activity]['prov:endTime']) < get_date(getField(entities, entity, 'creationTime')):
+        if get_date(getField(activities,activity,'endTime')) < get_date(getField(entities, entity, 'creationTime')['$']):
             return  False, "used error for "+k+":creationTime of entity "+entity+\
                 " should be before endTime of activity "+activity
         provg.add_edge(activity,entity, dict(type=used, name=k) )

@@ -98,12 +98,17 @@ class User(users_db.Model):
 def verify_password(username_or_token, password):
     # first try to authenticate by token
     user = User.verify_auth_token(username_or_token)
+    print "HEre1"
     if not user:
         # try to authenticate with username/password
+        print "here2"
         user = User.query.filter_by(username=username_or_token).first()
+        print "here3"
         if not user or not user.verify_password(password):
+            print "here4"
             return False
     g.user = user
+    print "here5"
     return True
 
 
@@ -141,7 +146,9 @@ def get_auth_token():
 @app.route('/api/resource')
 @auth.login_required
 def get_resource():
+    print "Here we reached"
     return jsonify({'data': 'Hello, %s!' % g.user.username})
+    #return jsonify({'data': 'Hello, "Tanu"'})  #%s!' % g.user.username})
 
 @app.route('/api/provenance/', methods=['POST'])
 @auth.login_required
@@ -157,6 +164,7 @@ def create_resource_prov():
 	return Response(dumps(data), mimetype='application/json',status=400)
     #valid JSON, then rename JSON ids
     namespace,obj = jsonid_rename(obj) 
+    print "namespace" + namespace
     # all ready to insert into database
 
     # the RequestID of this POST
@@ -200,7 +208,7 @@ def create_resource_prov():
 
 
 @app.route('/api/<string:namespace>/provenance/<string:uuid>', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 def get_resource_provenance(namespace,uuid):
  
   #obj = db.getSubgraph(uuid)
