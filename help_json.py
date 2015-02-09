@@ -65,10 +65,10 @@ def neo2json(aneo):
                     if "Activity" in n.get_labels():
                         if "activity" not in res:
                             res["activity"]={}
-                        res["activity"][n["_id"]]={n["__namespace"]+"type":{"$":  n[n["__namespace"]+":type"], "type": "xsd:string"},\
+                        res["activity"][n["_id"]]={n["__namespace"]+":type":{"$":  n[n["__namespace"]+":type"], "type": "xsd:string"},\
                                                   n["__namespace"]+":startTime":n[n["__namespace"]+":startTime"],\
                                                   n["__namespace"]+":endTime":n[n["__namespace"]+":endTime"], \
-                          n["__namespace"]+":how":n[n["__namespace"]+":how"]}
+                          n["__namespace"]+":how":n[n["__namespace"]+"label:how"]}
                     elif "Entity" in n.get_labels():
                         if "entity" not in res:
                             res["entity"]={}
@@ -76,7 +76,8 @@ def neo2json(aneo):
                                                       n["__namespace"]+":UUID":n[n["__namespace"]+":UUID"], \
                               n["__namespace"]+":creationTime":n[n["__namespace"]+":creationTime"],\
                                                       n["__namespace"]+":batchId":n[n["__namespace"]+":batchId"], \
-                              n["__namespace"]+":label":"\"" + n[n["__namespace"]+":label"] + "\""}
+                              n["__namespace"]+":label": n[n["__namespace"]+":label"], \
+			      n["__namespace"]+":version": n[n["__namespace"]+":version"] }
                     elif "Agent" in n.get_labels():#if node[size]["prov:type"] is not None:#and not node[size].has_key("prov:startTime") and not node[size].has_key("foundry:UUID"):
                         if "agent" not in res:
                             res["agent"] ={}

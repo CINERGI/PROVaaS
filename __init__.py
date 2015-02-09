@@ -224,8 +224,11 @@ def delete_resource_provenance(namespace,uuid):
   namespace1 = namespace
   uuid1 = uuid
   obj = db.deleteNodeByUuid(namespace1,uuid1)
-  obj_json = neo2json(obj)
-  return Response(obj_json,mimetype='application/json',status=200)
+  if (obj == True):
+    data = {"Deleted:": obj}
+  else:  
+    data = {"Deleted:": obj, "Reason": "namespace or uuid does not exist"}
+  return Response(dumps(data),mimetype='application/json',status=200)
 
 @app.route('/api/<string:namespace>/provenance/request/<string:rid>', methods=['DELETE'])
 @auth.login_required

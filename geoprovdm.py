@@ -249,23 +249,36 @@ class GeoProvDM:
     return result  
 
   def deleteNodeByUuid(self, namespace,uuid):
-      query = neo4j.CypherQuery(self._neo_graph, \
-	"MATCH (n {`{namespace}:UUID` : {uuid}}) RETURN n")
-      node = query.execute_one(namespace=namespace,uuid = uuid)
-      requestId = node["provdb:requestId"]
-      self.deleteNodeByRequestid(namespace,requestId)
-      return result
+      # TM: No clue why the statements below will not work.
+      #query = neo4j.CypherQuery(self._neo_graph, \
+      #	"MATCH (n {`{namespace1}:UUID` : \"{uuid1}\"}) RETURN n;")
+      #node = query.execute_one(namespace1=namespace.strip(),uuid1 = uuid.strip())
+    str = "MATCH (n {`"+namespace+":UUID` : \""+uuid+"\"}) RETURN n;"
+    query = neo4j.CypherQuery(self._neo_graph, str)
+    #node = query.execute_one() 
+    results = query.execute() 
+    if (results is not None):
+      for r in results:
+         print r
+         node = r[0] 
+         props = node.get_properties()
+         print props
+         requestId = node["provdb:RequestId"]
+         self.deleteNodeByRequestid(namespace,requestId)
+      return True
+    else:
+      return False
  
 
   def deleteNodeByRequestid(self, namespace,rid):
-      query = neo4j.CypherQuery(self._neo_graph, \
+    query = neo4j.CypherQuery(self._neo_graph, \
 	"MATCH (n {`provdb:RequestId` : {rid}}) OPTIONAL MATCH (n)-[r]-() DELETE r;")
-      result = query.execute(rid = rid)
+    result = query.execute(rid = rid)
 	
-      query = neo4j.CypherQuery(self._neo_graph, \
+    query = neo4j.CypherQuery(self._neo_graph, \
 	"MATCH (n {`provdb:RequestId` : {rid}}) DELETE n;")
-      result = query.execute(rid = rid)
-      return result
+    result = query.execute(rid = rid)
+    return result
  
 #Retrieve PROV-DM compliant provenance  of a resource with a given 'uuid', and which has activity 'activityname' in its path
   def getNodeByUuidWithActivity(self, nodeUuid, activityname):

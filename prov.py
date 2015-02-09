@@ -154,8 +154,8 @@ def validateJSONRequest(jsonobj):
         if getField(entities, entity_source, 'UUID') != getField(entities, entity_destination, 'UUID'):
             return  False, "wasDerivedFrom error for "+k+":UUID of entity "+entity_source+\
                " should be the same as UUID of entity "+entity_destination
-        if get_date(getField(entities, entity_source, 'creationTime')) >= \
-                get_date(getField(entities, entity_destination, 'creationTime')):
+        if get_date(getField(entities, entity_source, 'creationTime')['$']) >= \
+                get_date(getField(entities, entity_destination, 'creationTime')['$']):
             return  False, "wasDerivedFrom error for "+k+":creationTime of entity "+entity_source+\
                " should be lower than creationTime of entity "+entity_destination
         #if getField(entities, entity_source, 'version') >= getField(entities, entity_destination, 'version'):
@@ -252,7 +252,7 @@ def jsonid_rename(jsonobj):
         entity_destination =wasDerivedFrom[k]['prov:generatedEntity']
 
         big_string = str(namespace) + str("wasDerivedFrom") + str(jsonobj['wasDerivedFrom'][k]['prov:generatedEntity']) + \
-                   str(jsonobj['wasDerivedFrom'][k]['prov:usedentity'])
+                   str(jsonobj['wasDerivedFrom'][k]['prov:usedEntity'])
 
         name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
         #add field to identify subgraph
