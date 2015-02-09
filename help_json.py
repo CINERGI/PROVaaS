@@ -75,7 +75,7 @@ def neo2json(aneo):
                         res["entity"][n["_id"]]={n["__namespace"]+":sourceId":{"$": n[n["__namespace"]+":sourceId"], "type": "xsd:string"},\
                                                       n["__namespace"]+":UUID":n[n["__namespace"]+":UUID"], \
                               n["__namespace"]+":creationTime":n[n["__namespace"]+":creationTime"],\
-                                                      n["__namespace"]+":batchId":n[n["__namespace"]+":batchId"], \
+                                                     # n["__namespace"]+":batchId":n[n["__namespace"]+":batchId"], \
                               n["__namespace"]+":label": n[n["__namespace"]+":label"], \
 			      n["__namespace"]+":version": n[n["__namespace"]+":version"] }
                     elif "Agent" in n.get_labels():#if node[size]["prov:type"] is not None:#and not node[size].has_key("prov:startTime") and not node[size].has_key("foundry:UUID"):
