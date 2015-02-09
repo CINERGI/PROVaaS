@@ -68,7 +68,7 @@ def neo2json(aneo):
                         res["activity"][n["_id"]]={n["__namespace"]+":type":{"$":  n[n["__namespace"]+":type"], "type": "xsd:string"},\
                                                   n["__namespace"]+":startTime":n[n["__namespace"]+":startTime"],\
                                                   n["__namespace"]+":endTime":n[n["__namespace"]+":endTime"], \
-                          n["__namespace"]+":how":n[n["__namespace"]+"label:how"]}
+                          n["__namespace"]+":how":n[n["__namespace"]+":how"]}
                     elif "Entity" in n.get_labels():
                         if "entity" not in res:
                             res["entity"]={}
