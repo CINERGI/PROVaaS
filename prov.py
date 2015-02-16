@@ -154,7 +154,7 @@ def validateJSONRequest(jsonobj):
         if getField(entities, entity_source, 'UUID') != getField(entities, entity_destination, 'UUID'):
             return  False, "wasDerivedFrom error for "+k+":UUID of entity "+entity_source+\
                " should be the same as UUID of entity "+entity_destination
-        if get_date(getField(entities, entity_source, 'creationTime')['$']) >= \
+        if get_date(getField(entities, entity_source, 'creationTime')['$']) > \
                 get_date(getField(entities, entity_destination, 'creationTime')['$']):
             return  False, "wasDerivedFrom error for "+k+":creationTime of entity "+entity_source+\
                " should be lower than creationTime of entity "+entity_destination
