@@ -69,20 +69,30 @@ def validateJSONRequest(jsonobj):
         return False, "There are no entities"
 
     activities = jsonobj.get('activity') or []
+    unique_entities_dict = {}  # (key:value) (uuid_creationTime:entity_name)
 
     for k in entities:
         # "foundry:en9"
         namespace , entity_name = k.split(':')
         #print "adding entity " +str (k) + " having value ="
         #pprint(entities[k])
-        if entities[k].get(namespace+':UUID') is None:
+        entity_uuid = entities[k].get(namespace+':UUID')
+        entity_creationTime = entities[k].get(namespace+':creationTime')
+        entity_version = entities[k].get(namespace+':version')
+        if entity_uuid is None:
             return False, "There is no UUID in entity "+k
-        if entities[k].get(namespace+':creationTime') is None:
+        if entity_creationTime is None:
             return False, "There is no creationTime in entity "+k
-        if entities[k].get(namespace+':version') is None:
+        if entity_version is None:
             return False, "There is no version in entity "+k
-        if not is_valid_date(entities[k][namespace+':creationTime']['$']):
+        if not is_valid_date(entity_creationTime['$']):
             return False, "Invalid creationTime format in entity "+k
+        entities_uniqueness_key = entity_uuid['$']+entity_creationTime['$'] # maybe add version
+        existing_entity = unique_entities_dict.get(entities_uniqueness_key,None)
+        if existing_entity is not None:
+            return False, "Entities "+existing_entity+" and "+ k + " have the same UUID and creationTime"
+        else:
+            unique_entities_dict[entities_uniqueness_key] = k
 
         entities[k]['__namespace'] = namespace
         #print entities[k][namespace+':creationTime']['$']
