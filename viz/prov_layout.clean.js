@@ -117,7 +117,7 @@ d3.json(source,function(d) {
   	// loop over each different defined edge type
       for (var e_type in edge_defs) {
   		var t_edges = d[e_type];
-  		console.log(e_type);
+//  		console.log(e_type);
   		if (t_edges) {
 			for (var e in t_edges) {
 				var edge = t_edges[e];
@@ -125,23 +125,31 @@ d3.json(source,function(d) {
 				var source = edge[edge_defs[e_type]["source"]];
 				var target = edge[edge_defs[e_type]["target"]];
 				// should check here to make sure they exist.
-				console.log(edge, "source", source, "target",target);
+//				console.log(edge, "source", source, "target",target);
 
 				// check if these are aliased id's
 				// should note in the log.
+				if (source == undefined  || node_aliases[source] == undefined) {
+					console.log("FAILURE: UNRECOGNIZED SOURCE", source, "IN EDGE", edge);
+					return 1;
+				}
 				source = node_aliases[source];
+				if (target == undefined || node_aliases[target] == undefined) {
+					console.log("FAILURE: UNRECOGNIZED TARGET", target, "IN", e_type, "EDGE", edge);
+					return 1;
+				}
 				target = node_aliases[target];
+				if (target == undefined) {
+
+				}
 				// loop over the nodes to resolve the id's to node objects
-				var s = -1;
-				var t = -1;
-				var source_node, target_node;
+				var source_node = undefined;
+				var target_node = undefined;
 				for (var i = 0; i < nodes.length; i++) {
 					if (nodes[i].id == source) { 
-						s = i; 
 						source_node = nodes[i];
 					}
 					else if (nodes[i].id == target) { 
-						t = i; 
 						target_node = nodes[i]
 					}
 				}
@@ -153,7 +161,7 @@ d3.json(source,function(d) {
 					console.log("FAILURE; COULD NOT RESOLVE TARGET", target);
 					return 1;
 				}
-				links.push( {source:source_node, target: target_node, type:e} );
+				links.push( {source:source_node, target: target_node, type:e_type} );
 				source_node.outgoing.push(target_node);
 				target_node.incoming.push(source_node);								
 			}
@@ -162,52 +170,35 @@ d3.json(source,function(d) {
   	  return 0;
     }
 
-   	parse_edges(d);
+    // should check results and halt if error
+   	if (parse_edges(d) > 0) return;
 
 	console.log("links", links);
-	var outgoing_edges = {};
-	var incoming_edges = {};
 
+	var root = undefined;
+	var leaf = undefined;
 	for (var ni in nodes) {
-		var n = nodes[ni].id;
-		outgoing_edges[n] = 0;
-		incoming_edges[n] = 0;
-	}
+		console.log(nodes[ni].id, "in:",nodes[ni].incoming.length, "out:",nodes[ni].outgoing.length );		
+		if (nodes[ni].outgoing.length == 0) {
+				console.log("ROOT FOUND", nodes[ni])
+			if (root == undefined) {
+				root = nodes[ni];
+			} else {
+				console.log("FAILURE: MULTIPLE ROOTS DETECTED");
+				return 2;
+			}
+		}
+		if (nodes[ni].incoming.length == 0) {
+			leaf = nodes[ni];
 
-	for (var li in links) {
-		var l = links[li];
-		console.log(l);
-		var s = l.source.id;		
-		outgoing_edges[s] += 1;
-		var t = l.target.id;
-		incoming_edges[t] += 1;
-	}
-
-	console.log("out",outgoing_edges, "in", incoming_edges);
-
-	var root;
-	for (var ni in incoming_edges) {
-		console.log(ni);
-		if (incoming_edges[ni] == 0) {
-			root = d.entity[ni];
-			console.log("ROOT", root);
-			root.fixed = true;
-			root.y = height / 2.0;
-			root.x = 100;
 		}
 	}
-
-	var leaf;
-	for (var ni in outgoing_edges) {
-	  if (outgoing_edges[ni] == 0) {
-	  	leaf = d.entity[ni];
-			console.log("LEAF", leaf);	 
-			leaf.fixed = true; 	
-			leaf.y = height / 2.0;
-			leaf.x = width - 100;
-	  }		
+	if (root == undefined) {
+		console.log("FAILURE: NO ROOT FOUND");
+		return 2;
 	}
 
+	console.log("ROOT", root);
 
   function annotate_tree(node,depth) {
   	if (node.depth != undefined) {
@@ -253,7 +244,7 @@ d3.json(source,function(d) {
   	}
   }
 
-	var max_depth = annotate_tree(leaf,-1);
+	var max_depth = annotate_tree(root,-1);
 	console.log("MAX_DEPTH", max_depth);
 	layout_nodes(nodes,max_depth,width,0.5*width);
 	links.sort(function(a,b) {
@@ -304,6 +295,7 @@ d3.json(source,function(d) {
 	gradient.append("stop").attr("offset","100%").attr("color","#FFF");
 
 	function detail_display_link(d) {
+		console.log("LINK",d);
 		d3.select("#detail-header").text(d.type);
 		var table = d3.select("#detail");
 		table.selectAll("*").remove();		
@@ -346,7 +338,7 @@ d3.json(source,function(d) {
 	var link_updates = svg.selectAll(".link").data(links)
 		.enter().append("path").attr("class","link")
 		.attr("stroke-dasharray",function(d) {
-			if (d.type=="derivedFrom") return "5,5";
+			if (d.type=="wasDerivedFrom") return "5,5";
 			return "";
 		}).attr("marker-end", 'url(#end-arrow)')
 		.on("mouseover", detail_display_link);
