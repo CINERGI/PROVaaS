@@ -200,81 +200,82 @@ d3.json(source,function(d) {
 
 	console.log("ROOT", root);
 
-  function annotate_tree(node,depth) {
-  	if (node.depth != undefined) {
-  		return node.depth;
-  	} else {
-  		if (node.type == "entity") {
-  			node.depth = Math.floor(depth + 1.0);
-  		} else {
-  			node.depth = depth + 0.5;
-  		}
-  	}
-  	console.log("WALKING", node, node.depth);
-  	var max = node.depth;
-  	for (var ni in node.incoming) {
-  		var n = node.incoming[ni];
-  		var r = annotate_tree(n, node.depth);
-  		max = (r > max) ? r : max;
-  	}
-  	return max;
-  }
+	function annotate_tree(node,depth) {
+		if (node.depth != undefined) {
+			return node.depth;
+		} else {
+			if (node.type == "entity") {
+				node.depth = Math.floor(depth + 1.0);
+			} else {
+				node.depth = depth + 0.5;
+			}
+		}
+		console.log("WALKING", node, node.depth);
+		var max = node.depth;
+		for (var ni in node.incoming) {
+			var n = node.incoming[ni];
+			var r = annotate_tree(n, node.depth);
+			max = (r > max) ? r : max;
+		}
+		return max;
+	}
 
-  function layout_nodes(nodes, max_depth, width, height) {
-  	var padding = width * 0.18;
-  	var center = height / 2.0;
-  	var space = width - padding * 2;
-  	var spacing = space / max_depth;
+	function layout_nodes(nodes, max_depth, width, height) {
+		var padding = width * 0.18;
+		var center = height / 2.0;
+		var space = width - padding * 2;
+		var spacing = space / max_depth;
 	var max_height = height * 0.8;
 	if (spacing > max_height) {
 	  spacing = max_height;
 	}
-  	var offset = spacing * Math.sqrt(3.0) / 2.0;
-  	console.log(padding, center, space,spacing, offset);
+		var offset = spacing * Math.sqrt(3.0) / 2.0;
+		console.log(padding, center, space,spacing, offset);
 
-  	for (var ni in nodes) {
-  		var n = nodes[ni];
-  		n.x = padding + (max_depth - n.depth) * spacing;
-  		if (n.type == "entity") {
+		for (var ni in nodes) {
+			var n = nodes[ni];
+			n.x = padding + (max_depth - n.depth) * spacing;
+			if (n.type == "entity") {
 	  		n.y = center - (offset / 2.0);
-  		} else {
-  			n.y = center + (offset / 2.0);
-  		}
-  		n.fixed = true;
-  	}
-  }
+			} else {
+				n.y = center + (offset / 2.0);
+			}
+			n.fixed = true;
+		}
+	}
 
 	var max_depth = annotate_tree(root,-1);
 	console.log("MAX_DEPTH", max_depth);
 	layout_nodes(nodes,max_depth,width,0.5*width);
-	links.sort(function(a,b) {
-		if (a.source.depth < b.source.depth) return 1;
-		if (a.source.depth > b.source.depth) return -1;
-		return 0;
-	});
+
+	// links.sort(function(a,b) {
+	// 	if (a.source.depth < b.source.depth) return 1;
+	// 	if (a.source.depth > b.source.depth) return -1;
+	// 	return 0;
+	// });
 	
-	var desc = "";
-	var prev_entity = "";
-	var prev_activity = "";
-	for (var li = 0; li < links.length; li++) {
-		var l = links[li];
-		if (l.type == "used") {
-			console.log("used");
-			prev_entity = l.source;
-		} else if (l.type == "generatedBy") {
-			var activity = l.source;
-			var this_entity = l.target;
-			if (activity.type == "ingestion") {
-				desc += prev_entity["foundry:label"] + " was ingested from " + prev_entity["foundry:sourceId"]["$"] + " into " + this_entity["foundry:label"] + ".  ";
-			} else if (prev_entity["foundry:UUID"] == this_entity["foundry:UUID"]) {
-				desc += prev_entity["foundry:label"] + " was revised by activity " + activity.type + ".  ";
-			} else {
-				desc += prev_entity["foundry:label"] + " was transformed by activity " + activity.type + " into " + this_entity["foundry:label"] + ".  ";
-			}
-		}
-	}
-	console.log("desc", desc)
-	d3.select("#desc-body").text(desc);
+	// var desc = "";
+	// var prev_entity = "";
+	// var prev_activity = "";
+	// for (var li = 0; li < links.length; li++) {
+	// 	var l = links[li];
+	// 	if (l.type == "used") {
+	// 		console.log("used");
+	// 		prev_entity = l.source;
+	// 	} else if (l.type == "generatedBy") {
+	// 		var activity = l.source;
+	// 		var this_entity = l.target;
+	// 		if (activity.type == "ingestion") {
+	// 			desc += prev_entity["foundry:label"] + " was ingested from " + prev_entity["foundry:sourceId"]["$"] + " into " + this_entity["foundry:label"] + ".  ";
+	// 		} else if (prev_entity["foundry:UUID"] == this_entity["foundry:UUID"]) {
+	// 			desc += prev_entity["foundry:label"] + " was revised by activity " + activity.type + ".  ";
+	// 		} else {
+	// 			desc += prev_entity["foundry:label"] + " was transformed by activity " + activity.type + " into " + this_entity["foundry:label"] + ".  ";
+	// 		}
+	// 	}
+	// }
+	// console.log("desc", desc)
+	// d3.select("#desc-body").text(desc);
 	
 	force.nodes(nodes).links(links).start();
 	
@@ -291,11 +292,10 @@ d3.json(source,function(d) {
 		
 	var gradient = svg.select("defs").append("radialGradient")
 		.attr("id","selected-gradient")
-	gradient.append("stop").attr("offset","75%").attr("color","#00F");
-	gradient.append("stop").attr("offset","100%").attr("color","#FFF");
+	gradient.append("stop").attr("offset","65%").attr("stop-color","#F00");
+	gradient.append("stop").attr("offset","100%").attr("stop-color","#FFF");
 
 	function detail_display_link(d) {
-		console.log("LINK",d);
 		d3.select("#detail-header").text(d.type);
 		var table = d3.select("#detail");
 		table.selectAll("*").remove();		
@@ -306,29 +306,31 @@ d3.json(source,function(d) {
 		d3.select("#detail-header").text(d.label);
 		var table = d3.select("#detail");
 		table.selectAll("*").remove();
-		var attribs = ["foundry:UUID","foundry:creationTime","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version"]
+		var attribs = ["foundry:UUID","foundry:creationTime","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version"];
 		for (var a in attribs) {
 			var attrib = attribs[a];
 			var key = attrib.split(":")[1];
 			if (d[attrib] != undefined) {
 				var row = table.append("tr");
 				row.append("td").text(key);
-				row.append("td").text(d[attrib]);			
+				row.append("td").text(d[attrib]);
 			}
 		}
 		svg.selectAll("#selection").remove();
-		svg.insert("circle",":first-child").attr("r",18).style("fill","red").attr("cx",d.x).attr("cy",d.y).attr("id","selection");
+		svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",d.x).attr("cy",d.y).attr("id","selection");
 	}
 	
 	var node_updates = svg.selectAll(".node").data(nodes);
 	var node_enter = node_updates.enter().append("g").attr("class","node").attr("transform", function(d){return "translate("+d.x+","+d.y+")";});
-	var circles = node_enter.append("circle").attr("r", 15)
+
+	var circles = node_enter.filter(function(d,i) {return d.type == "activity"}).append("circle").attr("r", 15)
 		.style("fill", function(d) { return colors(d.group); })
 		.on("mouseover", detail_display);
-//		.on("mouseover", function(d) {
-//			console.log(d.type,d.id,d);
-//			d3.select("#detail").text(d.id + " : " + d.raw);
-//		});
+	var squares = node_enter.filter(function(d,i) {return d.type=="entity"}).append("rect").attr("width",26).attr("height",26)
+		.attr("transform","translate(-13,-13)")
+		.style("fill", function(d) { return colors(d.group); })
+		.on("mouseover", detail_display);
+
 	var labels = node_enter.append("text").text(function (d) { return d.label;})
 	.attr("dy",function(d) {
 		if (d.type == "entity") return -19;
@@ -361,13 +363,14 @@ d3.json(source,function(d) {
 			targetX = d.target.x - (targetPadding * normX),
 			targetY = d.target.y - (targetPadding * normY);
 		return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
-	  });
+	});
 	
 	node_updates.attr("transform", function(d){return "translate("+d.x+","+d.y+")";});
 //    node_updates.attr("cx", function(d) { return d.x; })
 //        .attr("cy", function(d) { return d.y; });
 //  detail_display(entities[entities.length - 1]);
   });
+
   console.log("selecting last entity", nodes[nodes.length - 1]);
   detail_display(nodes[nodes.length - 1]);
 
