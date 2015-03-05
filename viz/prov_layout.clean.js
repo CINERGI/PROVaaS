@@ -1,13 +1,21 @@
-console.log("hello world");
-
 var nodes = [];
 var node_pos = {};
 var links = [];
 
+var edge_defs = {
+	"used":{"source":"prov:entity",
+			"target":"prov:activity",},
+	"wasGeneratedBy":{"source":"prov:activity",
+					  "target":"prov:entity",},
+	"wasDerivedFrom":{"source":"prov:usedEntity",
+					  "target":"prov:generatedEntity",},
+	"wasInformedBy":{"source":"prov:informant",
+					 "target":"prov:informed",},
+};
+
 var width = 400,
     height = 200,
     colors = d3.scale.category10();
-
 
 var svg = d3.select("div#graph")
 	.append("svg")
@@ -36,22 +44,24 @@ source = source || "document.json";
 d3.json(source,function(d) {
 	console.log("data loaded:",d);	
 
+	var node_aliases = {};
+	// First parse the activities 
 	var group_count = 0;
 	var uuid_groups = {};
-
 	var activities = [];
 	for (var a in d.activity) {
 		d.activity[a]["raw"] = JSON.stringify(d.activity[a],null," ");
-		d.activity[a]["id"] = a;		
-		d.activity[a]["type"] = d.activity[a]["prov:type"]["$"];
+		d.activity[a]["id"] = a;
+		d.activity[a]["type"] = "activity";
 		var t = Date.parse(d.activity[a]["prov:startTime"]);
 		d.activity[a]["timecode"] = t;
 		d.activity[a]["group"] = group_count;
 		d.activity[a]["incoming"] = [];
 		d.activity[a]["outgoing"] = [];		
-		d.activity[a]["label"] = d.activity[a]["type"];
+		d.activity[a]["label"] = d.activity[a]["prov:type"]["$"];
 
 		group_count = (group_count + 1) % 10;
+		node_aliases[a] = a;
 		activities.push(d.activity[a]);
 	}
 	activities.sort(function(a,b){
@@ -61,9 +71,10 @@ d3.json(source,function(d) {
 	})
 	console.log("activities:", activities);
 
+	// Then the entities
 	var entities = [];
 	var seen_entities = {};
-	var entity_aliases = {};
+
 	for (var e in d.entity) {
 
 		d.entity[e]["raw"] = JSON.stringify(d.entity[e],null," ");
@@ -87,93 +98,72 @@ d3.json(source,function(d) {
 		var label = label_comp[label_comp.length - 1];
 		d.entity[e]["label"] = label.substring(0,label.length - 1);
 		
-		
-
+		// check if we've seen this entity before, 
 		if (seen_entities[uniqueid] == undefined) {
+			// if not, add it and log it's id
 			entities.push(d.entity[e]);
 			seen_entities[uniqueid] = e;
-			entity_aliases[e] = e;
+			node_aliases[e] = e;
 		} else {
-			entity_aliases[e] = seen_entities[uniqueid];
-		}
-
-	}
-	console.log("entities:");
-	console.log(entities);
-	console.log("seen_entities", seen_entities, "aliases", entity_aliases);
-	nodes =  activities.concat(entities);
-	console.log("nodes:", nodes)
-
-	console.log("used edges:");
-	for (var u in d.used) {
-		console.log(d.used[u]);
-		var s = -1;
-		var t = -1;
-		var e = d.used[u]["prov:entity"];		
-		e = entity_aliases[e];
-		var a = d.used[u]["prov:activity"];
-		for( var i = 0; i < nodes.length; i++) {
-			if (nodes[i].id == e) s = i; 
-			if (nodes[i].id == a) t = i;
-		}
-		if ( s < 0 || t < 0 ) {
-			console.log("NOT RESOLVED");
-		} else {
-			console.log("RESOLVED:",s,t);
-			links.push( {source: nodes[s], target: nodes[t], type:"used" } );
-			nodes[t].incoming.push(nodes[s]);
-			nodes[s].outgoing.push(nodes[t]);
-		}
-	}
-
-	console.log("generatedBy edges");
-	for (var g in d.wasGeneratedBy) {
-		console.log(d.wasGeneratedBy[g]);
-		var s = -1;
-		var t = -1;
-		var e = d.wasGeneratedBy[g]["prov:entity"];
-		e = entity_aliases[e];
-
-		var a = d.wasGeneratedBy[g]["prov:activity"];
-		for( var i = 0; i < nodes.length; i++) {
-			if (nodes[i].id == e) t = i; 
-			if (nodes[i].id == a) s = i;
-		}
-		if ( s < 0 || t < 0 ) {
-			console.log("NOT RESOLVED");
-		} else {
-			console.log("RESOLVED:",s,t);
-			links.push( {source: nodes[s], target: nodes[t], type:"generatedBy"} );
-			nodes[t].incoming.push(nodes[s]);
-			nodes[s].outgoing.push(nodes[t]);
+			//otherwise, just log this entity as an alias
+			node_aliases[e] = seen_entities[uniqueid];
 		}
 	}
 	
-	console.log("derivedFrom edges");
-	for (var der in d.wasDerivedFrom) {
-		console.log(d.wasDerivedFrom[der]);
-		var s = -1;
-		var t = -1;
-		var u = d.wasDerivedFrom[der]["prov:usedEntity"];
-		u = entity_aliases[u];
+	nodes =  activities.concat(entities);
+	console.log("nodes:", nodes)
 
-		var g = d.wasDerivedFrom[der]["prov:generatedEntity"];
-		g = entity_aliases[g];
-		for( var i = 0; i < nodes.length; i++) {
-			if (nodes[i].id == u) s = i; 
-			if (nodes[i].id == g) t = i;
-		}
-		if ( s < 0 || t < 0 ) {
-			console.log("NOT RESOLVED");
-		} else {
-			console.log("RESOLVED:",s,t);
-			links.push( {source: nodes[s], target: nodes[t], type:"derivedFrom"} );
-			nodes[t].incoming.push(nodes[s]);
-			nodes[s].outgoing.push(nodes[t]);
+    function parse_edges(data) {
+  	// loop over each different defined edge type
+      for (var e_type in edge_defs) {
+  		var t_edges = d[e_type];
+  		console.log(e_type);
+  		if (t_edges) {
+			for (var e in t_edges) {
+				var edge = t_edges[e];
+				// get the source and target node id's
+				var source = edge[edge_defs[e_type]["source"]];
+				var target = edge[edge_defs[e_type]["target"]];
+				// should check here to make sure they exist.
+				console.log(edge, "source", source, "target",target);
 
-		}
+				// check if these are aliased id's
+				// should note in the log.
+				source = node_aliases[source];
+				target = node_aliases[target];
+				// loop over the nodes to resolve the id's to node objects
+				var s = -1;
+				var t = -1;
+				var source_node, target_node;
+				for (var i = 0; i < nodes.length; i++) {
+					if (nodes[i].id == source) { 
+						s = i; 
+						source_node = nodes[i];
+					}
+					else if (nodes[i].id == target) { 
+						t = i; 
+						target_node = nodes[i]
+					}
+				}
+				if (source_node == undefined) {
+					console.log("FAILURE; COULD NOT RESOLVE SOURCE", source);
+					return 1;
+				}
+				if (target_node == undefined) {
+					console.log("FAILURE; COULD NOT RESOLVE TARGET", target);
+					return 1;
+				}
+				links.push( {source:source_node, target: target_node, type:e} );
+				source_node.outgoing.push(target_node);
+				target_node.incoming.push(source_node);								
+			}
+  		}
+  	  }
+  	  return 0;
+    }
 
-	}
+   	parse_edges(d);
+
 	console.log("links", links);
 	var outgoing_edges = {};
 	var incoming_edges = {};
@@ -217,6 +207,7 @@ d3.json(source,function(d) {
 			leaf.x = width - 100;
 	  }		
 	}
+
 
   function annotate_tree(node,depth) {
   	if (node.depth != undefined) {
