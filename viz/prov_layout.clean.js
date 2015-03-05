@@ -4,13 +4,13 @@ var links = [];
 
 var edge_defs = {
 	"used":{"source":"prov:entity",
-			"target":"prov:activity",},
+			"target":"prov:activity"},
 	"wasGeneratedBy":{"source":"prov:activity",
-					  "target":"prov:entity",},
+					  "target":"prov:entity"},
 	"wasDerivedFrom":{"source":"prov:usedEntity",
-					  "target":"prov:generatedEntity",},
+					  "target":"prov:generatedEntity"},
 	"wasInformedBy":{"source":"prov:informant",
-					 "target":"prov:informed",},
+					 "target":"prov:informed"}
 };
 
 var width = 400,
@@ -139,9 +139,6 @@ d3.json(source,function(d) {
 					return 1;
 				}
 				target = node_aliases[target];
-				if (target == undefined) {
-
-				}
 				// loop over the nodes to resolve the id's to node objects
 				var source_node = undefined;
 				var target_node = undefined;
