@@ -1,89 +1,334 @@
 {
-  "entity": {
-    "7bed1548-824e-11e4-a30f-002590a563e0": {
-      "foundry:batchId": null,
-      "foundry:sourceId": {
-        "type": "xsd:string",
-        "$": "NOAA"
-      },
-      "foundry:UUID": "5fc7af98-52a6-4512-9930-b685c7f9ddb4",
-      "foundry:creationTime": "2014-12-12 14:30:32",
-      "foundry:label": "\"http://hydro10.sdsc.edu/NOAA_1\""
+  "activity":{
+    "prov:act0":{
+      "prov:endTime":"2015-03-09T10:22:21.209002",
+      "prov:startTime":"2015-03-09T10:22:20.205236",
+      "prov:type":{
+        "$":"act0",
+        "type":"xsd:string"
+      }
     },
-    "7fd13cd4-824e-11e4-b330-002590a563e0": {
-      "foundry:batchId": null,
-      "foundry:sourceId": {
-        "type": "xsd:string",
-        "$": "cinergi-0001-01"
-      },
-      "foundry:UUID": "51220a00e4b0b37542fda86e",
-      "foundry:creationTime": "2014-12-12 14:30:32",
-      "foundry:label": "\"http://hydro10.sdsc.edu/CINERGI_1\""
+    "prov:act1":{
+      "prov:endTime":"2015-03-09T10:22:22.301039",
+      "prov:startTime":"2015-03-09T10:22:22.296988",
+      "prov:type":{
+        "$":"act1",
+        "type":"xsd:string"
+      }
     },
-    "7bed1372-824e-11e4-a30f-002590a563e0": {
-      "foundry:batchId": null,
-      "foundry:sourceId": {
-        "type": "xsd:string",
-        "$": "cinergi-0001-01"
-      },
-      "foundry:UUID": "51220a00e4b0b37542fda86e",
-      "foundry:creationTime": "2014-12-12 14:30:32",
-      "foundry:label": "\"http://hydro10.sdsc.edu/CINERGI_0001-01\""
+    "prov:act2":{
+      "prov:endTime":"2015-03-09T10:22:28.049161",
+      "prov:startTime":"2015-03-09T10:22:23.004726",
+      "prov:type":{
+        "$":"act2",
+        "type":"xsd:string"
+      }
     },
-    "7fd13afe-824e-11e4-b330-002590a563e0": {
-      "foundry:batchId": null,
-      "foundry:sourceId": {
-        "type": "xsd:string",
-        "$": "cinergi-0001-02"
-      },
-      "foundry:UUID": "51220a00e4b0b37542fda86e",
-      "foundry:creationTime": "2014-12-12 14:30:36",
-      "foundry:label": "\"http://hydro10.sdsc.edu/CINERGI_0001-02\""
-    }
-  },
-  "wasDerivedFrom": {
-    "7fd1366c-824e-11e4-b330-002590a563e0": {
-      "prov:usedEntity": "7fd13cd4-824e-11e4-b330-002590a563e0",
-      "prov:generatedEntity": "7fd13afe-824e-11e4-b330-002590a563e0"
-    }
-  },
-  "used": {
-    "7bed1192-824e-11e4-a30f-002590a563e0": {
-      "prov:entity": "7bed1548-824e-11e4-a30f-002590a563e0",
-      "prov:activity": "7bed0ce2-824e-11e4-a30f-002590a563e0"
+    "prov:act3":{
+      "prov:endTime":"2015-03-09T10:22:27.219382",
+      "prov:startTime":"2015-03-09T10:22:25.983793",
+      "prov:type":{
+        "$":"act3",
+        "type":"xsd:string"
+      }
     },
-    "7fd13932-824e-11e4-b330-002590a563e0": {
-      "prov:entity": "7fd13cd4-824e-11e4-b330-002590a563e0",
-      "prov:activity": "7fd13edc-824e-11e4-b330-002590a563e0"
-    }
-  },
-  "activity": {
-    "7fd13edc-824e-11e4-b330-002590a563e0": {
-      "prov:startTime": "2014-12-12 14:30:38-08:00",
-      "prov:endTime": "2014-12-12 14:30:38-08:00",
-      "prov:type": {
-        "type": "xsd:string",
-        "$": "spatialEnhancer"
-      },
-      "foundry:how": "Modified spatial fields"
+    "prov:act4":{
+      "prov:endTime":"2015-03-10T10:22:19.301039",
+      "prov:startTime":"2015-03-10T10:22:19.296988",
+      "prov:type":{
+        "$":"act4",
+        "type":"xsd:string"
+      }
     },
-    "7bed0ce2-824e-11e4-a30f-002590a563e0": {
-      "prov:startTime": "2014-12-12 14:30:32-08:00",
-      "prov:endTime": "2014-12-12 14:30:32-08:00",
-      "prov:type": {
-        "type": "xsd:string",
-        "$": "ingestion"
+    "prov:act5":{
+      "prov:endTime":"2015-03-10T10:22:28.049161",
+      "prov:startTime":"2015-03-10T10:22:26.004726",
+      "prov:type":{
+        "$":"act5",
+        "type":"xsd:string"
+      }
+    },
+    "prov:act6":{
+      "prov:endTime":"2015-03-10T10:22:26.219382",
+      "prov:startTime":"2015-03-10T10:22:26.083793",
+      "prov:type":{
+        "$":"act6",
+        "type":"xsd:string"
+      }
+    },
+    "prov:act7":{
+      "prov:endTime":"2015-03-10T10:22:27.219382",
+      "prov:startTime":"2015-03-10T10:22:27.083793",
+      "prov:type":{
+        "$":"act7",
+        "type":"xsd:string"
+      }
+    },
+    "prov:act8":{
+      "prov:endTime":"2015-03-10T10:22:27.219382",
+      "prov:startTime":"2015-03-10T10:22:27.083793",
+      "prov:type":{
+        "$":"act8",
+        "type":"xsd:string"
       }
     }
   },
-  "wasGeneratedBy": {
-    "7bed0f94-824e-11e4-a30f-002590a563e0": {
-      "prov:entity": "7bed1372-824e-11e4-a30f-002590a563e0",
-      "prov:activity": "7bed0ce2-824e-11e4-a30f-002590a563e0"
+  "entity":{
+    "prov:en0":{
+      "prov:UUID":{
+        "$":"1425896536517040/home/quanpt/myapps/2001_info.txt",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-09T10:22:20.205237",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
     },
-    "7fd140b2-824e-11e4-b330-002590a563e0": {
-      "prov:entity": "7fd13afe-824e-11e4-b330-002590a563e0",
-      "prov:activity": "7fd13edc-824e-11e4-b330-002590a563e0"
+    "prov:en1":{
+      "prov:UUID":{
+        "$":"1425896536325378/home/quanpt/myapps/perm/2001_kw.txt",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-09T10:22:21.109002",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en2":{
+      "prov:UUID":{
+        "$":"1425896536622318/home/quanpt/myapps/Anna.txt",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-09T10:22:22.297318",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en3":{
+      "prov:UUID":{
+        "$":"1425896539691411/home/quanpt/myapps/Bob.txt",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-09T10:22:22.297411",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en4":{
+      "prov:UUID":{
+        "$":"1425896536483243/postgresql/authpub/t1",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-09T10:22:26.483243",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en5":{
+      "prov:UUID":{
+        "$":"1425896536421491/postgresql/authpub/t2",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-09T10:22:26.421491",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en6":{
+      "prov:UUID":{
+        "$":"1425896536622318/home/quanpt/myapps/Anna_kw.txt",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-10T10:22:19.297318",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en7":{
+      "prov:UUID":{
+        "$":"1425896539691411/home/quanpt/myapps/Bob_kw.txt",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-10T10:22:19.301011",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en8":{
+      "prov:UUID":{
+        "$":"1425896536483243/postgresql/authpub/t1",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-10T10:22:26.183243",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"2.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en9":{
+      "prov:UUID":{
+        "$":"1425896536421491/postgresql/authpub/t2",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-10T10:22:27.121491",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"2.0",
+        "type":"xsd:string"
+      }
+    },
+    "prov:en10":{
+      "prov:UUID":{
+        "$":"1425896539905677/postgresql/authpub/t3",
+        "type":"xsd:string"
+      },
+      "prov:creationTime":{
+        "$":"2015-03-10T10:22:27.105677",
+        "type":"xsd:string"
+      },
+      "prov:version":{
+        "$":"1.0",
+        "type":"xsd:string"
+      }
+    }
+  },
+  "wasGeneratedBy":{
+    "_:wGB1":{
+      "prov:entity":"prov:en0",
+      "prov:activity":"prov:act0"
+    },
+    "_:wGB2":{
+      "prov:entity":"prov:en1",
+      "prov:activity":"prov:act0"
+    },
+    "_:wGB3":{
+      "prov:entity":"prov:en2",
+      "prov:activity":"prov:act1"
+    },
+    "_:wGB4":{
+      "prov:entity":"prov:en3",
+      "prov:activity":"prov:act1"
+    },
+    "_:wGB5":{
+      "prov:entity":"prov:en4",
+      "prov:activity":"prov:act3"
+    },
+    "_:wGB6":{
+      "prov:entity":"prov:en5",
+      "prov:activity":"prov:act3"
+    },
+    "_:wGB7":{
+      "prov:entity":"prov:en6",
+      "prov:activity":"prov:act4"
+    },
+    "_:wGB8":{
+      "prov:entity":"prov:en7",
+      "prov:activity":"prov:act4"
+    },
+    "_:wGB9":{
+      "prov:entity":"prov:en8",
+      "prov:activity":"prov:act6"
+    },
+    "_:wGB10":{
+      "prov:entity":"prov:en9",
+      "prov:activity":"prov:act7"
+    },
+    "_:wGB11":{
+      "prov:entity":"prov:en10",
+      "prov:activity":"prov:act8"
+    }
+  },
+  "used":{
+    "_:u1":{
+      "prov:entity":"prov:en0",
+      "prov:activity":"prov:act1"
+    },
+    "_:u2":{
+      "prov:entity":"prov:en1",
+      "prov:activity":"prov:act1"
+    },
+    "_:u3":{
+      "prov:entity":"prov:en2",
+      "prov:activity":"prov:act2"
+    },
+    "_:u4":{
+      "prov:entity":"prov:en3",
+      "prov:activity":"prov:act2"
+    },
+    "_:u5":{
+      "prov:entity":"prov:en0",
+      "prov:activity":"prov:act4"
+    },
+    "_:u6":{
+      "prov:entity":"prov:en1",
+      "prov:activity":"prov:act4"
+    },
+    "_:u7":{
+      "prov:entity":"prov:en6",
+      "prov:activity":"prov:act5"
+    },
+    "_:u8":{
+      "prov:entity":"prov:en7",
+      "prov:activity":"prov:act5"
+    }
+  },
+  "wasInformedBy":{
+    "_:wTB1":{
+      "prov:informant":"prov:act2",
+      "prov:informed":"prov:act3"
+    },
+    "_:wTB2":{
+      "prov:informant":"prov:act2",
+      "prov:informed":"prov:act3"
+    },
+    "_:wTB3":{
+      "prov:informant":"prov:act5",
+      "prov:informed":"prov:act6"
+    },
+    "_:wTB4":{
+      "prov:informant":"prov:act5",
+      "prov:informed":"prov:act7"
+    },
+    "_:wTB5":{
+      "prov:informant":"prov:act5",
+      "prov:informed":"prov:act8"
     }
   }
 }

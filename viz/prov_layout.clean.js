@@ -13,23 +13,24 @@ var edge_defs = {
 					 "target":"prov:informed"}
 };
 
-var width = 400,
-    height = 200,
+var width = 600,
+    height = 300,
     colors = d3.scale.category10();
 
 var svg = d3.select("div#graph")
 	.append("svg")
 	.attr("width",width)
-	.attr("height",height);	
+	.attr("height",height);
 
 var force = d3.layout.force()
 	.charge(-20)
-	.linkDistance(120)
+	.linkDistance(200)
 	.size([width,height]);
 
 var query = {};
 var qs = window.location.search.substr(1).split('&')
 console.log("qs", qs);
+
 qs.forEach(function (q, i, a) {
 	var kv = q.split("=");
 	k = kv[0];
@@ -37,6 +38,7 @@ qs.forEach(function (q, i, a) {
 	console.log(k,v)
 	query[k] = v
 });
+
 console.log("query: ",query);
 var source = query.source
 source = source || "document.json";
@@ -54,6 +56,7 @@ d3.json(source,function(d) {
 		d.activity[a]["id"] = a;
 		d.activity[a]["type"] = "activity";
 		var t = Date.parse(d.activity[a]["prov:startTime"]);
+		console.log(t);
 		d.activity[a]["timecode"] = t;
 		d.activity[a]["group"] = group_count;
 		d.activity[a]["incoming"] = [];
@@ -80,12 +83,13 @@ d3.json(source,function(d) {
 		d.entity[e]["raw"] = JSON.stringify(d.entity[e],null," ");
 		d.entity[e]["id"] = e;
 		d.entity[e]["type"] = "entity";
-		var uuid = d.entity[e]["foundry:UUID"];
-		var created = d.entity[e]["foundry:creationTime"];
+		var uuid = d.entity[e]["prov:UUID"]["$"];
+		var created = Date.parse(d.entity[e]["prov:creationTime"]["$"]);
+
 		var uniqueid = uuid + "@" + created;
 		
 		var group = uuid_groups[uuid];
-		if (group == undefined) {
+		if (group === undefined) {
 			group = group_count;
 			uuid_groups[uuid] = group;
 			group_count = (group_count + 1) % 10;
@@ -93,13 +97,15 @@ d3.json(source,function(d) {
 		d.entity[e]["group"] = group;
 		d.entity[e]["incoming"] = [];
 		d.entity[e]["outgoing"] = [];		
-		
-		var label_comp = d.entity[e]["foundry:label"].split("/");
-		var label = label_comp[label_comp.length - 1];
-		d.entity[e]["label"] = label.substring(0,label.length - 1);
-		
+
+//		var label_comp = d.entity[e]["foundry:label"];
+//		var label = label_comp[label_comp.length - 1];
+//		d.entity[e]["label"] = label.substring(0,label.length - 1);
+		var label_comp = uuid.split("/");
+		d.entity[e]["label"] = label_comp[label_comp.length - 1];
+
 		// check if we've seen this entity before, 
-		if (seen_entities[uniqueid] == undefined) {
+		if (seen_entities[uniqueid] === undefined) {
 			// if not, add it and log it's id
 			entities.push(d.entity[e]);
 			seen_entities[uniqueid] = e;
@@ -129,12 +135,12 @@ d3.json(source,function(d) {
 
 				// check if these are aliased id's
 				// should note in the log.
-				if (source == undefined  || node_aliases[source] == undefined) {
+				if (source === undefined  || node_aliases[source] === undefined) {
 					console.log("FAILURE: UNRECOGNIZED SOURCE", source, "IN EDGE", edge);
 					return 1;
 				}
 				source = node_aliases[source];
-				if (target == undefined || node_aliases[target] == undefined) {
+				if (target === undefined || node_aliases[target] === undefined) {
 					console.log("FAILURE: UNRECOGNIZED TARGET", target, "IN", e_type, "EDGE", edge);
 					return 1;
 				}
@@ -150,11 +156,11 @@ d3.json(source,function(d) {
 						target_node = nodes[i]
 					}
 				}
-				if (source_node == undefined) {
+				if (source_node === undefined) {
 					console.log("FAILURE; COULD NOT RESOLVE SOURCE", source);
 					return 1;
 				}
-				if (target_node == undefined) {
+				if (target_node === undefined) {
 					console.log("FAILURE; COULD NOT RESOLVE TARGET", target);
 					return 1;
 				}
@@ -174,76 +180,88 @@ d3.json(source,function(d) {
 
 	var root = undefined;
 	var leaf = undefined;
+	var bad_root = false;
 	for (var ni in nodes) {
 		console.log(nodes[ni].id, "in:",nodes[ni].incoming.length, "out:",nodes[ni].outgoing.length );		
-		if (nodes[ni].outgoing.length == 0) {
+		if (nodes[ni].incoming.length == 0) {
 				console.log("ROOT FOUND", nodes[ni])
-			if (root == undefined) {
+			if (root === undefined) {
 				root = nodes[ni];
 			} else {
 				console.log("FAILURE: MULTIPLE ROOTS DETECTED");
-				return 2;
+				bad_root = true;
+//				return 2;
 			}
 		}
-		if (nodes[ni].incoming.length == 0) {
+		if (nodes[ni].outgoing.length == 0) {
 			leaf = nodes[ni];
 
 		}
 	}
-	if (root == undefined) {
+	if (root === undefined) {
 		console.log("FAILURE: NO ROOT FOUND");
-		return 2;
+		bad_root = true;
+//		return 2;
 	}
 
 	console.log("ROOT", root);
 
-	function annotate_tree(node,depth) {
-		if (node.depth != undefined) {
-			return node.depth;
+	function annotate_tree(node,depth,breadth) {
+		if (node.depth !== undefined) {
+			return undefined;
 		} else {
-			if (node.type == "entity") {
-				node.depth = Math.floor(depth + 1.0);
-			} else {
-				node.depth = depth + 0.5;
-			}
+			node.depth = depth + 1;
+			node.breadth = breadth;
 		}
 		console.log("WALKING", node, node.depth);
-		var max = node.depth;
-		for (var ni in node.incoming) {
-			var n = node.incoming[ni];
-			var r = annotate_tree(n, node.depth);
-			max = (r > max) ? r : max;
+		var max_depth = node.depth;
+		var max_breadth = breadth;
+		var res = undefined;
+		var b = breadth;
+		for (var ni in node.outgoing) {
+			var n = node.outgoing[ni];
+			res = annotate_tree(n, node.depth,b);
+			if (res === undefined) {
+				continue;
+			}
+			max_depth = (res.max_depth > max_depth) ? res.max_depth : max_depth;
+			max_breadth = (res.max_breadth > max_breadth) ? res.max_breadth : max_breadth;
+			b = max_breadth + 1;
 		}
-		return max;
+		return {"max_depth":max_depth, "max_breadth":max_breadth };
 	}
 
-	function layout_nodes(nodes, max_depth, width, height) {
+	function layout_nodes(nodes, max_depth, max_breadth, width, height) {
 		var padding = width * 0.18;
 		var center = height / 2.0;
-		var space = width - padding * 2;
-		var spacing = space / max_depth;
-	var max_height = height * 0.8;
-	if (spacing > max_height) {
-	  spacing = max_height;
-	}
-		var offset = spacing * Math.sqrt(3.0) / 2.0;
-		console.log(padding, center, space,spacing, offset);
+		var w_space = width - padding * 2;
+		var w_spacing = w_space / max_depth;
+		var hpadding = 30;
+		var h_space = height - hpadding * 2;		
+		var h_spacing = h_space / max_breadth;
+		console.log("max_breadth",max_breadth,"h_space",h_space,"h_spacing",h_spacing);
+		var max_height = height * 0.9;
+
+		if (h_spacing > max_height) {
+		  h_spacing = max_height;
+		}
+
+//		var offset = spacing * Math.sqrt(3.0) / 2.0;
+		console.log(padding, center, w_spacing,h_spacing);
 
 		for (var ni in nodes) {
 			var n = nodes[ni];
-			n.x = padding + (max_depth - n.depth) * spacing;
-			if (n.type == "entity") {
-	  		n.y = center - (offset / 2.0);
-			} else {
-				n.y = center + (offset / 2.0);
-			}
+			console.log(n);
+			n.x = padding + (n.depth * w_spacing);
+	  		n.y = hpadding + (n.breadth * h_spacing);
 			n.fixed = true;
+			console.log("node ",ni, n.x,n.y);
 		}
 	}
 
-	var max_depth = annotate_tree(root,-1);
-	console.log("MAX_DEPTH", max_depth);
-	layout_nodes(nodes,max_depth,width,0.5*width);
+	var res = annotate_tree(root,-1,0);
+	console.log(res );
+	layout_nodes(nodes,res.max_depth,res.max_breadth,width,0.5*width);
 
 	// links.sort(function(a,b) {
 	// 	if (a.source.depth < b.source.depth) return 1;
@@ -303,11 +321,11 @@ d3.json(source,function(d) {
 		d3.select("#detail-header").text(d.label);
 		var table = d3.select("#detail");
 		table.selectAll("*").remove();
-		var attribs = ["foundry:UUID","foundry:creationTime","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version"];
+		var attribs = ["foundry:UUID","foundry:creationTime","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version","breadth","depth"];
 		for (var a in attribs) {
 			var attrib = attribs[a];
 			var key = attrib.split(":")[1];
-			if (d[attrib] != undefined) {
+			if (d[attrib] !== undefined) {
 				var row = table.append("tr");
 				row.append("td").text(key);
 				row.append("td").text(d[attrib]);
@@ -329,10 +347,10 @@ d3.json(source,function(d) {
 		.on("mouseover", detail_display);
 
 	var labels = node_enter.append("text").text(function (d) { return d.label;})
-	.attr("dy",function(d) {
-		if (d.type == "entity") return -19;
-		return 27;	
-	}).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px");
+		.attr("dy",function(d) {
+			if (d.type == "entity") return -19;
+			return 27;	
+		}).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px");
 	
 	var link_updates = svg.selectAll(".link").data(links)
 		.enter().append("path").attr("class","link")
@@ -362,13 +380,15 @@ d3.json(source,function(d) {
 		return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
 	});
 	
-	node_updates.attr("transform", function(d){return "translate("+d.x+","+d.y+")";});
+	node_updates.attr("transform", function(d){
+		return "translate("+d.x+","+d.y+")";
+	});
 //    node_updates.attr("cx", function(d) { return d.x; })
 //        .attr("cy", function(d) { return d.y; });
 //  detail_display(entities[entities.length - 1]);
   });
 
-  console.log("selecting last entity", nodes[nodes.length - 1]);
-  detail_display(nodes[nodes.length - 1]);
+	console.log("selecting last entity", nodes[nodes.length - 1] );
+	detail_display(nodes[nodes.length - 1]);
 
 });
