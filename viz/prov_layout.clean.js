@@ -13,8 +13,8 @@ var edge_defs = {
 					 "target":"prov:informed"}
 };
 
-var width = 600,
-    height = 300,
+var width = 500,
+    height = 400,
     colors = d3.scale.category10();
 
 var svg = d3.select("div#graph")
@@ -232,7 +232,7 @@ d3.json(source,function(d) {
 	}
 
 	function layout_nodes(nodes, max_depth, max_breadth, width, height) {
-		var padding = width * 0.18;
+		var padding = width * 0.1;
 		var center = height / 2.0;
 		var w_space = width - padding * 2;
 		var w_spacing = w_space / max_depth;
@@ -261,7 +261,7 @@ d3.json(source,function(d) {
 
 	var res = annotate_tree(root,-1,0);
 	console.log(res );
-	layout_nodes(nodes,res.max_depth,res.max_breadth,width,0.5*width);
+	layout_nodes(nodes,res.max_depth,res.max_breadth,width,height);
 
 	// links.sort(function(a,b) {
 	// 	if (a.source.depth < b.source.depth) return 1;
@@ -346,11 +346,6 @@ d3.json(source,function(d) {
 		.style("fill", function(d) { return colors(d.group); })
 		.on("mouseover", detail_display);
 
-	var labels = node_enter.append("text").text(function (d) { return d.label;})
-		.attr("dy",function(d) {
-			if (d.type == "entity") return -19;
-			return 27;	
-		}).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px");
 	
 	var link_updates = svg.selectAll(".link").data(links)
 		.enter().append("path").attr("class","link")
@@ -360,6 +355,10 @@ d3.json(source,function(d) {
 		}).attr("marker-end", 'url(#end-arrow)')
 		.on("mouseover", detail_display_link);
 		
+	var labels = node_enter.append("text").text(function (d) { return d.label;})
+		.attr("dy",-19).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px");
+
+
 //		.on("mouseover", function(d) {
 //			d3.select("#detail").text(d.type);
 //		});
