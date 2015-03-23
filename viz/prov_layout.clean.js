@@ -2,6 +2,8 @@ var nodes = [];
 var node_pos = {};
 var links = [];
 
+var selected = [];
+
 var edge_defs = {
 	"used":{"source":"prov:entity",
 			"target":"prov:activity"},
@@ -85,7 +87,11 @@ d3.json(source,function(d) {
 		d.entity[e]["type"] = "entity";
 		var uuid = d.entity[e]["prov:UUID"]["$"];
 		var created = Date.parse(d.entity[e]["prov:creationTime"]["$"]);
-
+		var created_date = d.entity[e]["prov:creationTime"]["$"];
+		var version = d.entity[e]["prov:version"]["$"];
+		d.entity[e].uuid = uuid;
+		d.entity[e].created_date = created_date;
+		d.entity[e].version = version;
 		var uniqueid = uuid + "@" + created;
 		
 		var group = uuid_groups[uuid];
@@ -317,22 +323,61 @@ d3.json(source,function(d) {
 		svg.selectAll("#selection").remove();
 	}
 
+	var selected = undefined;
+	function like_nodes(a,b) {
+		if ( (a.label == "Bob.txt" && b.label == "Anna.txt" ) || (a.label == "Bob_kw.txt" && b.label == "Anna_kw.txt") ) {
+			return true;
+		}
+		return false;
+	}
+
 	function detail_display(d) {
+		var comp_node = undefined;
+		var show_comp = false;
+		if (selected) {
+			comp_node = selected;
+			if (like_nodes(d,comp_node)) {
+				show_comp = true;
+			}
+		}
+
 		d3.select("#detail-header").text(d.label);
 		var table = d3.select("#detail");
 		table.selectAll("*").remove();
-		var attribs = ["foundry:UUID","foundry:creationTime","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version","breadth","depth"];
-		for (var a in attribs) {
-			var attrib = attribs[a];
-			var key = attrib.split(":")[1];
-			if (d[attrib] !== undefined) {
-				var row = table.append("tr");
-				row.append("td").text(key);
-				row.append("td").text(d[attrib]);
+
+		function detail_display_table(d) {
+
+			var attribs = ["uuid","created_date","version","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version","source","target"];
+			var header_row = table.append("tr");
+			var header = header_row.append("th");
+			header.attr("colspan",2);			
+			var header_text = header.append("h4");
+			header_text.attr("class","detail-header");
+
+			header_text.text(d.label);
+			for (var a in attribs) {
+				var attrib = attribs[a];
+				var key = attrib.split(":")[1];
+				if (key === undefined) key = attrib;
+				if (d[attrib] !== undefined) {
+					var row = table.append("tr");
+					row.append("td").text(key);
+					row.append("td").text(d[attrib]);
+				}
 			}
 		}
+
+		detail_display_table(d);
+		if (show_comp) {
+			detail_display_table(comp_node);
+		}
+
 		svg.selectAll("#selection").remove();
+		if (show_comp) {
+			svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",comp_node.x).attr("cy",comp_node.y).attr("id","selection");
+		}
 		svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",d.x).attr("cy",d.y).attr("id","selection");
+		selected = d;
 	}
 	
 	var node_updates = svg.selectAll(".node").data(nodes);
@@ -340,11 +385,11 @@ d3.json(source,function(d) {
 
 	var circles = node_enter.filter(function(d,i) {return d.type == "activity"}).append("circle").attr("r", 15)
 		.style("fill", function(d) { return colors(d.group); })
-		.on("mouseover", detail_display);
+		.on("click", detail_display);
 	var squares = node_enter.filter(function(d,i) {return d.type=="entity"}).append("rect").attr("width",26).attr("height",26)
 		.attr("transform","translate(-13,-13)")
 		.style("fill", function(d) { return colors(d.group); })
-		.on("mouseover", detail_display);
+		.on("click", detail_display);
 
 	
 	var link_updates = svg.selectAll(".link").data(links)
@@ -353,7 +398,7 @@ d3.json(source,function(d) {
 			if (d.type=="wasDerivedFrom") return "5,5";
 			return "";
 		}).attr("marker-end", 'url(#end-arrow)')
-		.on("mouseover", detail_display_link);
+		.on("click", detail_display_link);
 		
 	var labels = node_enter.append("text").text(function (d) { return d.label;})
 		.attr("dy",-19).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px");

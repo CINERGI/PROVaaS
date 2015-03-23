@@ -3,7 +3,7 @@
 	<style>
 	 .node { stroke: #000; stroke-width: 1.5px;}
 	 .link { stroke: #000; stroke-width: 2px;}	 
-	 hr { border-top: solid 1px #bbb !important; }
+	 h4.detail-header { border-bottom: solid 1px #bbb !important; margin-bottom: 5px !important; padding-bottom: 5px !important;}
 
 	</style>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -20,7 +20,8 @@
 	<div class="row">
 		<div class="col-md-1"></div>
      	<div id="graph" class="col-md-6"></div>
-	  <div id="detail_column" class="col-md-4" style="border-left:solid 1px #bbb;"><h4 id="detail-header"></h4><hr/><table class="table" id="detail"></table></div>
+	  <div id="detail_column" class="col-md-4" style="border-left:solid 1px #bbb;">
+	  	<table class="table" id="detail"></table></div>
 	  <div class="col-md-1"></div>
 	</div>
 	<div class="row">
@@ -34,5 +35,5 @@
 </body>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="prov_layout.js"></script>
+<script src="prov_layout.clean.js"></script>
 </html>
