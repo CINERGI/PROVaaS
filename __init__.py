@@ -42,6 +42,11 @@ from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 
+from flask import request
+from logging.handlers import TimedRotatingFileHandler
+import datetime
+import logging
+
 # initialization
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
@@ -60,6 +65,13 @@ if (ENVIRON == None):
    ENVIRON = 'PROD'
 
 db = GeoProvDM(ENVIRON, "http://%s:7474/db/data/"%SERVER_IP, False)
+
+@app.before_request
+def log_request():
+    now = datetime.datetime.now()
+    log_string = "%s user:%s baseUrl:%s data=%s" %\
+                 (now.strftime("%Y-%m-%d %H:%M:%S"), request.authorization.username, request.base_url, request.data)
+    app.logger.info(log_string)
 
 @app.route("/api/provenance/test")
 def hello():
@@ -289,6 +301,9 @@ def get_resource_provenance_with_activity_from_to(direction, aprop, t1,t2):
   return Response(obj_json,mimetype='application/json',status=200)
 
 if __name__ == '__main__':
+    handler = TimedRotatingFileHandler('provaas_requests.log',when="d",interval=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
     if not os.path.exists('users_db.sqlite'):
         users_db.create_all()
     app.run(host=SERVER_IP, port=5000, debug=True)
