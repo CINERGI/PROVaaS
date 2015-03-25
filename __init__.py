@@ -69,8 +69,12 @@ db = GeoProvDM(ENVIRON, "http://%s:7474/db/data/"%SERVER_IP, False)
 @app.before_request
 def log_request():
     now = datetime.datetime.now()
+    if request.authorization is None:
+        username = "NoUser"
+    else:
+        username = request.authorization.username
     log_string = "%s user:%s baseUrl:%s data=%s" %\
-                 (now.strftime("%Y-%m-%d %H:%M:%S"), request.authorization.username, request.base_url, request.data)
+                 (now.strftime("%Y-%m-%d %H:%M:%S"), username, request.base_url, request.data)
     app.logger.info(log_string)
 
 @app.route("/api/provenance/test")
