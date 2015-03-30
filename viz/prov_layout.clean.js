@@ -125,6 +125,8 @@ d3.json(source,function(d) {
 	nodes =  activities.concat(entities);
 	console.log("nodes:", nodes)
 
+	var least_time = undefined;
+
     function parse_edges(data) {
   	// loop over each different defined edge type
       for (var e_type in edge_defs) {
@@ -136,6 +138,7 @@ d3.json(source,function(d) {
 				// get the source and target node id's
 				var source = edge[edge_defs[e_type]["source"]];
 				var target = edge[edge_defs[e_type]["target"]];
+				edge["label"] = e_type;
 				// should check here to make sure they exist.
 //				console.log(edge, "source", source, "target",target);
 
@@ -170,7 +173,18 @@ d3.json(source,function(d) {
 					console.log("FAILURE; COULD NOT RESOLVE TARGET", target);
 					return 1;
 				}
-				links.push( {source:source_node, target: target_node, type:e_type} );
+
+				var time = target_node["prov:startTime"] || source_node["prov:endTime"] || source_node["foundry:creationTime"]["$"];
+				var seconds = Date.parse(time);
+
+				if (least_time === undefined) {
+					least_time = seconds;
+				}
+				if (seconds < least_time) {
+					least_time = seconds;
+				}
+
+				links.push( {source:source_node, target: target_node, type:e_type, label:e_type, time:seconds} );
 				source_node.outgoing.push(target_node);
 				target_node.incoming.push(source_node);								
 			}
@@ -181,6 +195,12 @@ d3.json(source,function(d) {
 
     // should check results and halt if error
    	if (parse_edges(d) > 0) return;
+
+    for (var l in links) {
+    	console.log("link!",l,links[l],links[l].time, least_time)
+    	links[l].elapsedTime = links[l].time - least_time;
+    }
+
 
 	console.log("links", links);
 
@@ -347,7 +367,7 @@ d3.json(source,function(d) {
 
 		function detail_display_table(d) {
 
-			var attribs = ["uuid","created_date","version","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version","source","target"];
+			var attribs = ["uuid","created_date","time","elapsedTime","version","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version","source","target"];
 			var header_row = table.append("tr");
 			var header = header_row.append("th");
 			header.attr("colspan",2);			
@@ -366,11 +386,10 @@ d3.json(source,function(d) {
 				}
 			}
 		}
-
-		detail_display_table(d);
 		if (show_comp) {
 			detail_display_table(comp_node);
 		}
+		detail_display_table(d);
 
 		svg.selectAll("#selection").remove();
 		if (show_comp) {
@@ -384,11 +403,27 @@ d3.json(source,function(d) {
 	var node_enter = node_updates.enter().append("g").attr("class","node").attr("transform", function(d){return "translate("+d.x+","+d.y+")";});
 
 	var circles = node_enter.filter(function(d,i) {return d.type == "activity"}).append("circle").attr("r", 15)
-		.style("fill", function(d) { return colors(d.group); })
+		.style("fill", function(d) { 
+			if (d.label.match("sql")) {
+				return d3.rgb("lightblue");
+			} else {
+				return d3.rgb("lightgreen");
+			}
+
+//			return colors(d.group); 
+		})
 		.on("click", detail_display);
 	var squares = node_enter.filter(function(d,i) {return d.type=="entity"}).append("rect").attr("width",26).attr("height",26)
 		.attr("transform","translate(-13,-13)")
-		.style("fill", function(d) { return colors(d.group); })
+		.style("fill", function(d) { 
+			if (d.uuid.match("sql")) {
+				return d3.rgb("lightblue");
+			} else {
+				return d3.rgb("lightgreen");
+			}
+
+//			return colors(d.group); 
+		})
 		.on("click", detail_display);
 
 	
@@ -398,7 +433,7 @@ d3.json(source,function(d) {
 			if (d.type=="wasDerivedFrom") return "5,5";
 			return "";
 		}).attr("marker-end", 'url(#end-arrow)')
-		.on("click", detail_display_link);
+		.on("click", detail_display);
 		
 	var labels = node_enter.append("text").text(function (d) { return d.label;})
 		.attr("dy",-19).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px");

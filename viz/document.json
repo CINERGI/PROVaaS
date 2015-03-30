@@ -28,7 +28,7 @@
       "prov:endTime":"2015-03-09T10:22:27.219382",
       "prov:startTime":"2015-03-09T10:22:25.983793",
       "prov:type":{
-        "$":"act3",
+        "$":"act3sql",
         "type":"xsd:string"
       }
     },
@@ -52,7 +52,7 @@
       "prov:endTime":"2015-03-10T10:22:26.219382",
       "prov:startTime":"2015-03-10T10:22:26.083793",
       "prov:type":{
-        "$":"act6",
+        "$":"act6sql",
         "type":"xsd:string"
       }
     },
@@ -60,7 +60,7 @@
       "prov:endTime":"2015-03-10T10:22:27.219382",
       "prov:startTime":"2015-03-10T10:22:27.083793",
       "prov:type":{
-        "$":"act7",
+        "$":"act7sql",
         "type":"xsd:string"
       }
     },
@@ -68,7 +68,7 @@
       "prov:endTime":"2015-03-10T10:22:27.219382",
       "prov:startTime":"2015-03-10T10:22:27.083793",
       "prov:type":{
-        "$":"act8",
+        "$":"act8sql",
         "type":"xsd:string"
       }
     }
