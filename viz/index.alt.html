@@ -1,0 +1,39 @@
+<html>
+<head>
+	<style>
+	 .node { stroke: #000; stroke-width: 1.5px;}
+	 .link { stroke: #000; stroke-width: 2px;}	 
+	 h4.detail-header { border-bottom: solid 1px #bbb !important; margin-bottom: 5px !important; padding-bottom: 5px !important;}
+
+	</style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+	<h1>ProvDB/viz</h1>
+	<hr/>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-1"></div>
+     	<div id="graph" class="col-md-6"></div>
+	  <div id="detail_column" class="col-md-4" style="border-left:solid 1px #bbb;">
+	  	<table class="table" id="detail"></table></div>
+	  <div class="col-md-1"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-9" id="desc">
+			<hr/>
+			<h4>Description</h4>
+			<p id="desc-body"><p>
+		</div>
+		<div class="col-md-1"></div>
+</body>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="prov_layout.alt.js"></script>
+</html>
