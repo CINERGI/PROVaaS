@@ -414,22 +414,21 @@ d3.json(source,function(d) {
 				}
 				return false;
 			}
+			console.log("CLEARING");
+			for (var l = 0; l < links.length; l++) {
+				links[l]["highlight"] = false;
+			}
 
 
 			while(to_visit.length > 0) {
 				console.log(to_visit.length, "to_visit", visited.length,"visited");
 				var current = to_visit[0];
 				console.log("current",current);
-				for (var l in links) {
-				//	links[l]["highlight"] = undefined;
-					var x = 0;
-				}
-				l = 0;
-				for (var l in links) {
+				for (var l = 0; l < links.length; l++) {
 //					console.log("CHECKING",links[l]["target"].id,current.id)
 					if (links[l]["target"].id == current.id) {
-						console.log("MATCH", links[l],links[l].source.label,links[l].target.label);
-						if (!(links[l]["source"].label == "f1") ) {
+						if (!(links[l]["source"].label === "f1") ) {
+							console.log("MATCH", links[l],links[l].source.label,links[l].target.label);
 							links[l]["highlight"] = true;
 							if (!(array_contains(visited,links[l]["source"]) || array_contains(to_visit,links[l]["source"]) ) ){
 								console.log("traversing");
