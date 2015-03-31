@@ -15,8 +15,8 @@ var edge_defs = {
 					 "target":"prov:informed"}
 };
 
-var width = 500,
-    height = 400,
+var width = 600,
+    height = 300,
     colors = d3.scale.category10();
 
 var svg = d3.select("div#graph")
@@ -62,7 +62,7 @@ d3.json(source,function(d) {
 		d.activity[a]["timecode"] = t;
 		d.activity[a]["group"] = group_count;
 		d.activity[a]["incoming"] = [];
-		d.activity[a]["outgoing"] = [];		
+		d.activity[a]["outgoing"] = [];
 		d.activity[a]["label"] = d.activity[a]["prov:type"]["$"];
 
 		group_count = (group_count + 1) % 10;
@@ -139,6 +139,7 @@ d3.json(source,function(d) {
 				var source = edge[edge_defs[e_type]["source"]];
 				var target = edge[edge_defs[e_type]["target"]];
 				edge["label"] = e_type;
+				var inferred = edge["foundry:inferred"] || false;
 				// should check here to make sure they exist.
 //				console.log(edge, "source", source, "target",target);
 
@@ -175,7 +176,7 @@ d3.json(source,function(d) {
 				}
 
 				var time = target_node["prov:startTime"] || source_node["prov:endTime"] || source_node["foundry:creationTime"]["$"];
-				var seconds = Date.parse(time);
+				var seconds = Date.parse(time) * .000001;
 
 				if (least_time === undefined) {
 					least_time = seconds;
@@ -184,7 +185,7 @@ d3.json(source,function(d) {
 					least_time = seconds;
 				}
 
-				links.push( {source:source_node, target: target_node, type:e_type, label:e_type, time:seconds} );
+				links.push( {id:e,source:source_node, target: target_node, type:e_type, label:e_type, time:seconds, inferred:inferred} );
 				source_node.outgoing.push(target_node);
 				target_node.incoming.push(source_node);								
 			}
@@ -258,7 +259,7 @@ d3.json(source,function(d) {
 	}
 
 	function layout_nodes(nodes, max_depth, max_breadth, width, height) {
-		var padding = width * 0.1;
+		var padding = width * 0.05;
 		var center = height / 2.0;
 		var w_space = width - padding * 2;
 		var w_spacing = w_space / max_depth;
@@ -367,7 +368,7 @@ d3.json(source,function(d) {
 
 		function detail_display_table(d) {
 
-			var attribs = ["uuid","created_date","time","elapsedTime","version","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version","source","target"];
+			var attribs = ["id","uuid","created_date","time","elapsedTime","version","inferred","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version"];
 			var header_row = table.append("tr");
 			var header = header_row.append("th");
 			header.attr("colspan",2);			
@@ -392,11 +393,17 @@ d3.json(source,function(d) {
 		detail_display_table(d);
 
 		svg.selectAll("#selection").remove();
-		if (show_comp) {
-			svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",comp_node.x).attr("cy",comp_node.y).attr("id","selection");
+
+		if (d.type == "entity" || d.type == "activity"){
+			if (show_comp) {
+				svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",comp_node.x).attr("cy",comp_node.y).attr("id","selection");
+			}
+			svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",d.x).attr("cy",d.y).attr("id","selection");
+			selected = d;
 		}
-		svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",d.x).attr("cy",d.y).attr("id","selection");
-		selected = d;
+		else {
+			selected = undefined;
+		}
 	}
 	
 	var node_updates = svg.selectAll(".node").data(nodes);
@@ -404,7 +411,7 @@ d3.json(source,function(d) {
 
 	var circles = node_enter.filter(function(d,i) {return d.type == "activity"}).append("circle").attr("r", 15)
 		.style("fill", function(d) { 
-			if (d.label.match("sql")) {
+			if (d.label.match("q")) {
 				return d3.rgb("lightblue");
 			} else {
 				return d3.rgb("lightgreen");
@@ -416,7 +423,7 @@ d3.json(source,function(d) {
 	var squares = node_enter.filter(function(d,i) {return d.type=="entity"}).append("rect").attr("width",26).attr("height",26)
 		.attr("transform","translate(-13,-13)")
 		.style("fill", function(d) { 
-			if (d.uuid.match("sql")) {
+			if (d.uuid.match("t")) {
 				return d3.rgb("lightblue");
 			} else {
 				return d3.rgb("lightgreen");
@@ -430,13 +437,14 @@ d3.json(source,function(d) {
 	var link_updates = svg.selectAll(".link").data(links)
 		.enter().append("path").attr("class","link")
 		.attr("stroke-dasharray",function(d) {
-			if (d.type=="wasDerivedFrom") return "5,5";
+			if (d.inferred) return "5,5";
 			return "";
 		}).attr("marker-end", 'url(#end-arrow)')
 		.on("click", detail_display);
 		
 	var labels = node_enter.append("text").text(function (d) { return d.label;})
-		.attr("dy",-19).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px");
+		.attr("dy",5).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px")
+		.attr("pointer-events","none");
 
 
 //		.on("mouseover", function(d) {
