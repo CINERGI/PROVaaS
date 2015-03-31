@@ -427,13 +427,16 @@ d3.json(source,function(d) {
 				for (var l = 0; l < links.length; l++) {
 //					console.log("CHECKING",links[l]["target"].id,current.id)
 					if (links[l]["target"].id == current.id) {
-						if (!(links[l]["source"].label === "f1") ) {
+						if (!(links[l].inferred == true) ) {
 							console.log("MATCH", links[l],links[l].source.label,links[l].target.label);
 							links[l]["highlight"] = true;
 							if (!(array_contains(visited,links[l]["source"]) || array_contains(to_visit,links[l]["source"]) ) ){
 								console.log("traversing");
 								to_visit.push(links[l]["source"]);								
 							}
+						}
+						else {
+							console.log("BAD LINK",links[l],links[l].id)
 						}
 					} 
 				}

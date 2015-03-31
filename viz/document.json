@@ -282,7 +282,8 @@
     },
     "_:u2":{
       "prov:entity":"prov:en1",
-      "prov:activity":"prov:act1"
+      "prov:activity":"prov:act1",
+      "foundry:inferred":true
     },
     "_:u3":{
       "prov:entity":"prov:en2",
@@ -295,7 +296,7 @@
     "_:u5":{
       "prov:entity":"prov:en0",
       "prov:activity":"prov:act4",
-      "inferred":true
+      "foundry:inferred":true
     },
     "_:u6":{
       "prov:entity":"prov:en1",
