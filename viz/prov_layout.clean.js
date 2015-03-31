@@ -353,6 +353,7 @@ d3.json(source,function(d) {
 	}
 
 	function detail_display(d) {
+		console.log("DETAIL DISPLAY", d.label,d.id);
 		var comp_node = undefined;
 		var show_comp = false;
 		if (selected) {
@@ -368,7 +369,7 @@ d3.json(source,function(d) {
 
 		function detail_display_table(d) {
 
-			var attribs = ["id","uuid","created_date","time","elapsedTime","version","inferred","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version"];
+			var attribs = ["uuid","created_date","time","elapsedTime","version","inferred","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version"];
 			var header_row = table.append("tr");
 			var header = header_row.append("th");
 			header.attr("colspan",2);			
@@ -400,6 +401,63 @@ d3.json(source,function(d) {
 			}
 			svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",d.x).attr("cy",d.y).attr("id","selection");
 			selected = d;
+
+			var visited = [];
+			var to_visit = [d];
+
+			function array_contains(the_array,obj) {
+//				console.log("IN COMP",the_array, the_array.length);
+				for (var l in the_array) {
+
+//					console.log("COMPARING", the_array[l].id, obj.id);
+					if (the_array[l].id === obj.id) return true;
+				}
+				return false;
+			}
+
+
+			while(to_visit.length > 0) {
+				console.log(to_visit.length, "to_visit", visited.length,"visited");
+				var current = to_visit[0];
+				console.log("current",current);
+				for (var l in links) {
+				//	links[l]["highlight"] = undefined;
+					var x = 0;
+				}
+				l = 0;
+				for (var l in links) {
+//					console.log("CHECKING",links[l]["target"].id,current.id)
+					if (links[l]["target"].id == current.id) {
+						console.log("MATCH", links[l],links[l].source.label,links[l].target.label);
+						if (!(links[l]["source"].label == "f1") ) {
+							links[l]["highlight"] = true;
+							if (!(array_contains(visited,links[l]["source"]) || array_contains(to_visit,links[l]["source"]) ) ){
+								console.log("traversing");
+								to_visit.push(links[l]["source"]);								
+							}
+						}
+					} 
+				}
+//				var next_node = links[l]["target"];
+//				console.log("NEXT HIGHLIGHT NODE", next_node);
+
+//				if (array_contains(visited,next_node) || array_contains(to_visit,next_node))
+//					;
+
+				visited.push(to_visit.shift());
+				console.log("to_visit",to_visit,"visited",visited);
+			}
+
+
+			console.log("incoming", d.incoming);
+			var link_updates = svg.selectAll(".link").data(links).style("stroke",function(d) {				
+				if (d.highlight) {
+					return d3.rgb("red");
+				} else {
+					return d3.rgb("black");
+				}
+			});
+			console.log("updated:", link_updates);
 		}
 		else {
 			selected = undefined;
@@ -439,7 +497,15 @@ d3.json(source,function(d) {
 		.attr("stroke-dasharray",function(d) {
 			if (d.inferred) return "5,5";
 			return "";
-		}).attr("marker-end", 'url(#end-arrow)')
+		})
+		//.attr("marker-end", 'url(#end-arrow)')
+		.attr("stroke",function(d) {
+			if (d.highlight) {
+				return d3.rgb("red");
+			} else {
+				return d3.rgb("black");
+			}
+		})
 		.on("click", detail_display);
 		
 	var labels = node_enter.append("text").text(function (d) { return d.label;})
