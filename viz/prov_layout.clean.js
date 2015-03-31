@@ -527,7 +527,7 @@ d3.json(source,function(d) {
 			normX = deltaX / dist,
 			normY = deltaY / dist,
 			sourcePadding = 15,
-			targetPadding = 17,
+			targetPadding = 15,
 			sourceX = d.source.x + (sourcePadding * normX),
 			sourceY = d.source.y + (sourcePadding * normY),
 			targetX = d.target.x - (targetPadding * normX),
