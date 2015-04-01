@@ -92,7 +92,7 @@ d3.json(source,function(d) {
 		d.entity[e].uuid = uuid;
 		d.entity[e].created_date = created_date;
 		d.entity[e].version = version;
-		var uniqueid = uuid + "@" + created;
+		var uniqueid = uuid + "@" + created + "#" + version;
 		
 		var group = uuid_groups[uuid];
 		if (group === undefined) {
@@ -112,11 +112,12 @@ d3.json(source,function(d) {
 		d.entity[e]["label"] = d.entity[e]["foundry:label"];
 		d.entity[e]["label"] = d.entity[e]["label"].split(":")[1];
 		// check if we've seen this entity before, 
+		node_aliases[e] = e;
+
 		if (seen_entities[uniqueid] === undefined) {
 			// if not, add it and log it's id
 			entities.push(d.entity[e]);
 			seen_entities[uniqueid] = e;
-			node_aliases[e] = e;
 		} else {
 			//otherwise, just log this entity as an alias
 			node_aliases[e] = seen_entities[uniqueid];
