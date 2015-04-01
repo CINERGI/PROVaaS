@@ -4,7 +4,7 @@
       "prov:endTime":"2015-03-09T10:22:21.209002",
       "prov:startTime":"2015-03-09T10:22:20.205236",
       "prov:type":{
-        "$":"act0",
+        "$":"a0",
         "type":"xsd:string"
       }
     },
@@ -12,7 +12,7 @@
       "prov:endTime":"2015-03-09T10:22:22.301039",
       "prov:startTime":"2015-03-09T10:22:22.296988",
       "prov:type":{
-        "$":"act1",
+        "$":"a1",
         "type":"xsd:string"
       }
     },
@@ -20,7 +20,7 @@
       "prov:endTime":"2015-03-09T10:22:28.049161",
       "prov:startTime":"2015-03-09T10:22:23.004726",
       "prov:type":{
-        "$":"act2",
+        "$":"a2",
         "type":"xsd:string"
       }
     },
@@ -28,7 +28,7 @@
       "prov:endTime":"2015-03-09T10:22:27.219382",
       "prov:startTime":"2015-03-09T10:22:25.983793",
       "prov:type":{
-        "$":"act3",
+        "$":"q1",
         "type":"xsd:string"
       }
     },
@@ -36,7 +36,7 @@
       "prov:endTime":"2015-03-10T10:22:19.301039",
       "prov:startTime":"2015-03-10T10:22:19.296988",
       "prov:type":{
-        "$":"act4",
+        "$":"a4",
         "type":"xsd:string"
       }
     },
@@ -44,7 +44,7 @@
       "prov:endTime":"2015-03-10T10:22:28.049161",
       "prov:startTime":"2015-03-10T10:22:26.004726",
       "prov:type":{
-        "$":"act5",
+        "$":"a5",
         "type":"xsd:string"
       }
     },
@@ -52,7 +52,7 @@
       "prov:endTime":"2015-03-10T10:22:26.219382",
       "prov:startTime":"2015-03-10T10:22:26.083793",
       "prov:type":{
-        "$":"act6",
+        "$":"q2",
         "type":"xsd:string"
       }
     },
@@ -60,7 +60,7 @@
       "prov:endTime":"2015-03-10T10:22:27.219382",
       "prov:startTime":"2015-03-10T10:22:27.083793",
       "prov:type":{
-        "$":"act7",
+        "$":"q3",
         "type":"xsd:string"
       }
     },
@@ -68,7 +68,7 @@
       "prov:endTime":"2015-03-10T10:22:27.219382",
       "prov:startTime":"2015-03-10T10:22:27.083793",
       "prov:type":{
-        "$":"act8",
+        "$":"q4",
         "type":"xsd:string"
       }
     }
@@ -76,7 +76,7 @@
   "entity":{
     "prov:en0":{
       "prov:UUID":{
-        "$":"1425896536517040/home/quanpt/myapps/2001_info.txt",
+        "$":"f1",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -90,7 +90,7 @@
     },
     "prov:en1":{
       "prov:UUID":{
-        "$":"1425896536325378/home/quanpt/myapps/perm/2001_kw.txt",
+        "$":"f2",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -104,7 +104,7 @@
     },
     "prov:en2":{
       "prov:UUID":{
-        "$":"1425896536622318/home/quanpt/myapps/Anna.txt",
+        "$":"f3",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -118,7 +118,7 @@
     },
     "prov:en3":{
       "prov:UUID":{
-        "$":"1425896539691411/home/quanpt/myapps/Bob.txt",
+        "$":"f4",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -132,7 +132,7 @@
     },
     "prov:en4":{
       "prov:UUID":{
-        "$":"1425896536483243/postgresql/authpub/t1",
+        "$":"t1",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -146,7 +146,7 @@
     },
     "prov:en5":{
       "prov:UUID":{
-        "$":"1425896536421491/postgresql/authpub/t2",
+        "$":"t2",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -160,7 +160,7 @@
     },
     "prov:en6":{
       "prov:UUID":{
-        "$":"1425896536622318/home/quanpt/myapps/Anna_kw.txt",
+        "$":"f5",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -174,7 +174,7 @@
     },
     "prov:en7":{
       "prov:UUID":{
-        "$":"1425896539691411/home/quanpt/myapps/Bob_kw.txt",
+        "$":"f6",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -188,7 +188,7 @@
     },
     "prov:en8":{
       "prov:UUID":{
-        "$":"1425896536483243/postgresql/authpub/t1",
+        "$":"t3",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -202,7 +202,7 @@
     },
     "prov:en9":{
       "prov:UUID":{
-        "$":"1425896536421491/postgresql/authpub/t2",
+        "$":"t4",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -216,7 +216,7 @@
     },
     "prov:en10":{
       "prov:UUID":{
-        "$":"1425896539905677/postgresql/authpub/t3",
+        "$":"t5",
         "type":"xsd:string"
       },
       "prov:creationTime":{
@@ -282,7 +282,8 @@
     },
     "_:u2":{
       "prov:entity":"prov:en1",
-      "prov:activity":"prov:act1"
+      "prov:activity":"prov:act1",
+      "foundry:inferred":true
     },
     "_:u3":{
       "prov:entity":"prov:en2",
@@ -294,7 +295,8 @@
     },
     "_:u5":{
       "prov:entity":"prov:en0",
-      "prov:activity":"prov:act4"
+      "prov:activity":"prov:act4",
+      "foundry:inferred":true
     },
     "_:u6":{
       "prov:entity":"prov:en1",
