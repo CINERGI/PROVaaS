@@ -134,9 +134,12 @@ d3.json(source,function(d) {
   		if (t_edges) {
 			for (var e in t_edges) {
 				var edge = t_edges[e];
+				console.log("EDGE",edge);
 				// get the source and target node id's
 				var source = edge[edge_defs[e_type]["source"]];
+				console.log("SOURCE",source);
 				var target = edge[edge_defs[e_type]["target"]];
+				console.log("TARGET",target);
 				// should check here to make sure they exist.
 //				console.log(edge, "source", source, "target",target);
 
@@ -156,6 +159,7 @@ d3.json(source,function(d) {
 				var source_node = undefined;
 				var target_node = undefined;
 				for (var i = 0; i < nodes.length; i++) {
+					console.log("TESTING ",nodes[i].id, "vs", source, target);
 					if (nodes[i].id == source) { 
 						source_node = nodes[i];
 					}
@@ -164,11 +168,11 @@ d3.json(source,function(d) {
 					}
 				}
 				if (source_node === undefined) {
-					console.log("FAILURE; COULD NOT RESOLVE SOURCE", source);
+					console.log("FAILURE ON ",edge," COULD NOT RESOLVE SOURCE", source );
 					return 1;
 				}
 				if (target_node === undefined) {
-					console.log("FAILURE; COULD NOT RESOLVE TARGET", target);
+					console.log("FAILURE ON ",edge," COULD NOT RESOLVE TARGET", target);
 					return 1;
 				}
 				links.push( {source:source_node, target: target_node, type:e_type} );

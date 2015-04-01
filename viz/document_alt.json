@@ -1,56 +1,56 @@
 {  
   "wasDerivedFrom":{  
     "null":{  
-      "prov:usedEntity":"13787c09-3a9c-3285-b5cf-81908ac99e3a",
-      "prov:generatedEntity":"8cf7d132-b9b1-35cb-ba35-fe40ea4573df"
+      "prov:usedEntity":"9755dcce-b6c4-31e8-a076-85fa1faf0521",
+      "prov:generatedEntity":"490324e8-4134-3f4b-8599-e566fb3c094e"
     }
   },
   "entity":{  
-    "40f16268-81a5-3deb-8423-50e0bfebbfcc":{  
+    "9755dcce-b6c4-31e8-a076-85fa1faf0521":{  
+      "foundry:version":"1.0",
+      "foundry:sourceId":{  
+        "type":"xsd:string",
+        "$":""
+      },
+      "foundry:label":"ScienceBase:abc38747",
+      "foundry:UUID":"abc38747",
+      "foundry:creationTime":"2015-02-04T11:44:05-08:00"
+    },
+    "22d329fc-7973-317f-9919-075b06c93234":{  
       "foundry:version":"1.0",
       "foundry:sourceId":{  
         "type":"xsd:string",
         "$":"cinergi-0001"
       },
       "foundry:label":"ScienceBase:abc38747",
-      "foundry:UUID":"c6fe6a22-f208-4a9e-9599-1b8c6a91309b",
+      "foundry:UUID":"c6fe6a22-f208-4a9e-9599-1b8c6a91309a",
       "foundry:creationTime":"2015-02-04T11:44:05-08:00"
     },
-    "13787c09-3a9c-3285-b5cf-81908ac99e3a":{  
-      "foundry:version":"1.0",
+    "490324e8-4134-3f4b-8599-e566fb3c094e":{  
+      "foundry:version":"2.0",
       "foundry:sourceId":{  
         "type":"xsd:string",
-        "$":null
+        "$":""
       },
       "foundry:label":"ScienceBase:abc38748",
       "foundry:UUID":"abc38748",
-      "foundry:creationTime":"2015-02-04T11:44:06-08:00"
-    },
-    "8cf7d132-b9b1-35cb-ba35-fe40ea4573df":{  
-      "foundry:version":"1.0",
-      "foundry:sourceId":{  
-        "type":"xsd:string",
-        "$":null
-      },
-      "foundry:label":"ScienceBase:abc38749",
-      "foundry:UUID":"abc38748",
-      "foundry:creationTime":"2015-02-04T11:44:07-08:00"
+      "foundry:creationTime":"2015-02-04T11:44:05-08:00"
     }
   },
   "activity":{  
-    "4bfd8bac-2964-365c-9c93-a9e73a7dfbda":{  
+    "10319f75-3cc1-3fa8-a55d-247f350bdae2":{  
       "prov:how":null,
-      "prov:startTime":"2015-02-04T11:44:06-08:00",
-      "prov:endTime":"2015-02-04T11:44:06-08:00",
+      "prov:startTime":"2015-02-04T11:44:05-08:00",
+      "prov:endTime":"2015-02-04T11:44:05-08:00",
       "prov:type":{  
         "type":"xsd:string",
         "$":"ingestion"
       }
     },
-    "2c85d09d-1f2d-317e-81d4-1a0f36bc6f1b":{  
+    "485d19c3-d736-3684-a683-3f6c3fce6c6a":{  
       "prov:how":null,
-      "prov:startTime":"2015-02-04T11:44:07-08:00",
-      "prov:endTime":"2015-02-04T11:44:07-08:00",
+      "prov:startTime":"2015-02-04T11:44:05-08:00",
+      "prov:endTime":"2015-02-04T11:44:05-08:00",
       "prov:type":{  
         "type":"xsd:string",
         "$":"spatial enhancement"
@@ -58,25 +58,23 @@
     }
   },
   "used":{  
-    "226bccce-3763-38da-ab2d-0a69b6faf520":{  
-      "prov:entity":"8cf7d132-b9b1-35cb-ba35-fe40ea4573df",
-      "prov:activity":"2c85d09d-1f2d-317e-81d4-1a0f36bc6f1b"
+    "eab1c730-f4c6-3e7f-b040-6d9a14be73d9":{  
+      "prov:entity":"9755dcce-b6c4-31e8-a076-85fa1faf0521",
+      "prov:activity":"485d19c3-d736-3684-a683-3f6c3fce6c6a"
     },
-    "supplied_rw":{
-      "prov:entity":"13787c09-3a9c-3285-b5cf-81908ac99e3a",
-      "prov:activity":"4bfd8bac-2964-365c-9c93-a9e73a7dfbda"
+    "680e8fda-6cf0-307e-ab62-f874309cf161":{  
+      "prov:entity":"22d329fc-7973-317f-9919-075b06c93234",
+      "prov:activity":"10319f75-3cc1-3fa8-a55d-247f350bdae2"
     }
-
   },
   "wasGeneratedBy":{  
-    "supplied_rw":{
-      "prov:entity":"40f16268-81a5-3deb-8423-50e0bfebbfcc",
-      "prov:activity":"2c85d09d-1f2d-317e-81d4-1a0f36bc6f1b"
+    "74c680fd-a120-3103-874f-69743c0a5044":{  
+      "prov:entity":"490324e8-4134-3f4b-8599-e566fb3c094e",
+      "prov:activity":"485d19c3-d736-3684-a683-3f6c3fce6c6a"
     },
-    "supplied_rw_2":{
-      "prov:entity":"8cf7d132-b9b1-35cb-ba35-fe40ea4573df",
-      "prov:activity":"4bfd8bac-2964-365c-9c93-a9e73a7dfbda"
+    "0dfdfc4a-96e7-3ea1-9d7c-270adfaf8f73":{  
+      "prov:entity":"9755dcce-b6c4-31e8-a076-85fa1faf0521",
+      "prov:activity":"10319f75-3cc1-3fa8-a55d-247f350bdae2"
     }
-
   }
 }
