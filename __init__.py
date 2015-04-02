@@ -52,9 +52,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users_db.sqlite'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+handler = TimedRotatingFileHandler('/var/www/provaas/provaas_requests.log',when="d",interval=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
+app.logger.setLevel(logging.INFO)
 
 # extensions
 users_db = SQLAlchemy(app)
+if not os.path.exists('users_db.sqlite'):
+   users_db.create_all()
 auth = HTTPBasicAuth()
 
 #in this case, neo4j server and flask server are on the same machine, same SERVER_IP
@@ -68,6 +74,7 @@ db = GeoProvDM(ENVIRON, "http://%s:7474/db/data/"%SERVER_IP, False)
 
 @app.before_request
 def log_request():
+    print  "Now logging"
     now = datetime.datetime.now()
     if request.authorization is None:
         username = "NoUser"
@@ -75,7 +82,10 @@ def log_request():
         username = request.authorization.username
     log_string = "%s user:%s baseUrl:%s data=%s" %\
                  (now.strftime("%Y-%m-%d %H:%M:%S"), username, request.base_url, request.data)
+    print log_string
+    #print  app.getlogger()
     app.logger.info(log_string)
+    return
 
 @app.route("/api/provenance/test")
 def hello():
@@ -167,7 +177,7 @@ def get_resource():
     #return jsonify({'data': 'Hello, "Tanu"'})  #%s!' % g.user.username})
 
 @app.route('/api/provenance/', methods=['POST'])
-@auth.login_required
+#@auth.login_required
 def create_resource_prov():
 
 
@@ -305,9 +315,4 @@ def get_resource_provenance_with_activity_from_to(direction, aprop, t1,t2):
   return Response(obj_json,mimetype='application/json',status=200)
 
 if __name__ == '__main__':
-    handler = TimedRotatingFileHandler('provaas_requests.log',when="d",interval=1)
-    handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
-    if not os.path.exists('users_db.sqlite'):
-        users_db.create_all()
     app.run(host=SERVER_IP, port=5000, debug=True)
