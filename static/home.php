@@ -9,12 +9,12 @@
         <link rel="icon" href="img/icon.png">
         <title>ProvDB</title>
         <!-- Bootstrap core CSS -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap.css" rel="stylesheet">
         <script src="js/bootstrap.js"></script>
         <script src="js/jquery.js"></script>
     </head>
-    <body>
-        <nav class="navbar navbar-default navbar-fixed-top">
+    <body style="background-color: #FFECFF;">
+        <nav class="navbar navbar-custom navbar-fixed-top" style="background-color:#3399FF;">
             <div class="container">
                 <a class="navbar-brand" href="#">
                     <img src="img/icon.png" style="width:25px;height:25px">
@@ -37,10 +37,11 @@
         </nav>
         <div class="container" style="padding-top:70px">
             <div id="instruction" class="jumbotron" >
-                <h2>Instruction</h2><br>
+                <h2>Instruction</h2>
+                <hr>
                 <p>
                     <small>
-                    ProvDB's API provides a RESTful web service for storage and access of provenance documents in various formats of the W3C's <a href="#">PROV Data Model</a>. Using the API, any client can upload PROV-compliant documents and query them using the PROV description model.
+                    ProvDB's API provides a RESTful web service for storage and access of provenance documents in various formats of the W3C's <a href="#">PROV Data Model</a>. Using the API, any client can upload PROV-compliant documents and query them using the PROV description model.<br>
                     This document provides details and examples of the available endpoints and resources at a low level. Existing libraries can be used instead to publish and access provenance documents available through ProvDB.
                     </small>
                 </p>
@@ -197,8 +198,6 @@
                     </small>
                 </p>
             </div>
-            <button id="hide">Hide</button>
-<button id="show">Show</button>
         </div>
     </div>
 </body>

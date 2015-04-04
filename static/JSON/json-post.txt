@@ -1,0 +1,75 @@
+{
+  "wasGeneratedBy": {
+    "_:wGB1": {
+      "prov:activity": "foundry:ac_1",
+      "prov:entity": "foundry:en_2"
+    }
+  },
+  "entity": {
+    "foundry:en_1": {
+      "foundry:label": {
+        "$": "ScienceBase:abc38747",
+        "type": "xsd:string"
+      },
+      "foundry:creationTime": {
+        "$": "2015-02-02T12:39:51-08:00",
+        "type": "xsd:string"
+      },
+      "foundry:version": {
+        "$": "1.0",
+        "type": "xsd:string"
+      },
+      "foundry:sourceId": {
+        "$": "cinergi-0001",
+        "type": "xsd:string"
+      },
+      "foundry:UUID": {
+        "$": "8d40e952-52d6-4411-9dc3-850bb67508a5",
+        "type": "xsd:string"
+      }
+    },
+    "foundry:en_2": {
+      "foundry:label": {
+        "$": "ScienceBase:abc38747",
+        "type": "xsd:string"
+      },
+      "foundry:creationTime": {
+        "$": "2015-02-02T12:39:51-08:00",
+        "type": "xsd:string"
+      },
+      "foundry:version": {
+        "$": "1.0",
+        "type": "xsd:string"
+      },
+      "foundry:UUID": {
+        "$": "abc38747",
+        "type": "xsd:string"
+      }
+    }
+  },
+  "prefix": {
+    "xsd": "http://www.w3.org/2001/XMLSchema",
+    "prov": "http://www.w3.org/ns/prov#",
+    "foundry": "http://example.org"
+  },
+  "used": {
+    "_:u1": {
+      "prov:activity": "foundry:ac_1",
+      "prov:entity": "foundry:en_1"
+    }
+  },
+  "activity": {
+    "foundry:ac_1": {
+      "prov:type": {
+        "$": "ingestion",
+        "type": "xsd:string"
+      },
+      "prov:startTime": "2015-02-02T12:39:51-08:00",
+      "foundry:label:how": {
+        "$": "Ingested abc38747.",
+        "type": "xsd:string"
+      },
+      "prov:endTime": "2015-02-02T12:39:51-08:00"
+    }
+  }
+}

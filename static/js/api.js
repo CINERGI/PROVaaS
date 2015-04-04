@@ -2,7 +2,7 @@ $("#post").click(function () {
     var post = $('#post').val();
     // alert(post);
     $("#interactive").html("<form action='' method='post' style='padding-top:20px'><div class='col-md-2'><input type='checkbox' id='ckbx1' class='checkbox' value='C1'>Data 1&nbsp</div><div class='col-md-2'><input type='checkbox' id='ckbx1' class='checkbox' value='C2'>Data 2&nbsp</div><div class='col-md-2'><input type='checkbox' id='ckbx3' class='checkbox' value='C3'>Data 3&nbsp</div><div class='col-md-2'><input type='checkbox' id='ckbx5' class='checkbox' value='C4'>Data 4&nbsp</div><div class='col-md-2'><input type='checkbox' id='ckbx7' class='checkbox' value='C5'>Data 5&nbsp</div><div class='col-md-10'><button class='btn btn-info btn pull-right' type='submit'>Reset Database &raquo;</button></div><div class='col-md-2'><button class='btn btn-info btn pull-right' 'type='submit'>Post to Database &raquo;</button></div></form>");
-    $.post('php/get_json.php', {post: post}, function(data){
+    $.post('php/post_json_local.php', {post: post}, function(data){
         $('#myTextarea').val(data);
     });
 });
