@@ -4,10 +4,10 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="personal home page">
-        <meta name="author" content="Lingduo Kong">
+        <meta name="description" content="PROVaaS">
+        <meta name="author" content="Lingduo Kong/Tanu Malik">
         <link rel="icon" href="img/icon.png">
-        <title>ProvDB</title>
+        <title>PROVaaS</title>
         <!-- Bootstrap core CSS -->
         <link href="css/bootstrap.css" rel="stylesheet">
         <script src="js/bootstrap.js"></script>
@@ -20,30 +20,35 @@
                     <img src="img/icon.png" style="width:25px;height:25px">
                 </a>
                 <a class="navbar-brand" href="#">
-                    <b>ProvDB</b>
+                    <b>PROVaaS</b>
                 </a>
                 <ul class="nav navbar-nav pull-right">
                     <li class="active"><a href=""><img src="img/home-50.png" style="width:18px;height:18px"></a></li>
-                    <li class="active"><a href="#instruction">Introduction</a></li>
+                    <li class="active"><a href="#introduction">Introduction</a></li>
                     <li class="active"><a href="#API">API</a></li>
-                    <li class="active"><a href="#Responses">Responses</a></li>
                     <li class="active"><a href="#Authentication">Authentication</a></li>
-                    <li class="active"><a href="#database_schema">Database Schema</a></li>
-                    <li class="active"><a href="#Related_Links">Related Links</a></li>
+                    <li class="active"><a href="#Features">Service Features</a></li>
+                    <li class="active"><a href="#use">Service Use</a></li>
                     <li class="active"><a href="https://github.com/SciCrunch/CINERGI-PROV">Github Repository</a></li>
-                    <li class="active"><a href=""><img src="img/search-50.png" style="width:18px;height:18px"></a></li>
+                    <li class="active"><a href="#About">About</a></li>
+                    <!--<li class="active"><a href=""><img src="img/search-50.png" style="width:18px;height:18px"></a></li>-->
                 </ul>
             </div>
         </nav>
         <div class="container" style="padding-top:70px">
-            <div id="instruction" class="jumbotron" >
-                <h2>Instruction</h2>
+            <div id="introduction" class="jumbotron" >
+                <h2>Introduction</h2><br>
                 <hr>
                 <p>
                     <small>
-                    ProvDB's API provides a RESTful web service for storage and access of provenance documents in various formats of the W3C's <a href="#">PROV Data Model</a>. Using the API, any client can upload PROV-compliant documents and query them using the PROV description model.<br>
-                    This document provides details and examples of the available endpoints and resources at a low level. Existing libraries can be used instead to publish and access provenance documents available through ProvDB.
-                    </small>
+                 	PROVaaS is a RESTful service for storage and access of provenance documents, following the W3C <a href="#">PROV</a> standard. Using the REST API, clients can upload multiple documents described in PROV. The service maintains the provenance, if any, among the documents. The clients can query the provenance of an entity or activity using the PROV description model.
+
+<p>
+
+                    This document provides details and examples of the available endpoints and resources at a low level, and how provenance is maintained across documents. 
+<!--Existing libraries can be used instead to publish and access provenance documents available through PROVaaS-->
+</p>
+                   </small>
                 </p>
             </div>
             <div id="API" class="jumbotron" style="height:1000px;">
