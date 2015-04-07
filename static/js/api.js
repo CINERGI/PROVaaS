@@ -31,6 +31,7 @@ $("#q1").click(function () {
 
 $("#q2").click(function () {
     var post = $(this).val();
+    post = "q2_client";
     // alert(post);
     $.post('php/get_json.php', {post: post}, function(data){
         $('#myTextarea').val(data);
@@ -49,6 +50,7 @@ $("#q3").click(function () {
 
 $("#q5").click(function () {
     var post = $(this).val();
+    post = "q5_client";
     // alert(post);
     $.post('php/get_json.php', {post: post}, function(data){
         $('#myTextarea').val(data);

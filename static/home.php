@@ -9,200 +9,109 @@
         <link rel="icon" href="img/icon.png">
         <title>PROVaaS</title>
         <!-- Bootstrap core CSS -->
-        <link href="css/bootstrap.css" rel="stylesheet">
-        <script src="js/bootstrap.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.css">
         <script src="js/jquery.js"></script>
+        <script src="js/bootstrap-dropdown.js"></script>
+        <style>
+        h1, h2, h3{color:#A30000}
+        h1{font-size: 50px}
+        .cloud{
+        width: 600px;
+        position: absolute;
+        right: 0px;
+        }
+        .logo{
+        width:300px;
+        position:absolute;
+        top:130px;
+        right:140px;
+        background-color:#993333;
+        border: 2px solid #a1a1a1;
+        border-radius: 25px;
+        }
+        .stats{
+        width:300px;
+        position:absolute;
+        top:310px;
+        bottom: 450px;
+        right:140px;
+        border-radius: 25px;
+        text-align: center;
+        }
+        .hrline{
+        background-color:#8A8A8A;
+        height:23px;
+        margin-left: -15px;
+        margin-right: -15px;
+        }
+        </style>
     </head>
-    <body style="background-color: #FFECFF;">
-        <nav class="navbar navbar-custom navbar-fixed-top" style="background-color:#3399FF;">
-            <div class="container">
-                <a class="navbar-brand" href="#">
-                    <img src="img/icon.png" style="width:25px;height:25px">
-                </a>
-                <a class="navbar-brand" href="#">
-                    <b>PROVaaS</b>
-                </a>
-                <ul class="nav navbar-nav pull-right">
-                    <li class="active"><a href=""><img src="img/home-50.png" style="width:18px;height:18px"></a></li>
-                    <li class="active"><a href="#introduction">Introduction</a></li>
-                    <li class="active"><a href="#API">API</a></li>
-                    <li class="active"><a href="#Authentication">Authentication</a></li>
-                    <li class="active"><a href="#Features">Service Features</a></li>
-                    <li class="active"><a href="#use">Service Use</a></li>
-                    <li class="active"><a href="https://github.com/SciCrunch/CINERGI-PROV">Github Repository</a></li>
-                    <li class="active"><a href="#About">About</a></li>
-                    <!--<li class="active"><a href=""><img src="img/search-50.png" style="width:18px;height:18px"></a></li>-->
-                </ul>
+    <body>
+        <?php include 'php/nav.php';?>
+        <div class="container-fluid" style="background-color:#f8f8f8">
+            <div class="container" style="padding-top:100px; height:450px">
+                <div class="col-xs-5" style="text-align: center;">
+                    <br>
+                    <br>
+                    <br>
+                    <h1>Provass</h1>
+                    <h1>data</h1>
+                    <h1>servise</h1>
+                </div>
+                <div class="col-xs-7">
+                    <img src="img/basic_cloud.png" class="cloud">
+                    <img src="img/logo2.png" class="logo pull-right">
+                    <div class="stats"><h3>Documents number: 50</h3></div>
+                </div>
             </div>
-        </nav>
-        <div class="container" style="padding-top:70px">
+            <hr class="hrline">
+            <div class="container">
+                <h2 id="News" style="text-align: left;">News</h2>
+                <hr>
+                <div class="row">
+                    <div class="col-xs-4">Title1</div>
+                    <div class="col-xs-8">Details</div>
+                    <div class="col-xs-4">Title2</div>
+                    <div class="col-xs-8">Details</div>
+                    <div class="col-xs-4">Title3</div>
+                    <div class="col-xs-8">Details</div>
+                </div>
+                <br>
+                <br>
+            </div>
+        </div>
+        <div class="container" style="padding-top:30px">
             <div id="introduction" class="jumbotron" >
                 <h2>Introduction</h2><br>
                 <hr>
                 <p>
                     <small>
-                 	PROVaaS is a RESTful service for storage and access of provenance documents, following the W3C <a href="#">PROV</a> standard. Using the REST API, clients can upload multiple documents described in PROV. The service maintains the provenance, if any, among the documents. The clients can query the provenance of an entity or activity using the PROV description model.
-
-<p>
-
-                    This document provides details and examples of the available endpoints and resources at a low level, and how provenance is maintained across documents. 
-<!--Existing libraries can be used instead to publish and access provenance documents available through PROVaaS-->
-</p>
-                   </small>
+                    PROVaaS is a RESTful service for storage and access of provenance documents, following the W3C <a href="#">PROV</a> standard. Using the REST API, clients can upload multiple documents described in PROV. The service maintains the provenance, if any, among the documents. The clients can query the provenance of an entity or activity using the PROV description model.
+                    <p>
+                        This document provides details and examples of the available endpoints and resources at a low level, and how provenance is maintained across documents.
+                        <!--Existing libraries can be used instead to publish and access provenance documents available through PROVaaS-->
+                    </p>
+                    </small>
                 </p>
             </div>
-            <div id="API" class="jumbotron" style="height:1000px;">
-                <h2>API</h2><hr>
-                <div class="col-md-4">
-                    <p>
-                        <small>
-                        <a href="">Link for POST API</a><br>
-                        show the description for API 1<br>
-                        </small>
-                    </p>
-                    <button class="btn btn-primary btn" id="post" value="post_client">POST API</button>
-                    <hr>
-                    <p>
-                        <small>
-                        <a href="">Link for API 1</a><br>
-                        show the description for API 1<br>
-                        </small>
-                    </p>
-                    <button class="btn btn-primary btn" id="q1" value="q1_client">GET API 1</button>
-                </div>
-                <div class="col-md-4">
-                    <p>
-                        <small>
-                        <a href="">Link for API 2</a><br>
-                        show the description for API 2<br>
-                        </small>
-                    </p>
-                    <button class="btn btn-primary btn" id="q2" value="q2_client">GET API 2</button>
-                    <hr>
-                    <p>
-                        <small>
-                        <a href="">Link for API 3</a><br>
-                        show the description for API 3<br>
-                        </small>
-                    </p>
-                    <button class="btn btn-primary btn" id="q3" value="q3_client">GET API 3</button>
-                </div>
-                <div class="col-md-4">
-                    <p>
-                        <small>
-                        <a href="">Link for API 5</a><br>
-                        show the description for API 5<br>
-                        </small>
-                    </p>
-                    <button class="btn btn-primary btn" id="q5" value="q5_client">GET API 5</button>
-                    <hr>
-                    <p>
-                        <small>
-                        <a href="">Link for API 7</a><br>
-                        show the description for API 7<br>
-                        </small>
-                    </p>
-                    <button class="btn btn-primary btn" id="q7" value="q7_client">GET API 7</button>
-                </div>
-                <div class="col-md-12">
-                    <br><a href="" class="btn btn-lg btn-link pull-right" role="button">Explore More</a><br>
-                </div>
-                <div class="col-md-6 ">
-                    <br>
-                    <textarea id="myTextarea" name="JsonRaw" cols="60" rows ="20"></textarea>
-                </div>
-                <div class="col-md-6">
-                    <br>
-                    <img src="img/sampledata1.png" style="width:400px;height:400px">
-                </div>
-                <div class="col-md-12" id="interactive"></div>
-                <script src="js/api.js">
-                </script>
+            <div id="Service_Features" class="jumbotron">
+                <h2>Service Features</h2><hr>
             </div>
-            <div id="Responses" class="jumbotron" style="height:400px">
-                <h2>Responses</h2>
-                <hr style="padding:5px">
-                <div class="col-md-2"><h4>
-                    GET
-                </h4></div>
-                <div class="col-md-2"><h4>
-                    <span class="label label-success">200 OK</span>
-                </h4></div>
-                <div class="col-md-8"><h4>
-                    The resource was successfully retrieved.
-                </h4></div>
-                <hr style="padding:5px">
-                <div class="col-md-2"><h4>
-                    POST
-                </h4></div>
-                <div class="col-md-2"><h4>
-                    <span class="label label-success">201 OK</span>
-                </h4></div>
-                <div class="col-md-8"><h4>
-                    The resource was successfully created. The information held in the new resource will be provided in the response body.
-                </h4></div>
-                <hr style="padding:5px">
-                <div class="col-md-2"><h4>
-                    POST
-                </h4></div>
-                <div class="col-md-2"><h4>
-                    <span class="label label-success">202 Accepted</span>
-                </h4></div>
-                <div class="col-md-8"><h4>
-                    The sub-resource was successfully added to the target resource.
-                </h4></div>
-                <hr style="padding:5px">
-            </div>
-            <div id="Authentication" class="jumbotron" >
-                <h2>Authentication</h2><hr>
-                <p>
-                    <small>
-                    The API supports authentication by either API key or OAuth. The API can also be accessed anonymously if you do not wish to authenticate. In this case only public documents will be visible and documents may not be added/modified.<br>
-                    </small>
-                </p>
-                <hr>
-                <p>
-                    <small>
-                    <a href="">Create user</a><br>
-                    curl -i -X POST -H "Content-Type: application/json" -d '{"username":"demouser","password":"demopass"}' http://SERVER_IP:5000/api/users<br>
-                    </small>
-                </p>
-                <p>
-                    <small>
-                    <a href="">Generate token for demouser</a><br>
-                    curl -u demouser:demopass  http://SERVER_IP:5000/api/token<br>
-                    </small>
-                </p>
-                <p>
-                    <small>
-                    <a href="">Test authentication with user and password</a><br>
-                    curl -u demouser:demopass  http://SERVER_IP:5000/api/resource<br>
-                    </small>
-                </p>
-                <p>
-                    <small>
-                    <a href="">Test authentication with token</a><br>
-                    If your generated token is:<br>
-                    "token": some_long_string<br>
-                    Then you can use:<br>
-                    curl -u some_long_string: http://SERVER_IP:5000/api/resource<br>
-                    Please note that request contains your token followed by colon
-                    </small>
-                </p>            </div>
-            <div id="database_schema" class="jumbotron">
-                <h2>Database schema</h2><hr>
+            <div id="Service_Use" class="jumbotron">
+                <h2>Service use</h2><hr>
             </div>
             <div id="Related_Links" class="jumbotron">
-                <h2>Related Links</h2><hr>
+                <h2>About</h2><hr>
                 <p>
                     <small>
                     <class="active"><a href="">Link 1</a><br>
-                    <class="active"><a href="">Link 2</a><br>
-                    <class="active"><a href="">Link 3</a><br>
-                    <class="active"><a href="">Link 4</a><br>
                     </small>
                 </p>
             </div>
+            <div id="Contact_us" class="jumbotron">
+                <h2>Contact US</h2><hr>
+                <p>
+                </p>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
