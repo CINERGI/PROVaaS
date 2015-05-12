@@ -54,63 +54,69 @@
                     <br>
                     <br>
                     <br>
-                    <h1>Provass</h1>
-                    <h1>data</h1>
-                    <h1>servise</h1>
+                    <h1>Your</h1>
+                    <h1>Provenance</h1>
+                    <h1>Host</h1>
                 </div>
                 <div class="col-xs-7">
                     <img src="img/basic_cloud.png" class="cloud">
-                    <img src="img/logo2.png" class="logo pull-right">
-                    <div class="stats"><h3>Documents number: 50</h3></div>
+                    <!--<img src="img/logo2.png" class="logo pull-right">-->
+                    <img src="img/Icon2.png" class="logo pull-right">
+                    <!--<div class="stats"><h3>Documents number: 50</h3></div>-->
                 </div>
             </div>
             <hr class="hrline">
             <div class="container">
                 <h2 id="News" style="text-align: left;">News</h2>
-                <hr>
+             <!--   <hr>-->
                 <div class="row">
-                    <div class="col-xs-4">Title1</div>
-                    <div class="col-xs-8">Details</div>
-                    <div class="col-xs-4">Title2</div>
-                    <div class="col-xs-8">Details</div>
-                    <div class="col-xs-4">Title3</div>
-                    <div class="col-xs-8">Details</div>
+                    <div class="col-xs-4">04-09-14</div>
+                    <div class="col-xs-8">Demonstrating PROVaaS at Earth Tech Hands Meeting</div>
+                    <div class="col-xs-4">04-05-14</div>
+                    <div class="col-xs-8">PROVaaS website launched</div>
+                    <div class="col-xs-4">04-01-14</div>
+                    <div class="col-xs-8">Provenance API launched</div>
                 </div>
                 <br>
                 <br>
             </div>
         </div>
         <div class="container" style="padding-top:30px">
-            <div id="introduction" class="jumbotron" >
+            <!--<div id="introduction" class="jumbotron" >
                 <h2>Introduction</h2><br>
                 <hr>
                 <p>
                     <small>
-                    PROVaaS is a RESTful service for storage and access of provenance documents, following the W3C <a href="#">PROV</a> standard. Using the REST API, clients can upload multiple documents described in PROV. The service maintains the provenance, if any, among the documents. The clients can query the provenance of an entity or activity using the PROV description model.
+                   </small>
+                </p>
+            </div>-->
+            <div id="Service_Features" class="jumbotron">
+              <h2>PROV-As-A-Service </h2><hr>
                     <p>
-                        This document provides details and examples of the available endpoints and resources at a low level, and how provenance is maintained across documents.
+	      PROVaaS is a RESTful service for storage and access of provenance documents, following the W3C <a href="#">PROV</a> standard. Using the REST API, clients can upload multiple documents described in PROV. The service maintains the provenance, if any, among the documents. The clients can query the provenance of an entity or activity using the PROV description model.
+            </p>
+<p>            This document provides details and examples of the available endpoints and resources at a low level, and how provenance is maintained across documents.
                         <!--Existing libraries can be used instead to publish and access provenance documents available through PROVaaS-->
                     </p>
-                    </small>
-                </p>
-            </div>
-            <div id="Service_Features" class="jumbotron">
-                <h2>Service Features</h2><hr>
+
             </div>
             <div id="Service_Use" class="jumbotron">
-                <h2>Service use</h2><hr>
+                <h2>Service Use</h2><hr>
+		<p>
+		 The service is used by several projects for their data provenance needs. We currently host provenance data from <a href="http://hydro10.sdsc.edu">CINERGI</a>, <a href="http://earthcube.org/group/geodataspace">GeoDataspace</a>, <a href="http://swift-lang.org">Swift</a>, and <a href="ihttp://www.cs.iit.edu/%7edbgroup/research/gprom.php">GPRoM</a>.
+		</p>
             </div>
             <div id="Related_Links" class="jumbotron">
                 <h2>About</h2><hr>
                 <p>
-                    <small>
-                    <class="active"><a href="">Link 1</a><br>
-                    </small>
+		    The PROVaaS data management is built by the Computation Institute, University of Chicago, with the generous support of the National Science Foundation under awards ICER-1343816(sub-contract) and ICER-1440327.
                 </p>
             </div>
             <div id="Contact_us" class="jumbotron">
-                <h2>Contact US</h2><hr>
+                <h2>Contact Us</h2><hr>
                 <p>
+		  For more information about service use, please contact us at <a href="mailto:scidataspace@gmail.com">PROVaaS</a>
+
                 </p>
             </div>
         </div>

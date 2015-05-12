@@ -22,8 +22,8 @@
                 <div class="col-md-4">
                     <p>
                         <small>
-                        <a href="">Link for POST API</a><br>
-                        show the description for API 1<br>
+                        <a href="">POST /api/provenance/</a><br>
+                        Post PROV encoded documents to the service. Requires authentication.<br>
                         </small>
                     </p>
                     <img src="img/Download.png" style="width:50px;height:50p" id="post" value="post_client">
@@ -39,8 +39,8 @@
                 <div class="col-md-4">
                     <p>
                         <small>
-                        <a href="">Link for API 2</a><br>
-                        show the description for API 2<br>
+                        <a href="">GET /api/$namespace/provenance/$uuid</a><br>
+                        Get provenance of a data entity.<br>
                         </small>
                     </p>
                     <img src="img/Upload.png" style="width:50px;height:50p" id="q2" value="q2_client">
@@ -56,8 +56,8 @@
                 <div class="col-md-4">
                     <p>
                         <small>
-                        <a href="">Link for API 5</a><br>
-                        show the description for API 5<br>
+                        <a href="">DELETE /api/$namespace/provenance/$uuid</a><br>
+                        Delete provenance of a data entity. Requires authentication.<br>
                         </small>
                     </p>
                     <img src="img/Cancel.png" style="width:50px;height:50p" id="q5" value="q5_client">
@@ -70,7 +70,7 @@
                     </p>
                     <button class="btn btn-primary btn" id="q7" value="q7_client">GET API 7</button> -->
                 </div>
-                <div class="col-md-12">
+                <!--<div class="col-md-12">
                     <br><a href="" class="btn btn-lg btn-link pull-right" role="button">Explore More</a><br>
                 </div>
                 <div class="col-md-6 ">
@@ -80,8 +80,8 @@
                 <div class="col-md-6">
                     <br>
                     <img src="img/sampledata1.png" style="width:400px;height:400px">
-                </div>
-                <div class="col-md-12" id="interactive"></div>
+                </div>-->
+                <!--<div class="col-md-12" id="interactive"></div>-->
                 <script src="js/api.js">
                 </script>
             </div>
