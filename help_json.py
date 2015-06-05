@@ -22,18 +22,19 @@ def neo2json(aneo):
         for paths in aneo:
             for path in paths:
                 rels= path.relationships               
+                #print rels
                 nodes= path.nodes
                 for r in rels:
                     if r.type not in res:
                             res[r.type] ={}
                     if r.type == 'wasDerivedFrom':
-                        res['wasDerivedFrom'][r["name"]]={"prov:generatedEntity": r.start_node["_id"], "prov:usedEntity": r.end_node["_id"]}
+                        res['wasDerivedFrom'][r["_id"]]={"prov:generatedEntity": r.start_node["_id"], "prov:usedEntity": r.end_node["_id"]}
                     elif r.type == 'actedOnBehalfOf':
-                        res['actedOnBehalfOf'][r["name"]]={"prov:delegate": r.start_node["_id"], "prov:responsible": r.end_node["_id"]}
+                        res['actedOnBehalfOf'][r["_id"]]={"prov:delegate": r.start_node["_id"], "prov:responsible": r.end_node["_id"]}
                     elif r.type == 'wasInformedBy':
-                        res['wasInformedBy'][r["name"]]={"prov:informed": r.start_node["_id"], "prov:informant": r.end_node["_id"]}
+                        res['wasInformedBy'][r["_id"]]={"prov:informed": r.start_node["_id"], "prov:informant": r.end_node["_id"]}
                     elif r.type == 'wasStartedBy':
-                        res['wasStartedBy'][r["name"]]={"prov:activity": r.start_node["_id"], "prov:trigger":  r.end_node["_id"]}
+                        res['wasStartedBy'][r["_id"]]={"prov:activity": r.start_node["_id"], "prov:trigger":  r.end_node["_id"]}
                     elif r.type == 'wasEndedBy':
                         res['wasEndedBy'][r["name"]]={"prov:activity": r.start_node["_id"], "prov:trigger":  r.end_node["_id"]}    
                     elif r.type == 'wasGeneratedBy':
@@ -85,9 +86,9 @@ def neo2json(aneo):
                         res["agent"][n["_id"]]={"prov:type":{"$":n["prov:type"], "type": "xsd:string"}}
                     else:
                         pass
-                
+               
+        print res
         res2 = json.dumps(res,ensure_ascii=True)
-        #print res2
     return res2
     
 def outputJSON(obj):

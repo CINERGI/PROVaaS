@@ -28,7 +28,7 @@ Author: Tanu Malik <tanum@ci.uchicago.edu>
 #!/usr/local/bin/python2.7
 import sys, json, datetime
 from json import dumps
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, Response, jsonify, send_from_directory
 #from jsonhelp import *
 from help_json import *
 from geoprovdm import *
@@ -48,13 +48,19 @@ import datetime
 import logging
 
 # initialization
-app = Flask(__name__)
+app = Flask(__name__) #, static_folder='static', static_url_path='/static')
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users_db.sqlite'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+handler = TimedRotatingFileHandler('/var/www/provaas/provaas_requests.log',when="d",interval=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
+app.logger.setLevel(logging.INFO)
 
 # extensions
 users_db = SQLAlchemy(app)
+if not os.path.exists('users_db.sqlite'):
+   users_db.create_all()
 auth = HTTPBasicAuth()
 
 #in this case, neo4j server and flask server are on the same machine, same SERVER_IP
@@ -68,6 +74,7 @@ db = GeoProvDM(ENVIRON, "http://%s:7474/db/data/"%SERVER_IP, False)
 
 @app.before_request
 def log_request():
+    print  "Now logging"
     now = datetime.datetime.now()
     if request.authorization is None:
         username = "NoUser"
@@ -75,9 +82,12 @@ def log_request():
         username = request.authorization.username
     log_string = "%s user:%s baseUrl:%s data=%s" %\
                  (now.strftime("%Y-%m-%d %H:%M:%S"), username, request.base_url, request.data)
+    print log_string
+    #print  app.getlogger()
     app.logger.info(log_string)
+    return
 
-@app.route("/api/provenance/test")
+@app.route("/provenance/test")
 def hello():
     return "Hello World!"
 
@@ -128,7 +138,7 @@ def verify_password(username_or_token, password):
     return True
 
 
-@app.route('/api/users', methods=['POST'])
+@app.route('/users', methods=['POST'])
 def new_user():
     username = request.json.get('username')
     password = request.json.get('password')
@@ -144,7 +154,7 @@ def new_user():
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
-@app.route('/api/users/<int:id>')
+@app.route('/users/<int:id>')
 def get_user(id):
     user = User.query.get(id)
     if not user:
@@ -152,22 +162,22 @@ def get_user(id):
     return jsonify({'username': user.username})
 
 
-@app.route('/api/token')
+@app.route('/token')
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(600)
     return jsonify({'token': token.decode('ascii'), 'duration': 600})
 
 
-@app.route('/api/resource')
+@app.route('/resource')
 @auth.login_required
 def get_resource():
     print "Here we reached"
     return jsonify({'data': 'Hello, %s!' % g.user.username})
     #return jsonify({'data': 'Hello, "Tanu"'})  #%s!' % g.user.username})
 
-@app.route('/api/provenance/', methods=['POST'])
-@auth.login_required
+@app.route('/provenance/', methods=['POST'])
+#@auth.login_required
 def create_resource_prov():
 
 
@@ -223,7 +233,7 @@ def create_resource_prov():
     return Response(dumps(data,default=outputJSON), mimetype='application/json',status=201)
 
 
-@app.route('/api/<string:namespace>/provenance/<string:uuid>', methods=['GET'])
+@app.route('/<string:namespace>/provenance/<string:uuid>', methods=['GET'])
 #@auth.login_required
 def get_resource_provenance(namespace,uuid):
  
@@ -234,7 +244,7 @@ def get_resource_provenance(namespace,uuid):
   obj_json = neo2json(obj)
   return Response(obj_json,mimetype='application/json',status=200)
 
-@app.route('/api/<string:namespace>/provenance/<string:uuid>', methods=['DELETE'])
+@app.route('/<string:namespace>/provenance/<string:uuid>', methods=['DELETE'])
 @auth.login_required
 def delete_resource_provenance(namespace,uuid):
   namespace1 = namespace
@@ -246,7 +256,7 @@ def delete_resource_provenance(namespace,uuid):
     data = {"Deleted:": obj, "Reason": "namespace or uuid does not exist"}
   return Response(dumps(data),mimetype='application/json',status=200)
 
-@app.route('/api/<string:namespace>/provenance/request/<string:rid>', methods=['DELETE'])
+@app.route('/<string:namespace>/provenance/request/<string:rid>', methods=['DELETE'])
 @auth.login_required
 def delete_provenance_request(namespace,rid):
   namespace1 = namespace
@@ -305,9 +315,4 @@ def get_resource_provenance_with_activity_from_to(direction, aprop, t1,t2):
   return Response(obj_json,mimetype='application/json',status=200)
 
 if __name__ == '__main__':
-    handler = TimedRotatingFileHandler('provaas_requests.log',when="d",interval=1)
-    handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
-    if not os.path.exists('users_db.sqlite'):
-        users_db.create_all()
     app.run(host=SERVER_IP, port=5000, debug=True)

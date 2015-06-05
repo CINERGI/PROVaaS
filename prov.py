@@ -1,3 +1,4 @@
+
 import sys, os, decimal
 import json
 import networkx as nx
@@ -87,7 +88,7 @@ def validateJSONRequest(jsonobj):
             return False, "There is no version in entity "+k
         if not is_valid_date(entity_creationTime['$']):
             return False, "Invalid creationTime format in entity "+k
-        entities_uniqueness_key = entity_uuid['$']+entity_creationTime['$'] # maybe add version
+        entities_uniqueness_key = entity_uuid['$']+entity_creationTime['$'] + entity_version['$'] # maybe add version
         existing_entity = unique_entities_dict.get(entities_uniqueness_key,None)
         if existing_entity is not None:
             return False, "Entities "+existing_entity+" and "+ k + " have the same UUID and creationTime"
@@ -200,8 +201,8 @@ def jsonid_rename(jsonobj):
         namespace = namespace
         #big_string = k[namespace+':UUID'] + k[namespace+':creationTime'] + k[namespace+':version']
         big_string = str(namespace) + str(jsonobj['entity'][k][namespace+':UUID']) + \
-                   str(jsonobj['entity'][k][namespace+':creationTime'])
-                     #str(jsonobj['entity'][k][namespace+':version'])
+                   str(jsonobj['entity'][k][namespace+':creationTime']) + \
+                   str(jsonobj['entity'][k][namespace+':version'])
         name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
         #print "new value for entity "+str(k) +" is "+ name_mapping[k]
         #add field to identify subgraph
@@ -231,9 +232,9 @@ def jsonid_rename(jsonobj):
     for k in wasGeneratedBy:
         activity = wasGeneratedBy[k]['prov:activity']
         entity = wasGeneratedBy[k]['prov:entity']
-        big_string = str(namespace) + str("activity") + str(jsonobj['wasGeneratedBy'][k]['prov:activity']) + \
-                   str(jsonobj['wasGeneratedBy'][k]['prov:entity'])
-
+        #big_string = str(namespace) + str("activity") + str(jsonobj['wasGeneratedBy'][k]['prov:activity']) + \
+        #           str(jsonobj['wasGeneratedBy'][k]['prov:entity'])
+        big_string = str(namespace) + str(k) + str("wasGeneratedBy") + name_mapping[activity] + name_mapping[entity]
         name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
         #add field to identify subgraph
         jsonobj2['wasGeneratedBy'][k]['provdb:projectId'] = namespace#graph_uuid
@@ -246,8 +247,9 @@ def jsonid_rename(jsonobj):
     for k in used:
         activity = used[k]['prov:activity']
         entity = used[k]['prov:entity']
-        big_string = str(namespace) + str("used") + str(jsonobj['used'][k]['prov:activity']) + \
-                   str(jsonobj['used'][k]['prov:entity'])
+        #big_string = str(namespace) + str("used") + str(jsonobj['used'][k]['prov:activity']) + \
+        #           str(jsonobj['used'][k]['prov:entity'])
+	big_string = str(namespace) + str(k) + str("used") + name_mapping[activity] + name_mapping[entity]
 
         name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
         #add field to identify subgraph
@@ -261,9 +263,9 @@ def jsonid_rename(jsonobj):
         entity_source = wasDerivedFrom[k]['prov:usedEntity']
         entity_destination =wasDerivedFrom[k]['prov:generatedEntity']
 
-        big_string = str(namespace) + str("wasDerivedFrom") + str(jsonobj['wasDerivedFrom'][k]['prov:generatedEntity']) + \
-                   str(jsonobj['wasDerivedFrom'][k]['prov:usedEntity'])
-
+        #big_string = str(namespace) + str("wasDerivedFrom") + str(jsonobj['wasDerivedFrom'][k]['prov:generatedEntity']) + \
+        #           str(jsonobj['wasDerivedFrom'][k]['prov:usedEntity'])
+        big_string = str(namespace) + str(k) + str("wasDerivedFrom") + name_mapping[entity_source] + name_mapping[entity_destination]
         name_mapping[k] = str(uuid.uuid3(uuid.NAMESPACE_DNS, big_string))
         #add field to identify subgraph
         jsonobj2['wasDerivedFrom'][k]['provdb:projectId'] = namespace #graph_uuid

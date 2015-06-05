@@ -1,0 +1,61 @@
+Exception on /api/provenance/ [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/var/www/provaas/__init__.py", line 181, in create_resource_prov
+    isvalid,message = validateJSONRequest(obj)
+  File "/var/www/provaas/prov.py", line 88, in validateJSONRequest
+    if not is_valid_date(entity_creationTime['$']):
+KeyError: '$'
+Exception on /api/provenance/ [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/var/www/provaas/__init__.py", line 193, in create_resource_prov
+    requestId = db.addRequestId(namespace)
+  File "/var/www/provaas/geoprovdm.py", line 78, in addRequestId
+    self._addObject(self._REQUESTID, rid)
+  File "/var/www/provaas/geoprovdm.py", line 106, in _addObject
+    a_node, = self._neo_graph.create(obj)
+  File "/usr/local/lib/python2.7/dist-packages/py2neo/neo4j.py", line 608, in create
+    return batch.submit()
+  File "/usr/local/lib/python2.7/dist-packages/py2neo/neo4j.py", line 2670, in submit
+    responses = self._execute()
+  File "/usr/local/lib/python2.7/dist-packages/py2neo/neo4j.py", line 2636, in _execute
+    if e.exception:
+  File "/usr/local/lib/python2.7/dist-packages/py2neo/exceptions.py", line 107, in __getattr__
+    return getattr(self.__cause__, item)
+AttributeError: 'ServerError' object has no attribute 'exception'
+Exception on /api/provenance/ [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/var/www/provaas/__init__.py", line 181, in create_resource_prov
+    isvalid,message = validateJSONRequest(obj)
+  File "/var/www/provaas/prov.py", line 88, in validateJSONRequest
+    if not is_valid_date(entity_creationTime['$']):
+KeyError: '$'

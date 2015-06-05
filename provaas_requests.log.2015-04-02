@@ -1,0 +1,74 @@
+Exception on /api/resource [GET]
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1473, in full_dispatch_request
+    rv = self.preprocess_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1666, in preprocess_request
+    rv = func()
+  File "/var/www/provaas/__init__.py", line 85, in log_request
+    print  app.getlogger()
+AttributeError: 'Flask' object has no attribute 'getlogger'
+2015-04-02 23:16:17 user:cinergi123 baseUrl:http://provaas.cloudapp.net/api/resource data=
+2015-04-03 00:23:29 user:NoUser baseUrl:http://168.62.109.219/ data=
+2015-04-03 08:18:46 user:NoUser baseUrl:http://provaas.cloudapp.net/ data=
+2015-04-03 09:59:41 user:NoUser baseUrl:http://168.62.109.219/ data=
+2015-04-03 09:59:42 user:NoUser baseUrl:http://168.62.109.219/HNAP1/ data=
+2015-04-03 09:59:42 user:NoUser baseUrl:http://168.62.109.219/sqlite/main.php data=
+2015-04-03 09:59:45 user:NoUser baseUrl:http://168.62.109.219/sqlitemanager/main.php data=
+2015-04-03 09:59:46 user:NoUser baseUrl:http://168.62.109.219/SQLiteManager/main.php data=
+2015-04-03 09:59:46 user:NoUser baseUrl:http://168.62.109.219/SQLite/main.php data=
+2015-04-03 09:59:46 user:NoUser baseUrl:http://168.62.109.219/SQlite/main.php data=
+2015-04-03 09:59:47 user:NoUser baseUrl:http://168.62.109.219/main.php data=
+2015-04-03 09:59:47 user:NoUser baseUrl:http://168.62.109.219/test/sqlite/SQLiteManager-1.2.0/SQLiteManager-1.2.0/main.php data=
+2015-04-03 09:59:47 user:NoUser baseUrl:http://168.62.109.219/SQLiteManager-1.2.4/main.php data=
+2015-04-03 09:59:48 user:NoUser baseUrl:http://168.62.109.219/agSearch/SQlite/main.php data=
+2015-04-03 17:16:19 user:NoUser baseUrl:http://provaas.cloudapp.net/ data=
+2015-04-03 17:33:12 user:NoUser baseUrl:http://168.62.109.219/wp-content/plugins/simple-ads-manager/ data=
+2015-04-03 17:42:47 user:NoUser baseUrl:http://provaas.cloudapp.net/api/provenance/ data={"wasGeneratedBy":{"_:wGB3":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_2"}},"entity":{"foundry:en_1":{"foundry:label":{"type":"xsd:string","$":"ScienceBase WAF:51220a00e4b0b37542fda86e"},"foundry:creationTime":{"type":"xsd:string","$":"2015-02-19T23:31:13Z"},"foundry:version":{"type":"xsd:string","$":"1.0"},"foundry:sourceId":{"type":"xsd:string","$":"cinergi-0001"},"foundry:UUID":{"type":"xsd:string","$":"cc419d9f-c2e5-48f2-9ddf-9cb429ae54aa"}},"foundry:en_2":{"foundry:label":{"type":"xsd:string","$":"ScienceBase WAF:51220a00e4b0b37542fda86e"},"foundry:creationTime":{"type":"xsd:string","$":"2015-02-19T23:31:14Z"},"foundry:version":{"type":"xsd:string","$":"1.1"},"foundry:UUID":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e"}}},"prefix":{"xsd":"http://www.w3.org/2001/XMLSchema","prov":"http://www.w3.org/ns/prov#","foundry":"http://example.org"},"used":{"_:u3":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_1"}},"activity":{"foundry:ac_1":{"prov:type":{"type":"xsd:string","$":"ingestion"},"prov:startTime":"2015-02-19T23:31:14Z","prov:endTime":"2015-02-19T23:31:14Z","prov:how":{"type":"xsd:string","$":"Added document with uuid 51220a00e4b0b37542fda86e"}}}}
+2015-04-03 17:42:48 user:NoUser baseUrl:http://provaas.cloudapp.net/api/provenance/ data={"wasGeneratedBy":{"_:wGB13":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_2"}},"entity":{"foundry:en_1":{"foundry:label":{"type":"xsd:string","$":"ScienceBase WAF:51220a00e4b0b37542fda86e"},"foundry:creationTime":{"type":"xsd:string","$":"2015-02-19T23:31:14Z"},"foundry:version":{"type":"xsd:string","$":"1.1"},"foundry:sourceId":{"type":"xsd:string","$":"cinergi-0001"},"foundry:UUID":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e"}},"foundry:en_2":{"foundry:label":{"type":"xsd:string","$":"ScienceBase WAF:51220a00e4b0b37542fda86e"},"foundry:creationTime":{"type":"xsd:string","$":"2015-02-19T23:31:20Z"},"foundry:version":{"type":"xsd:string","$":"1.2"},"foundry:UUID":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e"}}},"prefix":{"xsd":"http://www.w3.org/2001/XMLSchema","prov":"http://www.w3.org/ns/prov#","foundry":"http://example.org"},"wasDerivedFrom":{"_:wDF3":{"prov:activity":"foundry:ac_1","prov:generatedEntity":"foundry:en_2","prov:usedEntity":"foundry:en_1"}},"used":{"_:u13":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_1"}},"activity":{"foundry:ac_1":{"prov:type":{"type":"xsd:string","$":"spatialEnhancer"},"prov:startTime":"2015-02-19T23:31:20Z","prov:endTime":"2015-02-19T23:31:20Z","prov:how":{"type":"xsd:string","$":"No bounding box is added.."}}}}
+2015-04-03 17:42:49 user:NoUser baseUrl:http://provaas.cloudapp.net/api/provenance/ data={"wasGeneratedBy":{"_:wGB57":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_2"}},"entity":{"foundry:en_1":{"foundry:label":{"type":"xsd:string","$":"null:51220a00e4b0b37542fda86e"},"foundry:creationTime":{"type":"xsd:string","$":"2015-02-19T23:31:20Z"},"foundry:version":{"type":"xsd:string","$":"1.2"},"foundry:sourceId":{"type":"xsd:string","$":""},"foundry:UUID":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e"}},"foundry:en_2":{"foundry:label":{"type":"xsd:string","$":"null:51220a00e4b0b37542fda86e"},"foundry:creationTime":{"type":"xsd:string","$":"2015-02-19T23:31:44Z"},"foundry:version":{"type":"xsd:string","$":"1.3"},"foundry:UUID":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e"}}},"prefix":{"xsd":"http://www.w3.org/2001/XMLSchema","prov":"http://www.w3.org/ns/prov#","foundry":"http://example.org"},"wasDerivedFrom":{"_:wDF21":{"prov:activity":"foundry:ac_1","prov:generatedEntity":"foundry:en_2","prov:usedEntity":"foundry:en_1"}},"used":{"_:u57":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_1"}},"activity":{"foundry:ac_1":{"prov:type":{"type":"xsd:string","$":"organizationEnhancer"},"prov:startTime":"2015-02-19T23:31:44Z","prov:endTime":"2015-02-19T23:31:44Z","prov:how":{"type":"xsd:string","$":"No keywords are added."}}}}
+2015-04-03 17:42:50 user:NoUser baseUrl:http://provaas.cloudapp.net/api/provenance/ data={"wasGeneratedBy":{"_:wGB1":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_2"}},"entity":{"foundry:en_1":{"foundry:label":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e:ScienceBase WAF"},"foundry:creationTime":{"type":"xsd:string","$":"2015-02-19T15:31:44-08:00"},"foundry:version":{"type":"xsd:string","$":"1.3"},"foundry:sourceId":{"type":"xsd:string","$":"cinergi-0001"},"foundry:UUID":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e"}},"foundry:en_2":{"foundry:label":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e:ScienceBase WAF"},"foundry:creationTime":{"type":"xsd:string","$":"2015-03-23T16:12:32-07:00"},"foundry:version":{"type":"xsd:string","$":"1.4"},"foundry:UUID":{"type":"xsd:string","$":"51220a00e4b0b37542fda86e"}}},"prefix":{"xsd":"http://www.w3.org/2001/XMLSchema","prov":"http://www.w3.org/ns/prov#","foundry":"http://example.org"},"wasDerivedFrom":{"_:wDF1":{"prov:activity":"foundry:ac_1","prov:generatedEntity":"foundry:en_2","prov:usedEntity":"foundry:en_1"}},"used":{"_:u1":{"prov:activity":"foundry:ac_1","prov:entity":"foundry:en_1"}},"activity":{"foundry:ac_1":{"prov:type":{"type":"xsd:string","$":"annotator"},"prov:startTime":"2015-03-23T16:12:32-07:00","prov:endTime":"2015-03-23T16:12:32-07:00","prov:how":{"type":"xsd:string","$":"Added keywords geothermal reservoir,imaging for category theme. "}}}}
+2015-04-03 17:44:24 user:NoUser baseUrl:http://provaas.cloudapp.net/api/foundry/provenance/51220a00e4b0b37542fda86e data=
+2015-04-03 17:49:36 user:NoUser baseUrl:http://provaas.cloudapp.net/api/foundry/provenance/51220a00e4b0b37542fda86e data=
+2015-04-03 17:49:36 user:cinergi baseUrl:http://provaas.cloudapp.net/api/foundry/provenance/51220a00e4b0b37542fda86e data=
+Exception on /api/foundry/provenance/51220a00e4b0b37542fda86e [DELETE]
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/usr/local/lib/python2.7/dist-packages/flask_httpauth.py", line 61, in decorated
+    return f(*args, **kwargs)
+  File "/var/www/provaas/__init__.py", line 252, in delete_resource_provenance
+    obj = db.deleteNodeByUuid(namespace1,uuid1)
+  File "/var/www/provaas/geoprovdm.py", line 264, in deleteNodeByUuid
+    props = node.get_properties()
+  File "/usr/local/lib/python2.7/dist-packages/py2neo/neo4j.py", line 1398, in get_properties
+    self._properties = assembled(self._properties_resource._get()) or {}
+  File "/usr/local/lib/python2.7/dist-packages/py2neo/neo4j.py", line 367, in _get
+    raise ClientError(e)
+ClientError: Cannot find node with id [2247] in database.
+2015-04-03 17:57:30 user:admin baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:57:35 user:admin baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:57:41 user:admin baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:57:46 user:admin baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:57:52 user:admin baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:57:57 user:tomcat baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:58:03 user:tomcat baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:58:08 user:tomcat baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:58:14 user:tomcat baseUrl:http://4344800:80/manager/html data=
+2015-04-03 17:58:20 user:tomcat baseUrl:http://4344800:80/manager/html data=
+2015-04-03 18:27:41 user:NoUser baseUrl:http://168.62.109.219/ data=
+2015-04-03 19:57:45 user:NoUser baseUrl:http://provaas.cloudapp.net/api/foundry/provenance/4f4e49dce4b07f02db5e1c99 data=
+2015-04-03 20:55:00 user:NoUser baseUrl:http://provaas.cloudapp.net/api/foundry/provenance/4f4e49dce4b07f02db5e1c99 data=
