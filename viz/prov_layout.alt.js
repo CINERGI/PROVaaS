@@ -47,6 +47,7 @@ source = source || "document_alt.json";
 
 d3.json(source,function(d) {
 	console.log("data loaded:",d);	
+	var startTime = new Date();
 
 	var node_aliases = {};
 	// First parse the activities 
@@ -439,5 +440,7 @@ d3.json(source,function(d) {
 
 	console.log("selecting last entity", nodes[nodes.length - 1] );
 	detail_display(nodes[nodes.length - 1]);
+	var endTime = new Date();
+	console.log(endTime - startTime);
 
 });

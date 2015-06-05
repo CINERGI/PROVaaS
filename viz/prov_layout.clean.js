@@ -1,9 +1,10 @@
+// Global Variables to hold the graph.
 var nodes = [];
 var node_pos = {};
 var links = [];
-
 var selected = [];
 
+// Configuration for the edge types, listing them, and defining their directionality.
 var edge_defs = {
 	"used":{"source":"prov:entity",
 			"target":"prov:activity"},
@@ -15,6 +16,7 @@ var edge_defs = {
 					 "target":"prov:informed"}
 };
 
+// SVG and Layout
 var width = 600,
     height = 300,
     colors = d3.scale.category10();
@@ -24,11 +26,18 @@ var svg = d3.select("div#graph")
 	.attr("width",width)
 	.attr("height",height);
 
+// Force-directed graph.  Because the layout is deterministic, this shouldn't
+// affect the positions of and node, but it does make rendering the edges easier.
 var force = d3.layout.force()
 	.charge(-20)
 	.linkDistance(200)
 	.size([width,height]);
 
+// URL/CGI parsing.  To load a specific JSON file in for visualization
+// pass source=/path/to/file as a URL parameter.  Please study CORS for
+// more information on client-side security restrictions, and loading
+// data from other domains: 
+// http://en.wikipedia.org/wiki/Cross-origin_resource_sharing
 var query = {};
 var qs = window.location.search.substr(1).split('&')
 console.log("qs", qs);
@@ -42,12 +51,19 @@ qs.forEach(function (q, i, a) {
 });
 
 console.log("query: ",query);
-var source = query.source
-source = source || "document.json";
+var source = query.source;
+source = source || "document.json"; // You can override the default data source HERE
 
+// Retrieve the source data file
 d3.json(source,function(d) {
-	console.log("data loaded:",d);	
+	var startTime = new Date();
+	console.log("data loaded:",d, startTime);	
 
+	// Data parsing.  Because of the way JSON interacts with semantic namespaces,
+	// this section is very sensitive to the exact keys and value data types in the data.
+	// This is a very common limitation of JSON-based apps.  
+
+	// We'll begin by parsing the two node types, activities and entities.
 	var node_aliases = {};
 	// First parse the activities 
 	var group_count = 0;
@@ -69,6 +85,7 @@ d3.json(source,function(d) {
 		node_aliases[a] = a;
 		activities.push(d.activity[a]);
 	}
+	// sort activities by startTime
 	activities.sort(function(a,b){
 		if (a.timecode < b.timecode) return -1;
 		if (a.timecode > b.timecode) return 1;
@@ -76,7 +93,7 @@ d3.json(source,function(d) {
 	})
 	console.log("activities:", activities);
 
-	// Then the entities
+	// Then parse the entities.
 	var entities = [];
 	var seen_entities = {};
 
@@ -127,6 +144,8 @@ d3.json(source,function(d) {
 
 	var least_time = undefined;
 
+	// After the nodes are parsed, parse the edges, based on the definitions in the
+	// edge_defs configuration object (at the top of this file)
     function parse_edges(data) {
   	// loop over each different defined edge type
       for (var e_type in edge_defs) {
@@ -202,8 +221,14 @@ d3.json(source,function(d) {
     	links[l].elapsedTime = links[l].time - least_time;
     }
 
-
 	console.log("links", links);
+
+	// Now that we have nodes and edges, we can analyze the graph.
+
+	// First, we need to find our roots and our leaves.
+	// We do require that the graph have a single root, which also requires
+	// that a non-trivial graph be fully connected.  We do not require a true tree,
+	// but cycles will result in abnormal behavior.
 
 	var root = undefined;
 	var leaf = undefined;
@@ -211,18 +236,16 @@ d3.json(source,function(d) {
 	for (var ni in nodes) {
 		console.log(nodes[ni].id, "in:",nodes[ni].incoming.length, "out:",nodes[ni].outgoing.length );		
 		if (nodes[ni].incoming.length == 0) {
-				console.log("ROOT FOUND", nodes[ni])
+			console.log("ROOT FOUND", nodes[ni])
 			if (root === undefined) {
 				root = nodes[ni];
 			} else {
 				console.log("FAILURE: MULTIPLE ROOTS DETECTED");
 				bad_root = true;
-//				return 2;
 			}
 		}
 		if (nodes[ni].outgoing.length == 0) {
 			leaf = nodes[ni];
-
 		}
 	}
 	if (root === undefined) {
@@ -232,6 +255,21 @@ d3.json(source,function(d) {
 	}
 
 	console.log("ROOT", root);
+
+	// Now walk the graph, starting from the root, in a recursive DFS.
+	// Annotate each node with "depth" and "breadth" to fix its
+	// horizontal and vertical position, respectively.
+
+	// For each child in a node, we layout each of it's children in sequence by recursion.
+	// Since each child may be a subtree, we return the maximum depth and maximum breadth of that subtree.
+	// We use this to bound the layout of each subsequent child so that it cannot overlap
+	// onto its preceding siblings.
+
+	// This algorithm is very conservative, and doesn't use geometric space very efficiently
+	// for sparse or unbalanced trees.
+
+	// Tree layout is closely related to some NP-complete problems, so a greedy,
+	// conservative, linear-time algorithm is an adequate compromise.
 
 	function annotate_tree(node,depth,breadth) {
 		if (node.depth !== undefined) {
@@ -257,6 +295,10 @@ d3.json(source,function(d) {
 		}
 		return {"max_depth":max_depth, "max_breadth":max_breadth };
 	}
+
+	// with the logical tree positions created by annotate_tree, we can calculate
+	// the geometric positions of each node in euclidean space.
+	// Edges are handled automatically by the force directed graph.
 
 	function layout_nodes(nodes, max_depth, max_breadth, width, height) {
 		var padding = width * 0.05;
@@ -320,6 +362,8 @@ d3.json(source,function(d) {
 	// d3.select("#desc-body").text(desc);
 	
 	force.nodes(nodes).links(links).start();
+
+	// a few obscure SVG pieces.
 	
 	svg.append('svg:defs').append('svg:marker')
 		.attr('id', 'end-arrow')
@@ -337,6 +381,7 @@ d3.json(source,function(d) {
 	gradient.append("stop").attr("offset","65%").attr("stop-color","#F00");
 	gradient.append("stop").attr("offset","100%").attr("stop-color","#FFF");
 
+	// Handle clicking on edges.
 	function detail_display_link(d) {
 		d3.select("#detail-header").text(d.type);
 		var table = d3.select("#detail");
@@ -345,6 +390,9 @@ d3.json(source,function(d) {
 	}
 
 	var selected = undefined;
+
+	// Test to see if nodes are "alike" for the purpose of multiple selection.
+	// Currently a placeholder.
 	function like_nodes(a,b) {
 		if ( (a.label == "Bob.txt" && b.label == "Anna.txt" ) || (a.label == "Bob_kw.txt" && b.label == "Anna_kw.txt") ) {
 			return true;
@@ -352,8 +400,12 @@ d3.json(source,function(d) {
 		return false;
 	}
 
+
+	// Handles clicking on nodes
 	function detail_display(d) {
+
 		console.log("DETAIL DISPLAY", d.label,d.id);
+		// check for multiple selection.
 		var comp_node = undefined;
 		var show_comp = false;
 		if (selected) {
@@ -367,6 +419,7 @@ d3.json(source,function(d) {
 		var table = d3.select("#detail");
 		table.selectAll("*").remove();
 
+		// subroutine to display the right-hand detail table.
 		function detail_display_table(d) {
 
 			var attribs = ["uuid","created_date","time","elapsedTime","version","inferred","prov:startTime","prov:endTime","foundry:how","foundry:label","foundry:version"];
@@ -388,11 +441,13 @@ d3.json(source,function(d) {
 				}
 			}
 		}
+		// show the previous and current node in multiple selection.
 		if (show_comp) {
 			detail_display_table(comp_node);
 		}
 		detail_display_table(d);
 
+		// move the red "current selection" gradient to the newly selected node.
 		svg.selectAll("#selection").remove();
 
 		if (d.type == "entity" || d.type == "activity"){
@@ -402,30 +457,35 @@ d3.json(source,function(d) {
 			svg.insert("circle",":first-child").attr("r",21).style("fill","url(#selected-gradient)").attr("cx",d.x).attr("cy",d.y).attr("id","selection");
 			selected = d;
 
+
+			// walk the graph to "highlight" the path from the root to the selected node.
 			var visited = [];
 			var to_visit = [d];
 
+			// essential utility function.  Why doesn't JS have this?
 			function array_contains(the_array,obj) {
-//				console.log("IN COMP",the_array, the_array.length);
 				for (var l in the_array) {
-
-//					console.log("COMPARING", the_array[l].id, obj.id);
 					if (the_array[l].id === obj.id) return true;
 				}
 				return false;
 			}
+
+			// clear any prior highlighting.
 			console.log("CLEARING");
 			for (var l = 0; l < links.length; l++) {
 				links[l]["highlight"] = false;
 			}
 
+			// append nodes to the to_visit array as we encounter them, 
+			// and move them to visited after we enter them.  Do not add a node to 
+			// to_visit if is is already visited.
 
+			// Skips edges with inferred = true set in the data.
 			while(to_visit.length > 0) {
 				console.log(to_visit.length, "to_visit", visited.length,"visited");
 				var current = to_visit[0];
 				console.log("current",current);
 				for (var l = 0; l < links.length; l++) {
-//					console.log("CHECKING",links[l]["target"].id,current.id)
 					if (links[l]["target"].id == current.id) {
 						if (!(links[l].inferred == true) ) {
 							console.log("MATCH", links[l],links[l].source.label,links[l].target.label);
@@ -440,16 +500,10 @@ d3.json(source,function(d) {
 						}
 					} 
 				}
-//				var next_node = links[l]["target"];
-//				console.log("NEXT HIGHLIGHT NODE", next_node);
-
-//				if (array_contains(visited,next_node) || array_contains(to_visit,next_node))
-//					;
 
 				visited.push(to_visit.shift());
 				console.log("to_visit",to_visit,"visited",visited);
 			}
-
 
 			console.log("incoming", d.incoming);
 			var link_updates = svg.selectAll(".link").data(links).style("stroke",function(d) {				
@@ -469,6 +523,7 @@ d3.json(source,function(d) {
 	var node_updates = svg.selectAll(".node").data(nodes);
 	var node_enter = node_updates.enter().append("g").attr("class","node").attr("transform", function(d){return "translate("+d.x+","+d.y+")";});
 
+	// define rendering for nodes
 	var circles = node_enter.filter(function(d,i) {return d.type == "activity"}).append("circle").attr("r", 15)
 		.style("fill", function(d) { 
 			if (d.label.match("q")) {
@@ -476,8 +531,6 @@ d3.json(source,function(d) {
 			} else {
 				return d3.rgb("lightgreen");
 			}
-
-//			return colors(d.group); 
 		})
 		.on("click", detail_display);
 	var squares = node_enter.filter(function(d,i) {return d.type=="entity"}).append("rect").attr("width",26).attr("height",26)
@@ -488,19 +541,16 @@ d3.json(source,function(d) {
 			} else {
 				return d3.rgb("lightgreen");
 			}
-
-//			return colors(d.group); 
 		})
 		.on("click", detail_display);
 
-	
+	// define rendering for edges.
 	var link_updates = svg.selectAll(".link").data(links)
 		.enter().append("path").attr("class","link")
 		.attr("stroke-dasharray",function(d) {
 			if (d.inferred) return "5,5";
 			return "";
 		})
-		//.attr("marker-end", 'url(#end-arrow)')
 		.attr("stroke",function(d) {
 			if (d.highlight) {
 				return d3.rgb("red");
@@ -509,41 +559,40 @@ d3.json(source,function(d) {
 			}
 		})
 		.on("click", detail_display);
-		
+
+	// define rendering for text labels over nodes.		
 	var labels = node_enter.append("text").text(function (d) { return d.label;})
 		.attr("dy",5).attr("text-anchor","middle").attr("font-weight","100").attr("letter-spacing","1px")
 		.attr("pointer-events","none");
 
-
-//		.on("mouseover", function(d) {
-//			d3.select("#detail").text(d.type);
-//		});
-	
+	// Force directed graph update functions.  Keeps edges from overlapping circle radius.
 	force.on("tick", function() {
-	link_updates.attr("d",function(d){
-		var deltaX = d.target.x - d.source.x,
-			deltaY = d.target.y - d.source.y,
-			dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-			normX = deltaX / dist,
-			normY = deltaY / dist,
-			sourcePadding = 15,
-			targetPadding = 15,
-			sourceX = d.source.x + (sourcePadding * normX),
-			sourceY = d.source.y + (sourcePadding * normY),
-			targetX = d.target.x - (targetPadding * normX),
-			targetY = d.target.y - (targetPadding * normY);
-		return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
+		link_updates.attr("d",function(d){
+			var deltaX = d.target.x - d.source.x,
+				deltaY = d.target.y - d.source.y,
+				dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+				normX = deltaX / dist,
+				normY = deltaY / dist,
+				sourcePadding = 15,
+				targetPadding = 15,
+				sourceX = d.source.x + (sourcePadding * normX),
+				sourceY = d.source.y + (sourcePadding * normY),
+				targetX = d.target.x - (targetPadding * normX),
+				targetY = d.target.y - (targetPadding * normY);
+			return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
+		});
+		
+		node_updates.attr("transform", function(d){
+			return "translate("+d.x+","+d.y+")";
+		});
 	});
-	
-	node_updates.attr("transform", function(d){
-		return "translate("+d.x+","+d.y+")";
-	});
-//    node_updates.attr("cx", function(d) { return d.x; })
-//        .attr("cy", function(d) { return d.y; });
-//  detail_display(entities[entities.length - 1]);
-  });
 
-	console.log("selecting last entity", nodes[nodes.length - 1] );
+	// Done.  Select the final node by default.
+	console.log("selecting last node", nodes[nodes.length - 1] );
+	// Print timing data to log.
+	var endTime = new Date();
 	detail_display(nodes[nodes.length - 1]);
+	console.log(endTime);
+	console.log("elapsed", endTime - startTime);
 
 });
