@@ -57,7 +57,7 @@ def getField(elementsList, element, filedId):
 
 def validateJSONRequest(jsonobj):
 
-    provg  = nx.DiGraph()
+    # provg  = nx.DiGraph()
 
         #check that project field is in json request
         #projectId = jsonobj.get('provdb:projectId') or ""
@@ -98,7 +98,7 @@ def validateJSONRequest(jsonobj):
         entities[k]['__namespace'] = namespace
         #print entities[k][namespace+':creationTime']['$']
         # All good with entity
-        provg.add_node(k, entities.get(k) )
+        # provg.add_node(k, entities.get(k) )
 
     for k in activities:
         namespace , entity_name = k.split(':')
@@ -121,7 +121,7 @@ def validateJSONRequest(jsonobj):
 
         activities[k]['__namespace'] = 'prov' #namespace
         
-        provg.add_node(k, activities.get(k) )
+        # provg.add_node(k, activities.get(k) )
 
 
     #add relationships
@@ -142,7 +142,7 @@ def validateJSONRequest(jsonobj):
             get_date(getField(entities, entity, 'creationTime')['$']):
                 return  False, "wasGeneratedBy error for "+k+":creationTime of entity "+entity+\
                " should be between startTime and endTime of activity "+activity
-        provg.add_edge(entity,activity, dict(type=wasGeneratedBy, name=k) )
+        # provg.add_edge(entity,activity, dict(type=wasGeneratedBy, name=k) )
 
     for k in used:
         #The set of all entity nodes that were "used" by an activity A have creation time less than activity A's end_time.
@@ -152,7 +152,7 @@ def validateJSONRequest(jsonobj):
         if get_date(getField(activities,activity,'endTime')) < get_date(getField(entities, entity, 'creationTime')['$']):
             return  False, "used error for "+k+":creationTime of entity "+entity+\
                 " should be before endTime of activity "+activity
-        provg.add_edge(activity,entity, dict(type=used, name=k) )
+        # provg.add_edge(activity,entity, dict(type=used, name=k) )
     for k in wasDerivedFrom:
         #In the "wasDerivedBy" edge the source entity has a version number and creation time that is
         # lower than destination entity version number and creation time, but have the same UUID.
@@ -174,7 +174,7 @@ def validateJSONRequest(jsonobj):
         #           " should be lower than version of entity "+entity_destination
 
         #print "adding wasDerivedFrom edge  " +str (k) + " having value =" + str(wasDerivedFrom[k])
-        provg.add_edge(entity_source, entity_destination, dict(type=wasDerivedFrom, name=k) )
+        # provg.add_edge(entity_source, entity_destination, dict(type=wasDerivedFrom, name=k) )
 
 
     # remove additional
