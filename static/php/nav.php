@@ -20,6 +20,7 @@
                     <li><a href="home.php#Service_Use">Service Use</a></li>
                 </ul>
             </li>
+            <li><a href="home.php#Publications"><big>Publications</big></a></li>
             <li><a href="https://github.com/SciCrunch/CINERGI-PROV"><big>Github</big></a></li>
             <li><a href="home.php#Related_Links"><big>About</big></a></li>
             <li><a href="home.php#Contact_us"><big>Contact us</big></a></li>

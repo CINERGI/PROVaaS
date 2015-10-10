@@ -70,6 +70,8 @@
                 <h2 id="News" style="text-align: left;">News</h2>
              <!--   <hr>-->
                 <div class="row">
+                    <div class="col-xs-4">07-05-14</div>
+                    <div class="col-xs-8">Presenting PROVaaS at Theory and Practice of Provenance (TaPP)</div>
                     <div class="col-xs-4">04-09-14</div>
                     <div class="col-xs-8">Demonstrating PROVaaS at Earth Tech Hands Meeting</div>
                     <div class="col-xs-4">04-05-14</div>
@@ -103,9 +105,16 @@
             <div id="Service_Use" class="jumbotron">
                 <h2>Service Use</h2><hr>
 		<p>
-		 The service is used by several projects for their data provenance needs. We currently host provenance data from <a href="http://hydro10.sdsc.edu">CINERGI</a>, <a href="http://earthcube.org/group/geodataspace">GeoDataspace</a>, <a href="http://swift-lang.org">Swift</a>, and <a href="ihttp://www.cs.iit.edu/%7edbgroup/research/gprom.php">GPRoM</a>.
+	 We currently host provenance data for the following projects: <a href="http://hydro10.sdsc.edu">CINERGI</a>, <a href="http://earthcube.org/group/geodataspace">GeoDataspace</a>, <a href="http://swift-lang.org">Swift</a>, and <a href="ihttp://www.cs.iit.edu/%7edbgroup/research/gprom.php">GPRoM</a>.
 		</p>
             </div>
+	    <div id="Publications" class="jumbotron">
+                <h2>Publications</h2><hr>
+		<p>
+		<small>T. Malik, M. Yu, and C. Vlaescu. PROVaaS: A Pay-as-you-service for Storing and Querying Provenance. Poster in Theory and Practice of Provenance (TaPP), 2015. <a href="https://www.dropbox.com/s/tnlxgg7ksu1rxdv/TaPPPoster.pdf?dl=0">(pdf)</a></small>
+		</p>
+            </div>
+
             <div id="Related_Links" class="jumbotron">
                 <h2>About</h2><hr>
                 <p>
