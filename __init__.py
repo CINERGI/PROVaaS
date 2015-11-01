@@ -47,6 +47,17 @@ from logging.handlers import TimedRotatingFileHandler
 import datetime
 import logging
 
+'''
+set environment variables:
+    AWS_ACCESS_KEY_ID - Your AWS Access Key ID
+    AWS_SECRET_ACCESS_KEY - Your AWS Secret Access Key
+'''
+import boto.sqs
+from boto.sqs.message import Message
+
+conn = boto.sqs.connect_to_region("us-west-2")#, aws_access_key_id=access_key, aws_secret_access_key = secret_key)
+provaas_queue = conn.create_queue('provaas_queue_v1')
+
 # initialization
 app = Flask(__name__) #, static_folder='static', static_url_path='/static')
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
@@ -187,9 +198,9 @@ def create_resource_prov():
   
     if not (isvalid):
         data = {"Error:": message}
-	return Response(dumps(data), mimetype='application/json',status=400)
+        return Response(dumps(data), mimetype='application/json',status=400)
     #valid JSON, then rename JSON ids
-    namespace,obj = jsonid_rename(obj) 
+    namespace,obj = jsonid_rename(obj)
     print "namespace" + namespace
     # all ready to insert into database
 
@@ -198,36 +209,11 @@ def create_resource_prov():
         requestId = db.addRequestId(namespace)
     else:
         requestId = db.updateRequestId(namespace)
-       	
-    entities = obj['entity']
-    for k in entities.keys():
-	entity = json2obj(entities[k])
-        entity[u'_id'] = k
-        node = db.addEntity(entity)
-        #db.addProperty(node,entity)
-	 
-    # make all agents
-    #agents = obj['agent']
-    #for k in agents.keys():
-    #    agent = json2obj(agents[k])
-    #    agent[u'_id'] = k
-    #    db.addAgent(agent)
-        
-    acts = obj['activity']
-    for k in acts.keys():
-        act = json2obj(acts[k])
-        act[u'_id'] = k
-        db.addActivity(act)
-    
-    # =========================
-    # === add all relations ===
-    for rel in db.getRequiredIdsInRelation().keys():
-        try:
-            relations = obj[rel]
-            for name in relations.keys():
-                db.addRelation(rel, name, relations[name])
-        except KeyError:
-            pass
+
+    m = Message()
+    jsonForLaterProcessing = json.dumps({'obj':obj,'requestId':requestId})
+    m.set_body(jsonForLaterProcessing)
+    provaas_queue.write(m)
 
     data = {"request id: ": requestId, "provenance submitted at": datetime.datetime.utcnow(), "submitted provenance": obj}
     return Response(dumps(data,default=outputJSON), mimetype='application/json',status=201)
