@@ -7,7 +7,6 @@ from geoprovdm import *
 
 #in this case, neo4j server and flask server are on the same machine, same SERVER_IP
 SERVER_IP="127.0.0.1"
-SERVER_IP="192.168.1.104"
 
 ENVIRON = os.environ.get('PROV_ENVIRON')
 if (ENVIRON == None):
@@ -21,11 +20,7 @@ set the environment variables:
     AWS_SECRET_ACCESS_KEY - Your AWS Secret Access Key
 '''
 
-access_key = 'AKIAIQQYV2RQDHEF2Q4A'
-secret_key = 'r1CMoVZ9CSr6HHaYYKA6VkAARf9bnnCvNyyBGy8P'
-
-conn = boto.sqs.connect_to_region("us-west-2", aws_access_key_id=access_key, aws_secret_access_key = secret_key)
-
+conn = boto.sqs.connect_to_region("us-west-2")#, aws_access_key_id=access_key, aws_secret_access_key = secret_key)
 q = conn.create_queue('provaas_queue_v1')
 
 import json
