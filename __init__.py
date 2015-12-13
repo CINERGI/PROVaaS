@@ -46,6 +46,7 @@ from flask import request
 from logging.handlers import TimedRotatingFileHandler
 import datetime
 import logging
+import traceback
 
 '''
 set environment variables:
@@ -204,11 +205,17 @@ def create_resource_prov():
     print "namespace" + namespace
     # all ready to insert into database
 
-    # the RequestID of this POST
-    if db.getRequestId(namespace) is None:
-        requestId = db.addRequestId(namespace)
-    else:
-        requestId = db.updateRequestId(namespace)
+    try:
+        # the RequestID of this POST
+        if db.getRequestId(namespace) is None:
+            requestId = db.addRequestId(namespace)
+        else:
+            requestId = db.updateRequestId(namespace)
+    except:
+        e = sys.exc_info()
+        print "Errorx:",e
+        traceback.print_exc()
+    print "reqId: ",requestId
 
     submitting_time = datetime.datetime.utcnow()
     data = {"request id: ": requestId, "provenance submitted at": submitting_time, "submitted provenance": obj}
