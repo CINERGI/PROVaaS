@@ -4,15 +4,29 @@ from time import sleep
 
 from help_json import *
 from geoprovdm import *
+from datetime import datetime
+import argparse
 
+'''
+run with
+'''
 #in this case, neo4j server and flask server are on the same machine, same SERVER_IP
-SERVER_IP="127.0.0.1"
+NEO4J_SERVER_IP="127.0.0.1"
+# NEO4J_SERVER_IP="192.168.1.105"
 
 ENVIRON = os.environ.get('PROV_ENVIRON')
 if (ENVIRON == None):
    ENVIRON = 'PROD'
 
-db = GeoProvDM(ENVIRON, "http://%s:7474/db/data/"%SERVER_IP, False)
+db = GeoProvDM(ENVIRON, "http://%s:7474/db/data/"%NEO4J_SERVER_IP, False)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--test", help="start server in test mode")
+args = parser.parse_args()
+if args.test:
+    print "Starting server in TEST mode"
+else:
+    print "Starting server in NORMAL mode"
 
 '''
 set the environment variables:
@@ -26,10 +40,16 @@ q = conn.create_queue('provaas_queue_v1')
 import json
 bRequiresNewLine = False
 
+max_processing_seconds = 60
+debug_ips = ["89.136.140.39","192.168.1.105"]
+if args.test:
+    print "Processing ONLY requests submitted from: ",debug_ips
+else:
+    print "Processing all, EXCEPT requests submitted from: ",debug_ips
 while True:
-    m = q.read(60) # we estimate that processing this message will take less than that seconds
+    m = q.read(max_processing_seconds) # we estimate that processing this message will take less than that seconds
     if m is None:
-        sleep(3)
+        sleep(300) # wait 5 minutes, maybe requests will come
         print ".",
         bRequiresNewLine = True
         continue
@@ -39,7 +59,23 @@ while True:
     obj_received = json.loads(m.get_body())
     obj = obj_received['obj']
     requestId = obj_received['requestId']
-    print "Processing id=%s containing: %s"%(str(requestId), str(obj))
+    submitAt = obj_received['submitAt']
+    requestIP = obj_received['requestIP']
+    user = obj_received['user']
+
+    # client_ips for test - ignored in provaas.org
+    if requestIP in debug_ips:
+        if not args.test:
+            print "%s: request from %s will be ignored for %s seconds"%(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),requestIP, max_processing_seconds)
+            continue
+    else:
+        pass
+        # all other IPs are processed normally
+
+    processing_starttime = datetime.now()
+    print "start processing at: ", processing_starttime.strftime("%Y-%m-%d %H:%M:%S.%f")
+    print "Processing id={requestId}, submitted from {requestIP} at {submitAt} by {user}, containing: {obj}".format(
+           requestId=requestId,requestIP=requestIP,submitAt=submitAt,user=user,obj=obj)
 
     entities = obj['entity']
     for k in entities.keys():
@@ -72,3 +108,6 @@ while True:
             pass
 
     q.delete_message(m)
+    processing_endtime = datetime.now()
+    print "end processing at: ", processing_endtime.strftime("%Y-%m-%d %H:%M:%S.%f")
+    print "processing took: ",str(processing_endtime-processing_starttime)
