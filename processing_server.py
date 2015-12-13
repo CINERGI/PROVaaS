@@ -8,7 +8,7 @@ from datetime import datetime
 import argparse
 
 '''
-run with
+run with arguments '--test 1' to obtain TEST mode
 '''
 #in this case, neo4j server and flask server are on the same machine, same SERVER_IP
 NEO4J_SERVER_IP="127.0.0.1"
