@@ -4,6 +4,7 @@ import json
 
 # http://book.py2neo.org/en/latest/fundamentals/#node-relationship-abstracts
 from py2neo import neo4j, node, rel
+from neo4jrestclient.client import GraphDatabase
 
 # VERSION
 _geoprovdm_version=0.75
@@ -19,11 +20,11 @@ class GeoProvDM:
   # neo4j (http://localhost:7474/browser/): match (n) optional match (n)-[r]-() delete n, r
 
   def __init__(self, environ, url = "http://localhost:7474/db/data/", cleanStart = False):
-    self._neo_graph = neo4j.GraphDatabaseService(url)
+    self._neo_graph = neo4j.Graph(url)
     # reset the neo graph 
     if cleanStart:
-      neo4j.CypherQuery(self._neo_graph,\
-        "MATCH (n) WHERE n._geoprovdm_version = " + str(_geoprovdm_version) + " OPTIONAL MATCH (n)-[r]-() DELETE n, r").execute()
+      self._neo_graph.cypher.execute("MATCH (n) WHERE n._geoprovdm_version = {version} OPTIONAL MATCH (n)-[r]-() DELETE n, r",
+                          version = _geoprovdm_version)
     ENVIRON = environ
 
   _AGENT = "Agent"
@@ -164,47 +165,60 @@ class GeoProvDM:
 
 
   def _getNodeById(self, nodeType, nodeId):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (ee:" + nodeType.title() + ") WHERE ee._id = {p_id} RETURN ee;")
-    node = query.execute_one(p_id = nodeId)
+    query = "MATCH (ee:" + nodeType.title() + ") WHERE ee._id = {p_id} RETURN ee;"
+    node = self._neo_graph.cypher.execute_one(query, p_id = nodeId )
     return node
 
 
   def _getNodeInformant(self, actId,order,namespace):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (ee:Activity) WHERE ee.`prov:type` = {act} AND ee.`provdb:order`={a_order} and ee.`provdb:projectId` = {namespace} RETURN ee;")
-    node = query.execute_one(act = actId,a_order=order,namespace=namespace)
+    query = "MATCH (ee:Activity) WHERE ee.`prov:type` = {act} " \
+            "AND ee.`provdb:order`={a_order} and ee.`provdb:projectId` = {namespace} " \
+            "RETURN ee;"
+    node = self._neo_graph.cypher.execute_one(query, act = actId,a_order=order,namespace=namespace )
     return node
 
   def _getRequestId(self,namespace):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (rId:RequestId) where rId.`provdb:projectId` = {namespace} RETURN rId;")
-    node = query.execute_one(namespace=namespace)
+    query = "MATCH (rId:RequestId) where rId.`provdb:projectId` = {namespace} RETURN rId;"
+    node = self._neo_graph.cypher.execute_one(query, namespace=namespace )
     return node
 
   def getRequestId(self,namespace):
     return self._getRequestId(namespace)
 
   def updateRequestId(self,namespace):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (rId:RequestId) where rId.`provdb:projectId` = {namespace} RETURN rId;")
-    node = query.execute_one(namespace=namespace)
-    tmp=node["provdb:number"]
-    node["provdb:number"]=str(int(tmp)+1)
+    query = "MATCH (rId:RequestId) " \
+            "WHERE rId.`provdb:projectId` = {namespace} " \
+            "SET rId._LOCK_ = true " \
+            "SET rId.`provdb:number` = tostring(toint(rId.`provdb:number`)+1) " \
+            "REMOVE rId._LOCK_ " \
+            "RETURN rId;"
+    node = self._neo_graph.cypher.execute_one(query,namespace=namespace)
     return node["provdb:number"]
 
+    # tx = self._neo_graph.cypher.begin()
+    # tx.append(query,  namespace=namespace)
+    #
+    # # tx = self._neo_gdb.transaction(for_query=True)
+    # # params = {'namespace':namespace}
+    # # tx.append(query,  params=params)
+    # results = tx.commit()
+    # print "results=",results
+    # print "results0=",results[0][0]
+    # return results[0][0][0]["provdb:number"]
+
+
   def _updateOrder(self,actType,namespace):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (o:Order) Where o.`provdb:actType`={atype} and o.`provdb:projectId` = {namespace} RETURN o;")
-    node = query.execute_one(atype=actType,namespace=namespace)
-    tmp=node["provdb:order"]
-    node["provdb:order"]=str(int(tmp)+1)
+    query = "MATCH (o:Order) WHERE o.`provdb:actType`={atype} and o.`provdb:projectId` = {namespace} " \
+            "REMOVE o.lock " \
+            "SET o.`provdb:order` = tostring(toint(rId.`provdb:order`)+1) " \
+            "RETURN o;"
+    #  o.lock is non existing property - to create transaction
+    node = self._neo_graph.cypher.execute_one(query,atype=actType,namespace=namespace)
     return node
 
   def _getOrder(self,actType,namespace):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH (o:Order) Where o.`provdb:actType`={atype} and o.`provdb:projectId` = {namespace} RETURN o;")
-    node = query.execute_one(atype=actType,namespace=namespace)
+    node = self._neo_graph.cypher.execute_one("MATCH (o:Order) Where o.`provdb:actType`={atype} and o.`provdb:projectId` = {namespace} RETURN o;",
+                          atype=actType,namespace=namespace)
     return node
 
   def getOrder(self,actType,namespace):
@@ -235,9 +249,8 @@ class GeoProvDM:
 	WHERE en.`%(namespace1)s:UUID` = "%(p_uuid)s" \
 	AND NOT ()-[:wasInformedBy]->a  \
 	RETURN path;' %{"namespace1":namespace,"p_uuid":nodeUuid}
-    query = neo4j.CypherQuery(self._neo_graph,str)
-    result = query.execute()
 
+    result = self._neo_graph.cypher.execute(str)
     #query = neo4j.CypherQuery(self._neo_graph, \
     #  "Start en=node(*)\
     #  MATCH path = en-[*..2]->a \
@@ -253,9 +266,7 @@ class GeoProvDM:
       #	"MATCH (n {`{namespace1}:UUID` : \"{uuid1}\"}) RETURN n;")
       #node = query.execute_one(namespace1=namespace.strip(),uuid1 = uuid.strip())
     str = "MATCH (n:Entity {`"+namespace+":UUID` : \""+uuid+"\"}) RETURN n;"
-    query = neo4j.CypherQuery(self._neo_graph, str)
-    #node = query.execute_one() 
-    results = query.execute() 
+    results = self._neo_graph.cypher.execute(str)  # Cristi: Should be here  execute_one ?
     if (results is not None):
       for r in results:
          print r
@@ -270,85 +281,76 @@ class GeoProvDM:
  
 
   def deleteNodeByRequestid(self, namespace,rid):
-    query = neo4j.CypherQuery(self._neo_graph, \
-	"MATCH (n {`provdb:RequestId` : {rid}}) OPTIONAL MATCH (n)-[r]-() DELETE r;")
-    result = query.execute(rid = rid)
+    query = "MATCH (n {`provdb:RequestId` : {rid}}) OPTIONAL MATCH (n)-[r]-() DELETE r;"
+    result = self._neo_graph.cypher.execute(query,rid = rid )
 	
-    query = neo4j.CypherQuery(self._neo_graph, \
-	"MATCH (n {`provdb:RequestId` : {rid}}) DELETE n;")
-    result = query.execute(rid = rid)
+    query = "MATCH (n {`provdb:RequestId` : {rid}}) DELETE n;"
+    result = self._neo_graph.cypher.execute(query,rid = rid )
     return result
  
 #Retrieve PROV-DM compliant provenance  of a resource with a given 'uuid', and which has activity 'activityname' in its path
   def getNodeByUuidWithActivity(self, nodeUuid, activityname):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH path = (en:Entity)-[*..]->a,(act:Activity) \
+    query = "MATCH path = (en:Entity)-[*..]->a,(act:Activity) \
       WHERE en.`foundry:UUID` = {p_uuid} AND  act.`prov:type`={aname} AND act IN nodes(path)\
-      RETURN path;") 
-    result = query.execute(p_uuid = nodeUuid, aname=activityname)
+      RETURN path;"
+    result = self._neo_graph.cypher.execute(query, p_uuid = nodeUuid, aname=activityname )
     return result
 
 # #Retrieve PROV-DM compliant provenance  of a resource with a given ''uuid', and which was generated by resource UUID2
   def getNodeByUuidwasGeneratedBy(self, enUuid, UUID2):        #UUID2 must be Activity,enUuid must be Entity
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH path = (en:Entity)-[*..]->a, en-[r:`wasGeneratedBy`]->(act:Activity) \
+    query = "MATCH path = (en:Entity)-[*..]->a, en-[r:`wasGeneratedBy`]->(act:Activity) \
       WHERE en.`foundry:UUID` = {p_uuid} AND act._id = {aid} \
-      RETURN path;")
-    result = query.execute(p_uuid = enUuid, aid = UUID2)
+      RETURN path;"
+    result = self._neo_graph.cypher.execute(query, p_uuid = enUuid, aid = UUID2 )
     return result
 
 #Retrieve PROV-DM compliant provenance  of a resource with a given 'uuid', and which generated resource UUID2
   def getNodeByUuidGenerate(self, acUuid, UUID2):   #UUID2 must be Entity, acUuid must be Activity
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH path = a-[*..]->act, (en:Entity)-[r:`wasGeneratedBy`]->act \
+    query = "MATCH path = a-[*..]->act, (en:Entity)-[r:`wasGeneratedBy`]->act \
       WHERE en.`foundry:UUID` = {p_uuid} AND act._id = {aid} \
-      RETURN path;")
-    result = query.execute(p_uuid = UUID2, aid = acUuid)
+      RETURN path;"
+    result = self._neo_graph.cypher.execute(query, p_uuid = UUID2, aid = acUuid )
     return result
 
 #Retrieve PROV-DM compliant provenance  of a resource with a given ''uuid', which has activity 'activity name' and resource 'id2' in its ancestral path
   def getNodeByUuidWithAncestral(self, nodeUuid, activityname, id2):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH path = (en:Entity)-[*..]->a,(act:Activity), (e:Entity) \
+    query = "MATCH path = (en:Entity)-[*..]->a,(act:Activity), (e:Entity) \
       WHERE en.`foundry:UUID` = {p_uuid} AND  act.`prov:type`={aname}\
       AND e._id = {rid2} AND act IN nodes(path) AND e IN nodes(path)\
-      RETURN path;")  
-    result= query.execute(p_uuid = nodeUuid, aname= activityname,rid2= id2)
+      RETURN path;"
+    result = self._neo_graph.cypher.execute(query, p_uuid = nodeUuid, aname= activityname,rid2= id2 )
     return result
 
 #Retrieve PROV-DM compliant provenance  of a resource with a given ''uuid', which has activity 'activity name' and resource 'id2' in its forward path
   def getNodeByUuidWithForward(self, nodeUuid, activityname, id2):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH path = (en:Entity)<-[*..]-a,(act:Activity), (e:Entity) \
+    query = "MATCH path = (en:Entity)<-[*..]-a,(act:Activity), (e:Entity) \
       WHERE en.`foundry:UUID` = {p_uuid} AND  act.`prov:type`={aname}\
       AND e._id = {rid2} AND act IN nodes(path) AND e IN nodes(path)\
-      RETURN path;")  
-    result = query.execute(p_uuid = nodeUuid, aname= activityname,rid2= id2)
+      RETURN path;"
+    result = self._neo_graph.cypher.execute(query, p_uuid = nodeUuid, aname= activityname,rid2= id2 )
     return result
 
 
 #Retrieve PROV-DM compliant provenance  of all resources used by an activity 'activity name' between time 'datetime1' and 'datetime2'
   def getNodeUsedByActivityWithTimestamp(self, activityname, datetime1, datetime2):
-    query = neo4j.CypherQuery(self._neo_graph, \
-     "MATCH path = (act:Activity)-[r:`used`]->a \
+    query = "MATCH path = (act:Activity)-[r:`used`]->a \
       WHERE act.`prov:type`={aname}\
       AND ((act.`prov:startTime`>={t1} AND act.`prov:startTime`<={t2})\
       OR (act.`prov:endTime`>={t1} AND act.`prov:endTime`>={t2})\
       OR (act.`prov:startTime`<{t1} AND act.`prov:endTime`>{t2}))\
-      RETURN path;") 
-    result = query.execute(aname=activityname, t1= datetime1, t2 = datetime2)
+      RETURN path;"
+    result = self._neo_graph.cypher.execute(query, aname=activityname, t1= datetime1, t2 = datetime2 )
     return result
 
 # #Retrieve PROV-DM compliant provenance  of all resources generated by 'activity name' between time 'dateime1' and 'datetime2'
   def getNodeGeneratedByActivityWithTimestamp(self, activityname, datetime1, datetime2):
-    query = neo4j.CypherQuery(self._neo_graph, \
-      "MATCH path = (en:Entity)-[r:`wasGeneratedBy`]->(act:Activity) \
+    query = "MATCH path = (en:Entity)-[r:`wasGeneratedBy`]->(act:Activity) \
       WHERE act.`prov:type`={aname}\
       AND ((act.`prov:startTime`>={t1} AND act.`prov:startTime`<={t2})\
       OR (act.`prov:endTime`>={t1} AND act.`prov:endTime`>={t2})\
       OR (act.`prov:startTime`<{t1} AND act.`prov:endTime`>{t2}))\
-      RETURN path;") 
-    result = query.execute(aname=activityname, t1= datetime1, t2 = datetime2)
+      RETURN path;"
+    result = self._neo_graph.cypher.execute(query, aname=activityname, t1= datetime1, t2 = datetime2 )
     return result
 
   

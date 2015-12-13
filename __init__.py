@@ -188,14 +188,14 @@ def get_resource():
     #return jsonify({'data': 'Hello, "Tanu"'})  #%s!' % g.user.username})
 
 @app.route('/provenance/', methods=['POST'])
-#@auth.login_required
+@auth.login_required
 def create_resource_prov():
 
 
     obj = request.json
     #validate obj
     isvalid,message = validateJSONRequest(obj)
-  
+
     if not (isvalid):
         data = {"Error:": message}
         return Response(dumps(data), mimetype='application/json',status=400)
@@ -210,12 +210,19 @@ def create_resource_prov():
     else:
         requestId = db.updateRequestId(namespace)
 
+    submitting_time = datetime.datetime.utcnow()
+    data = {"request id: ": requestId, "provenance submitted at": submitting_time, "submitted provenance": obj}
+    if request.authorization is None:
+        username = "NoUser"
+    else:
+        username = request.authorization.username
     m = Message()
-    jsonForLaterProcessing = json.dumps({'obj':obj,'requestId':requestId})
+    jsonForLaterProcessing = json.dumps({'obj':obj, 'namespace':namespace, 'user':username,
+                                         'requestIP':request.remote_addr,'requestId':requestId,
+                                         'submitAt':submitting_time},default=outputJSON)
     m.set_body(jsonForLaterProcessing)
     provaas_queue.write(m)
 
-    data = {"request id: ": requestId, "provenance submitted at": datetime.datetime.utcnow(), "submitted provenance": obj}
     return Response(dumps(data,default=outputJSON), mimetype='application/json',status=201)
 
 
