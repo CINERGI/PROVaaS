@@ -158,10 +158,15 @@ def new_user():
         abort(400)    # missing arguments
     if User.query.filter_by(username=username).first() is not None:
         abort(400)    # existing user
-    user = User(username=username)
-    user.hash_password(password)
-    users_db.session.add(user)
-    users_db.session.commit()
+    try:
+        user = User(username=username)
+        user.hash_password(password)
+        users_db.session.add(user)
+        users_db.session.commit()
+    except:
+        e = sys.exc_info()
+        print "Errorx:",e
+        traceback.print_exc()
     return (jsonify({'username': user.username}), 201,
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
@@ -234,7 +239,7 @@ def create_resource_prov():
 
 
 @app.route('/<string:namespace>/provenance/<string:uuid>', methods=['GET'])
-#@auth.login_required
+@auth.login_required
 def get_resource_provenance(namespace,uuid):
  
   #obj = db.getSubgraph(uuid)
