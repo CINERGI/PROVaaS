@@ -1,0 +1,75 @@
+FROM pamtrak06/ubuntu14.04-apache2:latest
+
+
+
+
+sudo apt-get -y install software-properties-common
+
+sudo apt-get update
+sudo apt-get -y install default-jre
+add-apt-repository -y ppa:webupd8team/java
+sudo apt-get update
+echo debconf shared/accepted-oracle-license-v1-1 select true | \
+  sudo debconf-set-selections
+echo debconf shared/accepted-oracle-license-v1-1 seen true | \
+  sudo debconf-set-selections
+sudo apt-get -y install oracle-java8-installer
+
+wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
+echo 'deb http://debian.neo4j.org/repo stable/' >/tmp/neo4j.list
+mv /tmp/neo4j.list /etc/apt/sources.list.d
+sudo apt-get update
+    
+sudo apt-get -y install neo4j
+
+sed -i 's/#dbms.security.auth_enabled=false/dbms.security.auth_enabled=false/g' /etc/neo4j/neo4j.conf
+sed -i 's/#dbms.connector.http.address=0.0.0.0:7474/dbms.connector.http.address=0.0.0.0:7474/g' /etc/neo4j/neo4j.conf
+neo4j start
+
+
+#use the command line tool "neo4j-shell" to run the commands below
+#Neo4j constraint creation
+CREATE CONSTRAINT ON (n:Entity) ASSERT n._id IS UNIQUE;
+CREATE CONSTRAINT ON (n:Activity) ASSERT n._id IS UNIQUE;
+CREATE CONSTRAINT ON (n:Activity) ASSERT n.orderkey IS UNIQUE;
+CREATE CONSTRAINT ON (n:Order) ASSERT n._id IS UNIQUE;
+CREATE CONSTRAINT ON (n:used) ASSERT n._id IS UNIQUE;
+CREATE CONSTRAINT ON (n:wasGeneratedBy) ASSERT n._id IS UNIQUE;
+CREATE CONSTRAINT ON (n:wasinformedBy) ASSERT n._id IS UNIQUE;
+CREATE CONSTRAINT ON (n:wasDerivedFrom) ASSERT n._id IS UNIQUE;
+
+sudo add-apt-repository ppa:fkrull/deadsnakes-python2.7
+sudo apt-get update 
+sudo apt-get -y install python2.7
+ln -s /usr/bin/python2.7 /usr/bin/python
+
+sudo apt-get -y install python-pip
+sudo pip install  flask py2neo networkx python-dateutil pytz flask-sqlalchemy flask-httpauth passlib boto neo4jrestclient configparser
+
+sudo apt-get -y install git
+
+sudo apt-get -y install libapache2-mod-wsgi
+sudo a2enmod wsgi
+
+
+cd /
+mkdir bitbucket
+cd bitbucket
+git init
+#manual operation  - because password needed (change user from akinakyuz to xxxx)
+git clone https://akinakyuz@bitbucket.org/tanum/provaas.git -b akin
+cd /var/www/
+mkdir provaas
+cd /bitbucket/provaas
+cp -r * /var/www/provaas/
+cd /var/www/provaas
+
+sed -i 'http://localhost:7474/http://0.0.0.0:7474/g' /var/www/provaas/geoprovdm.py
+
+
+cd~
+vi run_provaas.sh
+#manually add these lines in it
+neo4j restart
+sudo service apache2 restart
+nohup python /var/www/provaas/__init__.py &
